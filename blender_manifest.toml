@@ -26,10 +26,9 @@ license = [
   "SPDX:MIT",
 ]
 # Optional: required by some licenses.
-# copyright = [
-#   "2002-2024 Developer Name",
-#   "1998 Company Name",
-# ]
+copyright = [
+  "2024 Mars (https://squirrelbite.com)",
+]
 
 # Optional list of supported platforms. If omitted, the extension will be available in all operating systems.
 # platforms = ["windows-x64", "macos-arm64", "linux-x64"]
