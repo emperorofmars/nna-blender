@@ -122,8 +122,9 @@ class EditNNARawJsonComponentOperator(bpy.types.Operator):
 		self.json = getJsonFromTargetName(context.object.name)
 		try:
 			self.jsonComponent = getComponentFromNNA(self.json, self.componentIdx)
-		except:
-			pass
+		except ValueError as error:
+			self.report({'ERROR'}, str(error))
+			return None
 		return context.window_manager.invoke_props_dialog(self)
 		
 	def execute(self, context):

@@ -60,19 +60,20 @@ class NNAEditor(bpy.types.Panel):
 						row.label(text=property)
 						row.label(text=str(component[property]))
 
-					btnRow = col.row()
+					box.separator(type="LINE", factor=1)
+					btnRow = box.row()
 					editButton = btnRow.operator(EditNNARawJsonComponentOperator.bl_idname, text="Edit")
 					editButton.componentIdx = idx
 					deleteButton = btnRow.operator(RemoveNNAJsonComponentOperator.bl_idname, text="Remove")
 					deleteButton.componentIdx = idx
 
-					if(idx < len(componentsList) - 1): col.separator(factor=2)
+					if(idx < len(componentsList) - 1): col.separator(factor=1)
 			except ValueError as e:
 				self.layout.label(text="Invalid Json: " + str(e))
 		else:
 			self.layout.label(text="No Component Added")
 		
-		self.layout.separator(type="LINE", factor=2)
+		self.layout.separator(type="LINE", factor=1)
 		row = self.layout.row()
 		row.operator(AddNNARawJsonComponentOperator.bl_idname, text="Add Component")
 		row.operator(EditNNARawJsonOperator.bl_idname, text="Edit Raw Json")
