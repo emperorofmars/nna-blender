@@ -1,5 +1,6 @@
 import bpy
 from enum import Enum, auto
+import re
 
 class NNAObjectState(Enum):
 	NotInited = auto()
@@ -7,11 +8,13 @@ class NNAObjectState(Enum):
 	InitedInsideTree = auto()
 	IsRootObject = auto()
 	IsTargetingObject = auto()
+	IsJsonDefinition = auto()
 	HasTargetingObject = auto()
 
 def determineNNAObjectState(object: bpy.types.Object) -> NNAObjectState:
 	if(object.name == "$nna"): return NNAObjectState.IsRootObject
 	if(object.name.startswith("$target:")): return NNAObjectState.IsTargetingObject
+	if(re.match("^\$[0-9]+\$.+", object.name)): return NNAObjectState.IsJsonDefinition
 	nnaCollection = findNNARootCollection()
 	if(nnaCollection == None): return NNAObjectState.NotInited
 	for collection in [nnaCollection, *nnaCollection.children_recursive]:
@@ -48,6 +51,7 @@ def findNNATargetingObject(name: str) -> bpy.types.Object | None:
 	return None
 
 def initNNARoot(collection: bpy.types.Collection):
+	originalSelectedObject = bpy.context.active_object
 	bpy.ops.object.empty_add()
 	nnaObject = bpy.context.active_object
 	nnaObject.name = "$nna"
@@ -56,9 +60,12 @@ def initNNARoot(collection: bpy.types.Collection):
 		for linkedCollection in nnaObject.users_collection:
 			if(linkedCollection != collection):
 				linkedCollection.objects.unlink(nnaObject)
+	bpy.context.view_layer.objects.active = originalSelectedObject
 
 def createTargetingObject(root: bpy.types.Object, name: str):
+	originalSelectedObject = bpy.context.active_object
 	bpy.ops.object.empty_add()
 	nnaObject = bpy.context.active_object
 	nnaObject.name = "$target:" + name
 	nnaObject.parent = root
+	bpy.context.view_layer.objects.active = originalSelectedObject

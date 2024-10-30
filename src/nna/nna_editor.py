@@ -1,52 +1,7 @@
 import bpy
 from .nna_tree_utils import *
-
-class InitializeNNAOperator(bpy.types.Operator):
-	bl_idname = 'nna.init'
-	bl_label = 'Initializie NNA'
-	bl_options = {"REGISTER", "UNDO"}
-
-	nna_init_collection: bpy.props.StringProperty(name = "nna_init_collection") # type: ignore
-	
-	def execute(self, context):
-		if bpy.context.scene.collection.name == self.nna_init_collection:
-			initNNARoot(bpy.context.scene.collection)
-			return {"FINISHED"}
-		else:
-			for collection in [bpy.context.scene.collection, *bpy.context.scene.collection.children_recursive]:
-				if(collection.name == self.nna_init_collection):
-					initNNARoot(collection)
-					return {"FINISHED"}
-		return {"FAILED"}
-
-class CreateNNATargetingObjectOperator(bpy.types.Operator):
-	bl_idname = 'nna.create_targeting_object'
-	bl_label = 'Initializie NNA'
-	bl_options = {"REGISTER", "UNDO"}
-
-	target: bpy.props.StringProperty(name = "target") # type: ignore
-	
-	def execute(self, context):
-		createTargetingObject(findNNARoot(), self.target)
-		return {"FINISHED"}
-
-class CommitNNAJsonChanges(bpy.types.Operator):
-	bl_idname = 'nna.commit_json_changes'
-	bl_label = 'Initializie NNA'
-	bl_options = {"REGISTER", "UNDO"}
-
-	target: bpy.props.StringProperty(name = "target") # type: ignore
-	json: bpy.props.StringProperty(name = "json") # type: ignore
-	
-	def execute(self, context):
-		t = findNNATargetingObject(self.target)
-		jsonBytes = self.json # get actual bytes
-		bpy.ops.object.empty_add()
-		nnaObject = bpy.context.active_object
-		nnaObject.name = jsonBytes
-		nnaObject.parent = t
-		return {"FINISHED"}
-
+from .nna_operators import *
+from .nna_json_utils import *
 
 class NNAEditor(bpy.types.Panel):
 	bl_idname = "OBJECT_PT_nna_editor"
@@ -81,6 +36,8 @@ class NNAEditor(bpy.types.Panel):
 				button.target = context.object.name
 			case NNAObjectState.IsTargetingObject:
 				self.layout.label(text="This is the Component definition for: " + context.object.name[8:])
+			case NNAObjectState.IsJsonDefinition:
+				self.layout.label(text="This part of the Json definition for: " + context.object.parent.name[8:])
 			case NNAObjectState.HasTargetingObject:
 				self.drawNNAEditor(context)
 	
@@ -89,18 +46,39 @@ class NNAEditor(bpy.types.Panel):
 		
 		self.layout.label(text="nnaDef: " + targetingObject.name)
 
-		self.layout.prop(context.scene, "nna_json", expand=True)
+		# initButton = self.layout.operator(ParseNNAJsonOperator.bl_idname, text="Init")
+		# initButton.target = context.object.name
+		# bpy.ops.nna.parse_json.invoke()
+
+		#json = getJsonFromTargetingObject(targetingObject)
+		# context.object.nna_json = json
+
+		self.layout.prop(context.object, "nna_json", expand=True)
+
+		#print()
+		#print(json)
+		#print()
 
 		button = self.layout.operator(CommitNNAJsonChanges.bl_idname, text="Commit changes")
 		button.target = context.object.name
-		button.json = context.scene.nna_json # combine subtree names
+		button.json = context.object.nna_json # combine subtree names
 
+def msgbus_callback_set_json(*arg):
+	match determineNNAObjectState(bpy.context.active_object):
+		case NNAObjectState.HasTargetingObject:
+			json = getJsonFromTargetingObject(findNNATargetingObject(bpy.context.active_object.name))
+			bpy.context.active_object.nna_json = json
+		case _:
+			bpy.context.active_object.nna_json = ""
 
 def register():
-	bpy.types.Scene.nna_json = bpy.props.StringProperty(name="nna_json", default="asdfasdf")
+	bpy.types.Object.nna_json = bpy.props.StringProperty(name="nna_json")
+	bpy.msgbus.subscribe_rna(key=(bpy.types.LayerObjects, "active"), owner="NNA", args=("",), notify=msgbus_callback_set_json)
 
 def unregister():
-	del bpy.types.Scene.nna_json
+	del bpy.types.Object.nna_json
+	bpy.msgbus.clear_by_owner("NNA")
+
 
 """
 # TODO Create a new tab in the properties panel
