@@ -45,8 +45,7 @@ def findNNATargetingObject(root: bpy.types.Object, name: str) -> bpy.types.Objec
 	for child in root.children:
 		if(child.name.startswith("$target:" + name)):
 			return child
-	else:
-		return None
+	return None
 
 def initNNARoot(collection: bpy.types.Collection):
 	bpy.ops.object.empty_add()
