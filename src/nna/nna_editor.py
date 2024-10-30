@@ -1,4 +1,5 @@
 import bpy
+import json
 from .nna_tree_utils import *
 from .nna_operators import *
 from .nna_json_utils import *
@@ -42,31 +43,36 @@ class NNAEditor(bpy.types.Panel):
 				self.drawNNAEditor(context)
 	
 	def drawNNAEditor(self, context):
-		self.layout.label(text="Edit Raw NNA Json")
-		self.layout.prop(context.object, "nna_json", text="", expand=True)
+		jsonText = getJsonFromTargetingObject(findNNATargetingObject(context.object.name))
+		if(len(jsonText) > 0):
+			try:
+				componentsList = json.loads(jsonText)
+				self.layout.label(text="Components")
+				col = self.layout.column(heading="Components")
+				for idx, component in enumerate(componentsList):
+					box = col.box()
+					row = box.row()
+					row.label(text="Type")
+					row.label(text=str(component["t"]))
+					for property in component.keys():
+						if(property == "t"): continue
+						row = box.row()
+						row.label(text=property)
+						row.label(text=str(component[property]))
 
-		button = self.layout.operator(CommitNNAJsonChangesOperator.bl_idname, text="Commit Changes")
-		button.target = context.object.name
-		button.json = context.object.nna_json
+					editButton = box.row().operator(EditNNARawJsonComponentOperator.bl_idname)
+					editButton.componentIdx = idx
+						
+					if(idx < len(componentsList) - 1): col.separator(factor=1)
+			except ValueError as e:
+				self.layout.label(text="Invalid Json: " + str(e))
+		else:
+			self.layout.label(text="Add First Component")
 
-		resetButton = self.layout.operator(ResetNNAJsonOperator.bl_idname, text="Reset")
-		resetButton.target = context.object.name
+		# TODO add & remove components
 
-def msgbus_callback_set_json(*arg):
-	match determineNNAObjectState(bpy.context.active_object):
-		case NNAObjectState.HasTargetingObject:
-			json = getJsonFromTargetingObject(findNNATargetingObject(bpy.context.active_object.name))
-			bpy.context.active_object.nna_json = json
-		case _:
-			bpy.context.active_object.nna_json = ""
-
-def register():
-	bpy.types.Object.nna_json = bpy.props.StringProperty(name="nna_json")
-	bpy.msgbus.subscribe_rna(key=(bpy.types.LayerObjects, "active"), owner="NNA", args=("",), notify=msgbus_callback_set_json)
-
-def unregister():
-	del bpy.types.Object.nna_json
-	bpy.msgbus.clear_by_owner("NNA")
+		self.layout.separator(type="LINE", factor=5)
+		self.layout.operator(EditNNARawJsonOperator.bl_idname)
 
 
 """
