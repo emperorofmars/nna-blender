@@ -16,7 +16,7 @@ def determineNNAObjectState(object: bpy.types.Object) -> NNAObjectState:
 	if(nnaCollection == None): return NNAObjectState.NotInited
 	for collection in [nnaCollection, *nnaCollection.children_recursive]:
 		if(collection in object.users_collection):
-			if(findNNATargetingObject(findNNARoot(), object.name)):
+			if(findNNATargetingObject(object.name)):
 				return NNAObjectState.HasTargetingObject
 			else:
 				return NNAObjectState.InitedInsideTree
@@ -41,8 +41,8 @@ def findNNARootInCollection(collection: bpy.types.Collection) -> bpy.types.Objec
 			return child
 	return None
 
-def findNNATargetingObject(root: bpy.types.Object, name: str) -> bpy.types.Object | None:
-	for child in root.children:
+def findNNATargetingObject(name: str) -> bpy.types.Object | None:
+	for child in findNNARoot().children:
 		if(child.name.startswith("$target:" + name)):
 			return child
 	return None

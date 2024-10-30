@@ -30,6 +30,23 @@ class CreateNNATargetingObjectOperator(bpy.types.Operator):
 		createTargetingObject(findNNARoot(), self.target)
 		return {"FINISHED"}
 
+class CommitNNAJsonChanges(bpy.types.Operator):
+	bl_idname = 'nna.commit_json_changes'
+	bl_label = 'Initializie NNA'
+	bl_options = {"REGISTER", "UNDO"}
+
+	target: bpy.props.StringProperty(name = "target") # type: ignore
+	json: bpy.props.StringProperty(name = "json") # type: ignore
+	
+	def execute(self, context):
+		t = findNNATargetingObject(self.target)
+		jsonBytes = self.json # get actual bytes
+		bpy.ops.object.empty_add()
+		nnaObject = bpy.context.active_object
+		nnaObject.name = jsonBytes
+		nnaObject.parent = t
+		return {"FINISHED"}
+
 
 class NNAEditor(bpy.types.Panel):
 	bl_idname = "OBJECT_PT_nna_editor"
@@ -47,8 +64,7 @@ class NNAEditor(bpy.types.Panel):
 		pass
 		
 	def draw(self, context):
-		state = determineNNAObjectState(context.object)
-		match state:
+		match determineNNAObjectState(context.object):
 			case NNAObjectState.IsRootObject:
 				self.layout.label(text="This is the NNA Root")
 			case NNAObjectState.NotInited:
@@ -69,14 +85,22 @@ class NNAEditor(bpy.types.Panel):
 				self.drawNNAEditor(context)
 	
 	def drawNNAEditor(self, context):
-		root = findNNARoot()
-		targetingObject = findNNATargetingObject(root, context.object.name)
+		targetingObject = findNNATargetingObject(context.object.name)
+		
 		self.layout.label(text="nnaDef: " + targetingObject.name)
 
-		# TODO text editor here
+		self.layout.prop(context.scene, "nna_json", expand=True)
+
+		button = self.layout.operator(CommitNNAJsonChanges.bl_idname, text="Commit changes")
+		button.target = context.object.name
+		button.json = context.scene.nna_json # combine subtree names
 
 
+def register():
+	bpy.types.Scene.nna_json = bpy.props.StringProperty(name="nna_json", default="asdfasdf")
 
+def unregister():
+	del bpy.types.Scene.nna_json
 
 """
 # TODO Create a new tab in the properties panel
