@@ -1,9 +1,10 @@
 import bpy
 
+from .nna_registry import *
 from .nna_json_utils import *
 
-class AddNNAJsonComponentOperator(bpy.types.Operator):
-	bl_idname = "nna.add_json_component"
+class AddNNATwistComponentOperator(bpy.types.Operator):
+	bl_idname = "nna.add_nna_twist"
 	bl_label = "Add Json Component"
 	bl_options = {"REGISTER", "UNDO"}
 	
@@ -32,8 +33,8 @@ class AddNNAJsonComponentOperator(bpy.types.Operator):
 		self.layout.prop(self, "type", text="Type", expand=True)
 		self.layout.prop(self, "newComponent", text="Values", expand=True)
 
-def nna_register():
-	pass
-
-def nna_unregister():
-	pass
+nna_types = {
+	"nna.twist": {
+		NNAOperatorType.Add: AddNNATwistComponentOperator.bl_idname
+	},
+}

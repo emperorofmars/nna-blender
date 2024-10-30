@@ -3,7 +3,7 @@ import json
 from .nna_tree_utils import *
 from .nna_operators import *
 from .nna_json_utils import *
-from .nna_registry import NNA_Registry
+from .nna_registry import *
 
 class NNAEditor(bpy.types.Panel):
 	bl_idname = "OBJECT_PT_nna_editor"
@@ -81,6 +81,11 @@ class NNAEditor(bpy.types.Panel):
 
 		self.layout.separator(type="LINE", factor=5)
 		self.layout.operator(RemoveNNATargetingObjectOperator.bl_idname)
+
+		# TODO proper dropdown for which component to add in the add component operator
+		col = self.layout.column()
+		for nna_type, add_op in get_nna_operators(NNAOperatorType.Add).items():
+			col.label(text=nna_type)
 
 
 """
