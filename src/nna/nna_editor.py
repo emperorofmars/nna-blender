@@ -3,6 +3,7 @@ import json
 from .nna_tree_utils import *
 from .nna_operators import *
 from .nna_json_utils import *
+from .nna_registry import NNA_Registry
 
 class NNAEditor(bpy.types.Panel):
 	bl_idname = "OBJECT_PT_nna_editor"
@@ -62,7 +63,7 @@ class NNAEditor(bpy.types.Panel):
 
 					box.separator(type="LINE", factor=1)
 					btnRow = box.row()
-					editButton = btnRow.operator(EditNNARawJsonComponentOperator.bl_idname, text="Edit")
+					editButton = btnRow.operator(EditNNARawJsonComponentOperator.bl_idname, text="Edit Raw Json")
 					editButton.componentIdx = idx
 					deleteButton = btnRow.operator(RemoveNNAJsonComponentOperator.bl_idname, text="Remove")
 					deleteButton.componentIdx = idx
