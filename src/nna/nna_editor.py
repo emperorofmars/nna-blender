@@ -43,7 +43,7 @@ class NNAEditor(bpy.types.Panel):
 				self.drawNNAEditor(context)
 	
 	def drawNNAEditor(self, context):
-		jsonText = getJsonFromTargetingObject(findNNATargetingObject(context.object.name))
+		jsonText = getJsonFromTargetName(context.object.name)
 		if(len(jsonText) > 0):
 			try:
 				componentsList = json.loads(jsonText)
@@ -60,16 +60,20 @@ class NNAEditor(bpy.types.Panel):
 						row.label(text=property)
 						row.label(text=str(component[property]))
 
-					editButton = box.row().operator(EditNNARawJsonComponentOperator.bl_idname)
+					btnRow = col.row()
+					editButton = btnRow.operator(EditNNARawJsonComponentOperator.bl_idname, text="Edit")
 					editButton.componentIdx = idx
-						
-					if(idx < len(componentsList) - 1): col.separator(factor=1)
+					deleteButton = btnRow.operator(RemoveNNAJsonComponentOperator.bl_idname, text="Remove")
+					deleteButton.componentIdx = idx
+
+					if(idx < len(componentsList) - 1): col.separator(factor=2)
 			except ValueError as e:
 				self.layout.label(text="Invalid Json: " + str(e))
 		else:
-			self.layout.label(text="Add First Component")
-
-		# TODO add & remove components
+			self.layout.label(text="No Component Added")
+		
+		self.layout.separator(factor=2)
+		self.layout.operator(AddNNARawJsonComponentOperator.bl_idname, text="Add Component")
 
 		self.layout.separator(type="LINE", factor=5)
 		self.layout.operator(EditNNARawJsonOperator.bl_idname)

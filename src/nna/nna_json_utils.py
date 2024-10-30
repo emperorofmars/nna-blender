@@ -1,6 +1,10 @@
+import json
 import bpy
 import re
-import functools
+from .nna_tree_utils import *
+
+def getJsonFromTargetName(targetObjectName: str) -> str:
+	return getJsonFromTargetingObject(findNNATargetingObject(targetObjectName))
 
 def getJsonFromTargetingObject(targetingObject: bpy.types.Object) -> str:
 	list = []
@@ -18,6 +22,9 @@ def getJsonFromTargetingObject(targetingObject: bpy.types.Object) -> str:
 			for line in list:
 				str += line[1]
 			return str
+
+def serializeJsonToTargetName(targetObjectName: str, json: str):
+	serializeJsonToTargetingObject(findNNATargetingObject(targetObjectName), json)
 
 def serializeJsonToTargetingObject(targetingObject: bpy.types.Object, json: str):
 	clearTargetingObject(targetingObject)
@@ -40,3 +47,23 @@ def addLineToTargetingObject(targetingObject: bpy.types.Object, line: str, lineN
 	nnaObject.name = "$" + str(lineNr) + "$" + line
 	nnaObject.parent = targetingObject
 	bpy.context.view_layer.objects.active = originalSelectedObject
+
+def getComponentFromNNA(jsonText: str, componentIndex: int) -> str:
+	jsonObject = json.loads(jsonText)
+	return json.dumps(jsonObject[componentIndex])
+
+def replaceComponentInNNA(jsonText: str, jsonComponentText: str, componentIndex: int) -> str:
+	jsonObject = json.loads(jsonText)
+	jsonObject[componentIndex] = json.loads(jsonComponentText)
+	return json.dumps(jsonObject)
+
+def removeComponentInNNA(jsonText: str, componentIndex: int) -> str:
+	jsonObject = json.loads(jsonText)
+	del(jsonObject[componentIndex])
+	return json.dumps(jsonObject)
+
+def addComponentToNNA(jsonText: str, jsonComponentText: str) -> str:
+	jsonObject = json.loads(jsonText)
+	jsonObject.append(json.loads(jsonComponentText))
+	return json.dumps(jsonObject)
+
