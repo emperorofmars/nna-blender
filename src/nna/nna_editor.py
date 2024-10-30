@@ -44,7 +44,7 @@ class NNAEditor(bpy.types.Panel):
 	
 	def drawNNAEditor(self, context):
 		jsonText = getJsonFromTargetName(context.object.name)
-		if(len(jsonText) > 0):
+		if(len(jsonText) > 2):
 			try:
 				componentsList = json.loads(jsonText)
 				self.layout.label(text="Components")
@@ -72,11 +72,13 @@ class NNAEditor(bpy.types.Panel):
 		else:
 			self.layout.label(text="No Component Added")
 		
-		self.layout.separator(factor=2)
-		self.layout.operator(AddNNARawJsonComponentOperator.bl_idname, text="Add Component")
+		self.layout.separator(type="LINE", factor=2)
+		row = self.layout.row()
+		row.operator(AddNNARawJsonComponentOperator.bl_idname, text="Add Component")
+		row.operator(EditNNARawJsonOperator.bl_idname, text="Edit Raw Json")
 
 		self.layout.separator(type="LINE", factor=5)
-		self.layout.operator(EditNNARawJsonOperator.bl_idname)
+		self.layout.operator(RemoveNNATargetingObjectOperator.bl_idname)
 
 
 """

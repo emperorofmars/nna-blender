@@ -40,6 +40,11 @@ def clearTargetingObject(object: bpy.types.Object):
 	for child in object.children:
 		bpy.data.objects.remove(child)
 
+def removeTargetingObject(object: bpy.types.Object):
+	for child in object.children:
+		bpy.data.objects.remove(child)
+	bpy.data.objects.remove(object)
+
 def addLineToTargetingObject(targetingObject: bpy.types.Object, line: str, lineNr: int):
 	originalSelectedObject = bpy.context.active_object
 	bpy.ops.object.empty_add()
@@ -63,7 +68,10 @@ def removeComponentInNNA(jsonText: str, componentIndex: int) -> str:
 	return json.dumps(jsonObject)
 
 def addComponentToNNA(jsonText: str, jsonComponentText: str) -> str:
-	jsonObject = json.loads(jsonText)
-	jsonObject.append(json.loads(jsonComponentText))
-	return json.dumps(jsonObject)
+	if(len(jsonText) > 2):
+		jsonObject = json.loads(jsonText)
+		jsonObject.append(json.loads(jsonComponentText))
+		return json.dumps(jsonObject)
+	else:
+		return json.dumps([json.loads(jsonComponentText)])
 
