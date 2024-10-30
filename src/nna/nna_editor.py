@@ -42,26 +42,15 @@ class NNAEditor(bpy.types.Panel):
 				self.drawNNAEditor(context)
 	
 	def drawNNAEditor(self, context):
-		targetingObject = findNNATargetingObject(context.object.name)
-		
-		self.layout.label(text="nnaDef: " + targetingObject.name)
+		self.layout.label(text="Edit Raw NNA Json")
+		self.layout.prop(context.object, "nna_json", text="", expand=True)
 
-		# initButton = self.layout.operator(ParseNNAJsonOperator.bl_idname, text="Init")
-		# initButton.target = context.object.name
-		# bpy.ops.nna.parse_json.invoke()
-
-		#json = getJsonFromTargetingObject(targetingObject)
-		# context.object.nna_json = json
-
-		self.layout.prop(context.object, "nna_json", expand=True)
-
-		#print()
-		#print(json)
-		#print()
-
-		button = self.layout.operator(CommitNNAJsonChanges.bl_idname, text="Commit changes")
+		button = self.layout.operator(CommitNNAJsonChangesOperator.bl_idname, text="Commit Changes")
 		button.target = context.object.name
-		button.json = context.object.nna_json # combine subtree names
+		button.json = context.object.nna_json
+
+		resetButton = self.layout.operator(ResetNNAJsonOperator.bl_idname, text="Reset")
+		resetButton.target = context.object.name
 
 def msgbus_callback_set_json(*arg):
 	match determineNNAObjectState(bpy.context.active_object):

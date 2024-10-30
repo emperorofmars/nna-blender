@@ -1,4 +1,5 @@
 import bpy
+import json
 from .nna_tree_utils import *
 from .nna_json_utils import *
 
@@ -31,9 +32,9 @@ class CreateNNATargetingObjectOperator(bpy.types.Operator):
 		createTargetingObject(findNNARoot(), self.target)
 		return {"FINISHED"}
 
-"""
-class ParseNNAJsonOperator(bpy.types.Operator):
-	bl_idname = 'nna.parse_json'
+
+class ResetNNAJsonOperator(bpy.types.Operator):
+	bl_idname = 'nna.reset_json'
 	bl_label = 'Parse NNA Json'
 	bl_options = {"REGISTER", "UNDO"}
 
@@ -45,15 +46,23 @@ class ParseNNAJsonOperator(bpy.types.Operator):
 		print("JSON: " + json)
 		context.object.nna_json = json
 		return {"FINISHED"}
-"""
 
-class CommitNNAJsonChanges(bpy.types.Operator):
+
+class CommitNNAJsonChangesOperator(bpy.types.Operator):
 	bl_idname = 'nna.commit_json_changes'
 	bl_label = 'Initializie NNA'
 	bl_options = {"REGISTER", "UNDO"}
 
 	target: bpy.props.StringProperty(name = "target") # type: ignore
 	json: bpy.props.StringProperty(name = "json") # type: ignore
+	
+	@classmethod
+	def poll(cls, context):
+		try:
+			json.loads(context.object.nna_json)
+			return True
+		except:
+			return None
 	
 	def execute(self, context):
 		targetingObject = findNNATargetingObject(self.target)
