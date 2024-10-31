@@ -7,13 +7,18 @@ class NNAObjectState(Enum):
 	InitedOutsideTree = auto()
 	InitedInsideTree = auto()
 	IsRootObject = auto()
+	IsRootObjectWithTargeting = auto()
 	IsTargetingObject = auto()
 	IsJsonDefinition = auto()
 	HasTargetingObject = auto()
 
 def determineNNAObjectState(object: bpy.types.Object) -> NNAObjectState:
-	if(object.name == "$nna"): return NNAObjectState.IsRootObject
-	if(object.name.startswith("$target:")): return NNAObjectState.IsTargetingObject
+	if(object.name == "$nna"):
+		for child in object.children:
+			if(child.name == "$root"):
+				return NNAObjectState.IsRootObjectWithTargeting
+		return NNAObjectState.IsRootObject
+	if(object.name.startswith("$target:") or object.name == "$root"): return NNAObjectState.IsTargetingObject
 	if(re.match("^\$[0-9]+\$.+", object.name)): return NNAObjectState.IsJsonDefinition
 	nnaCollection = findNNARootCollection()
 	if(nnaCollection == None): return NNAObjectState.NotInited
@@ -32,11 +37,7 @@ def findNNARootCollection() -> bpy.types.Collection | None:
 	return None
 
 def findNNARoot() -> bpy.types.Object | None:
-	for collection in [bpy.context.scene.collection, *bpy.context.scene.collection.children_recursive]:
-		root = findNNARootInCollection(collection)
-		if(root):
-			return root
-	return None
+	return bpy.data.objects.get("$nna")
 
 def findNNARootInCollection(collection: bpy.types.Collection) -> bpy.types.Object | None:
 	for child in collection.objects:
@@ -47,6 +48,8 @@ def findNNARootInCollection(collection: bpy.types.Collection) -> bpy.types.Objec
 def findNNATargetingObject(name: str) -> bpy.types.Object | None:
 	for child in findNNARoot().children:
 		if(child.name.startswith("$target:" + name)):
+			return child
+		elif(name == "$nna" and child.name == "$root"):
 			return child
 	return None
 
@@ -66,6 +69,9 @@ def createTargetingObject(root: bpy.types.Object, name: str):
 	originalSelectedObject = bpy.context.active_object
 	bpy.ops.object.empty_add()
 	nnaObject = bpy.context.active_object
-	nnaObject.name = "$target:" + name
+	if(name == "$nna"):
+		nnaObject.name = "$root"
+	else:
+		nnaObject.name = "$target:" + name
 	nnaObject.parent = root
 	bpy.context.view_layer.objects.active = originalSelectedObject

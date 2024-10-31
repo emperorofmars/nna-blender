@@ -25,7 +25,7 @@ class InitializeNNAOperator(bpy.types.Operator):
 
 class CreateNNATargetingObjectOperator(bpy.types.Operator):
 	bl_idname = "nna.create_targeting_object"
-	bl_label = "Initializie NNA"
+	bl_label = "Initializie NNA for this Object"
 	bl_options = {"REGISTER", "UNDO"}
 
 	target: bpy.props.StringProperty(name = "target") # type: ignore

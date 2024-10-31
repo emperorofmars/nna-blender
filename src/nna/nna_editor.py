@@ -23,7 +23,10 @@ class NNAEditor(bpy.types.Panel):
 	def draw(self, context):
 		match determineNNAObjectState(context.object):
 			case NNAObjectState.IsRootObject:
-				self.layout.label(text="This is the NNA Root")
+				button = self.layout.operator(CreateNNATargetingObjectOperator.bl_idname, text="Create NNA Component List for Root")
+				button.target = context.object.name
+			case NNAObjectState.IsRootObjectWithTargeting:
+				self.drawNNAEditor(context)
 			case NNAObjectState.NotInited:
 				if(len(bpy.context.scene.collection.children_recursive) == 0):
 					button = self.layout.operator(operator=InitializeNNAOperator.bl_idname, text="Initialize NNA in Scene")
@@ -37,7 +40,7 @@ class NNAEditor(bpy.types.Panel):
 				button = self.layout.operator(CreateNNATargetingObjectOperator.bl_idname, text="Create NNA Component List")
 				button.target = context.object.name
 			case NNAObjectState.IsTargetingObject:
-				self.layout.label(text="This is the Component definition for: " + context.object.name[8:])
+				self.layout.label(text="This is the Json definition for: " + ("The Scene Root" if context.object.name == "$root" else context.object.name[8:]))
 			case NNAObjectState.IsJsonDefinition:
 				self.layout.label(text="This part of the Json definition for: " + context.object.parent.name[8:])
 			case NNAObjectState.HasTargetingObject:
