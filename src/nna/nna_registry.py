@@ -1,4 +1,6 @@
 from enum import Enum, auto
+import inspect
+from pkgutil import iter_modules
 import sys
 import bpy
 
@@ -15,14 +17,12 @@ def get_nna_types_from_module(module, operator_type: NNAOperatorType):
 				ret[nna_type] = value.get(operator_type)
 	return ret
 
-
 def get_local_nna_operators(operator_type: NNAOperatorType):
 	ret = {}
-
-	from . import nna_twist_component
-	modules = [nna_twist_component]
 	
-	for module in modules:
+	from . import components
+
+	for name, module in inspect.getmembers(components, inspect.ismodule):
 		if(nna_types := get_nna_types_from_module(module, operator_type)):
 			ret = ret | nna_types
 	return ret

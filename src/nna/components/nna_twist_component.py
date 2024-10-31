@@ -1,7 +1,6 @@
 import bpy
-
-from .nna_registry import *
-from .nna_json_utils import *
+from ..nna_registry import *
+from ..nna_json_utils import *
 
 class AddNNATwistComponentOperator(bpy.types.Operator):
 	bl_idname = "nna.add_nna_twist"
