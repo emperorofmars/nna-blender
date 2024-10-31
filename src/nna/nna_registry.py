@@ -1,6 +1,5 @@
 from enum import Enum, auto
 import inspect
-from pkgutil import iter_modules
 import sys
 import bpy
 

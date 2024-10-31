@@ -1,4 +1,5 @@
 import bpy
+import json
 from ..nna_registry import *
 from ..nna_json_utils import *
 
@@ -9,8 +10,6 @@ class AddNNATwistComponentOperator(bpy.types.Operator):
 	
 	target: bpy.props.StringProperty(name = "target") # type: ignore
 	json: bpy.props.StringProperty(name = "json") # type: ignore
-	type: bpy.props.StringProperty(name = "type") # type: ignore
-	newComponent: bpy.props.StringProperty(name = "newComponent") # type: ignore
 
 	def invoke(self, context, event):
 		self.target = context.object.name
@@ -19,7 +18,7 @@ class AddNNATwistComponentOperator(bpy.types.Operator):
 		
 	def execute(self, context):
 		try:
-			jsonText = addComponentToNNA(self.json, self.newComponent)
+			jsonText = addComponentToNNA(self.json, json.dumps({"t":"nna.twist"}))
 			serializeJsonToTargetName(self.target, jsonText)
 			self.report({'INFO'}, "Component successfully added")
 			return {"FINISHED"}
@@ -29,7 +28,6 @@ class AddNNATwistComponentOperator(bpy.types.Operator):
 	
 	def draw(self, context):
 		self.layout.label(text="Target Object: " + self.target)
-		self.layout.prop(self, "type", text="Type", expand=True)
 		self.layout.prop(self, "newComponent", text="Values", expand=True)
 
 nna_types = {
