@@ -11,6 +11,8 @@ This project is an abomination and the sooner it can burn in a fire, the better.
 
 Issues, discussions & PRs Welcome!
 
+Find the Unity counterpart here: <https://github.com/emperorofmars/nna-unity>
+
 ## Why
 Existing 3d interchange formats are bad. The least horrible one, FBX, is not extensible.
 
