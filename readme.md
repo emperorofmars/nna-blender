@@ -32,8 +32,11 @@ For more complex components, you can serialize JSON into an array of child-nodes
 
 On import into a game-engine with an NNA implementation, these definitions will be parsed into the game-engines own constructs.
 
+<!--
+TODO: write one proper source of truth spec for available components across all nna implementations.
 **[Documantation on all provided NNA processors!](Docs/Processors.md)**
 
 You can easily implement additional processors yourself!
+-->
 
 

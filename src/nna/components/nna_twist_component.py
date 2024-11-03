@@ -30,6 +30,7 @@ class AddNNATwistComponentOperator(bpy.types.Operator):
 		self.layout.label(text="Target Object: " + self.target)
 		self.layout.prop(self, "newComponent", text="Values", expand=True)
 
+
 nna_types = {
 	"nna.twist": {
 		NNAOperatorType.Add: AddNNATwistComponentOperator.bl_idname
