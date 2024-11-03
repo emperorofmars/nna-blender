@@ -5,7 +5,7 @@ from ..nna_json_utils import *
 
 class AddNNATwistComponentOperator(bpy.types.Operator):
 	bl_idname = "nna.add_nna_twist"
-	bl_label = "Add Json Component"
+	bl_label = "Add Twist Component"
 	bl_options = {"REGISTER", "UNDO"}
 	
 	target: bpy.props.StringProperty(name = "target") # type: ignore
@@ -30,9 +30,13 @@ class AddNNATwistComponentOperator(bpy.types.Operator):
 		self.layout.label(text="Target Object: " + self.target)
 		self.layout.prop(self, "newComponent", text="Values", expand=True)
 
+def PreviewNNATwistComponent(layout, json):
+	row = layout.row()
+	row.label(text="AAAAAA")
 
 nna_types = {
 	"nna.twist": {
-		NNAOperatorType.Add: AddNNATwistComponentOperator.bl_idname
+		NNAOperatorType.Add: AddNNATwistComponentOperator.bl_idname,
+		NNAOperatorType.Preview: PreviewNNATwistComponent
 	},
 }

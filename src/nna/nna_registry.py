@@ -7,6 +7,7 @@ class NNAOperatorType(Enum):
 	Add = auto()
 	Edit = auto()
 	Remove = auto()
+	Preview = auto()
 
 def get_nna_types_from_module(module, operator_type: NNAOperatorType) -> dict[str, str]:
 	ret = {}
@@ -47,22 +48,12 @@ def _build_operator_enum(operator_type) -> list:
 def _build_operator_add_enum_callback(self, context) -> list:
 	return _build_operator_enum(NNAOperatorType.Add)
 
-def _build_operator_edit_enum_callback(self, context) -> list:
-	return _build_operator_enum(NNAOperatorType.Edit)
-
-def _build_operator_remove_enum_callback(self, context) -> list:
-	return _build_operator_enum(NNAOperatorType.Remove)
-
 _NNAEnumCache = {
-	NNAOperatorType.Add: [],
-	NNAOperatorType.Edit: [],
-	NNAOperatorType.Remove: [],
+	NNAOperatorType.Add: []
 }
 
 NNACache = {
-	NNAOperatorType.Add: {},
-	NNAOperatorType.Edit: {},
-	NNAOperatorType.Remove: {},
+	NNAOperatorType.Add: {}
 }
 
 def register():
@@ -72,23 +63,7 @@ def register():
 		description="Default & hot-loaded NNA add operators",
 		options={"SKIP_SAVE"}
 	)
-	bpy.types.Scene.nna_oparators_edit = bpy.props.EnumProperty(
-		items=_build_operator_edit_enum_callback,
-		name="NNA Edit Operators",
-		description="Default & hot-loaded NNA edit operators",
-		options={"SKIP_SAVE"}
-	)
-	bpy.types.Scene.nna_oparators_remove = bpy.props.EnumProperty(
-		items=_build_operator_remove_enum_callback,
-		name="NNA Remove Operators",
-		description="Default & hot-loaded NNA remove operators",
-		options={"SKIP_SAVE"}
-	)
 
 def unregister():
 	if hasattr(bpy.types.Scene, "nna_oparators_add"):
 		del bpy.types.Scene.nna_oparators_add
-	if hasattr(bpy.types.Scene, "nna_oparators_edit"):
-		del bpy.types.Scene.nna_oparators_edit
-	if hasattr(bpy.types.Scene, "nna_oparators_remove"):
-		del bpy.types.Scene.nna_oparators_remove

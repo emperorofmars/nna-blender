@@ -48,6 +48,9 @@ class NNAEditor(bpy.types.Panel):
 	
 	def drawNNAEditor(self, context):
 		jsonText = getJsonFromTargetName(context.object.name)
+		preview_operators = get_nna_operators(NNAOperatorType.Preview)
+		edit_operators = get_nna_operators(NNAOperatorType.Edit)
+		remove_operators = get_nna_operators(NNAOperatorType.Remove)
 		if(len(jsonText) > 2):
 			try:
 				componentsList = json.loads(jsonText)
@@ -58,18 +61,31 @@ class NNAEditor(bpy.types.Panel):
 					row = box.row()
 					row.label(text="Type")
 					row.label(text=str(component["t"]))
-					for property in component.keys():
-						if(property == "t"): continue
-						row = box.row()
-						row.label(text=property)
-						row.label(text=str(component[property]))
+
+					if(str(component["t"]) in preview_operators):
+						preview_operators[str(component["t"])](box, component)
+					else:
+						for property in component.keys():
+							if(property == "t"): continue
+							row = box.row()
+							row.label(text=property)
+							row.label(text=str(component[property]))
 
 					box.separator(type="LINE", factor=1)
-					btnRow = box.row()
-					editButton = btnRow.operator(EditNNARawJsonComponentOperator.bl_idname, text="Edit Raw Json")
-					editButton.componentIdx = idx
-					deleteButton = btnRow.operator(RemoveNNAJsonComponentOperator.bl_idname, text="Remove")
-					deleteButton.componentIdx = idx
+					if(str(component["t"]) in edit_operators):
+						row = box.row()
+						editButton = row.operator(edit_operators[str(component["t"])], text="Edit")
+						editButton.componentIdx = idx
+						box.separator(factor=1)
+					row = box.row()
+					editRawButton = row.operator(EditNNARawJsonComponentOperator.bl_idname, text="Edit Raw Json")
+					editRawButton.componentIdx = idx
+					if(str(component["t"]) in remove_operators):
+						deleteButton = row.operator(remove_operators[str(component["t"])], text="Remove")
+						deleteButton.componentIdx = idx
+					else:
+						deleteButton = row.operator(RemoveNNAJsonComponentOperator.bl_idname, text="Remove")
+						deleteButton.componentIdx = idx
 
 					if(idx < len(componentsList) - 1): col.separator(factor=1)
 			except ValueError as e:
