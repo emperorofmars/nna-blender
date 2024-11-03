@@ -3,13 +3,13 @@ import inspect
 import sys
 import bpy
 
-class NNAOperatorType(Enum):
+class NNAFunctionType(Enum):
 	Add = auto()
 	Edit = auto()
 	Remove = auto()
-	Preview = auto()
+	Display = auto()
 
-def get_nna_types_from_module(module, operator_type: NNAOperatorType) -> dict[str, str]:
+def get_nna_types_from_module(module, operator_type: NNAFunctionType) -> dict[str, str]:
 	ret = {}
 	if(nna_types := getattr(module, "nna_types", None)):
 		for nna_type, value in nna_types.items():
@@ -17,7 +17,7 @@ def get_nna_types_from_module(module, operator_type: NNAOperatorType) -> dict[st
 				ret[nna_type] = value.get(operator_type)
 	return ret
 
-def get_local_nna_operators(operator_type: NNAOperatorType) -> dict[str, str]:
+def get_local_nna_operators(operator_type: NNAFunctionType) -> dict[str, str]:
 	ret = {}
 	
 	from . import components
@@ -27,7 +27,7 @@ def get_local_nna_operators(operator_type: NNAOperatorType) -> dict[str, str]:
 			ret = ret | nna_types
 	return ret
 
-def get_loaded_nna_operators(operator_type: NNAOperatorType) -> dict[str, str]:
+def get_loaded_nna_operators(operator_type: NNAFunctionType) -> dict[str, str]:
 	ret = {}
 	for addon_name in bpy.context.preferences.addons.keys():
 		if(addon_name in sys.modules):
@@ -36,7 +36,7 @@ def get_loaded_nna_operators(operator_type: NNAOperatorType) -> dict[str, str]:
 				ret = ret | nna_types
 	return ret
 
-def get_nna_operators(operator_type: NNAOperatorType) -> dict[str, str]:
+def get_nna_operators(operator_type: NNAFunctionType) -> dict[str, str]:
 	return get_local_nna_operators(operator_type) | get_loaded_nna_operators(operator_type)
 
 
@@ -46,14 +46,14 @@ def _build_operator_enum(operator_type) -> list:
 	return _NNAEnumCache[operator_type]
 
 def _build_operator_add_enum_callback(self, context) -> list:
-	return _build_operator_enum(NNAOperatorType.Add)
+	return _build_operator_enum(NNAFunctionType.Add)
 
 _NNAEnumCache = {
-	NNAOperatorType.Add: []
+	NNAFunctionType.Add: []
 }
 
 NNACache = {
-	NNAOperatorType.Add: {}
+	NNAFunctionType.Add: {}
 }
 
 def register():

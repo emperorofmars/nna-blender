@@ -48,9 +48,9 @@ class NNAEditor(bpy.types.Panel):
 	
 	def draw_nna_editor(self, context):
 		jsonText = get_json_from_targetname(context.object.name)
-		preview_operators = get_nna_operators(NNAOperatorType.Preview)
-		edit_operators = get_nna_operators(NNAOperatorType.Edit)
-		remove_operators = get_nna_operators(NNAOperatorType.Remove)
+		preview_operators = get_nna_operators(NNAFunctionType.Display)
+		edit_operators = get_nna_operators(NNAFunctionType.Edit)
+		remove_operators = get_nna_operators(NNAFunctionType.Remove)
 		if(len(jsonText) > 2):
 			try:
 				componentsList = json.loads(jsonText)
@@ -96,7 +96,7 @@ class NNAEditor(bpy.types.Panel):
 		self.layout.separator(type="LINE", factor=1)
 		row = self.layout.row()
 		row.prop(bpy.context.scene, "nna_oparators_add", text="")
-		row.operator(NNACache[NNAOperatorType.Add][bpy.context.scene.nna_oparators_add], text="Add Component")
+		row.operator(NNACache[NNAFunctionType.Add][bpy.context.scene.nna_oparators_add], text="Add Component")
 
 		self.layout.separator(factor=1)
 		self.layout.operator(EditNNARawJsonOperator.bl_idname, text="Edit Raw Json")
