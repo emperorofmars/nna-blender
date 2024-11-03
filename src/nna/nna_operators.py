@@ -47,7 +47,7 @@ class RemoveNNATargetingObjectOperator(bpy.types.Operator):
 		return context.window_manager.invoke_confirm(self, event)
 	
 	def execute(self, context):
-		removeTargetingObject(findNNATargetingObject(self.target))
+		remove_targeting_object(find_nna_targeting_object(self.target))
 		self.report({"INFO"}, "NNA functionality has been removed from: " + self.target)
 		return {"FINISHED"}
 
@@ -61,13 +61,13 @@ class EditNNARawJsonOperator(bpy.types.Operator):
 	
 	def invoke(self, context, event):
 		self.target = context.object.name
-		self.json = getJsonFromTargetName(context.object.name)
+		self.json = get_json_from_targetname(context.object.name)
 		return context.window_manager.invoke_props_dialog(self)
 		
 	def execute(self, context):
 		try:
 			json.loads(self.json)
-			serializeJsonToTargetName(self.target, self.json)
+			serialize_json_to_targetname(self.target, self.json)
 			self.report({'INFO'}, "Object Json successfully edited")
 			return {"FINISHED"}
 		except ValueError as error:
@@ -89,13 +89,13 @@ class AddNNARawJsonComponentOperator(bpy.types.Operator):
 
 	def invoke(self, context, event):
 		self.target = context.object.name
-		self.json = getJsonFromTargetName(context.object.name)
+		self.json = get_json_from_targetname(context.object.name)
 		return context.window_manager.invoke_props_dialog(self)
 		
 	def execute(self, context):
 		try:
-			jsonText = addComponentToNNA(self.json, self.newComponent)
-			serializeJsonToTargetName(self.target, jsonText)
+			jsonText = add_component_to_nna(self.json, self.newComponent)
+			serialize_json_to_targetname(self.target, jsonText)
 			self.report({'INFO'}, "Component successfully added")
 			return {"FINISHED"}
 		except ValueError as error:
@@ -119,9 +119,9 @@ class EditNNARawJsonComponentOperator(bpy.types.Operator):
 	
 	def invoke(self, context, event):
 		self.target = context.object.name
-		self.json = getJsonFromTargetName(context.object.name)
+		self.json = get_json_from_targetname(context.object.name)
 		try:
-			self.jsonComponent = getComponentFromNNA(self.json, self.componentIdx)
+			self.jsonComponent = get_component_from_nna(self.json, self.componentIdx)
 		except ValueError as error:
 			self.report({'ERROR'}, str(error))
 			return None
@@ -129,8 +129,8 @@ class EditNNARawJsonComponentOperator(bpy.types.Operator):
 		
 	def execute(self, context):
 		try:
-			jsonText = replaceComponentInNNA(self.json, self.jsonComponent, self.componentIdx)
-			serializeJsonToTargetName(self.target, jsonText)
+			jsonText = replace_component_in_nna(self.json, self.jsonComponent, self.componentIdx)
+			serialize_json_to_targetname(self.target, jsonText)
 			self.report({'INFO'}, "Component successfully edited")
 			return {"FINISHED"}
 		except ValueError as error:
@@ -152,13 +152,13 @@ class RemoveNNAJsonComponentOperator(bpy.types.Operator):
 
 	def invoke(self, context, event):
 		self.target = context.object.name
-		self.json = getJsonFromTargetName(context.object.name)
+		self.json = get_json_from_targetname(context.object.name)
 		return context.window_manager.invoke_confirm(self, event)
 	
 	def execute(self, context):
 		try:
-			jsonText = removeComponentInNNA(self.json, self.componentIdx)
-			serializeJsonToTargetName(self.target, jsonText)
+			jsonText = remove_component_from_nna(self.json, self.componentIdx)
+			serialize_json_to_targetname(self.target, jsonText)
 			self.report({'INFO'}, "Component successfully removed")
 			return {"FINISHED"}
 		except ValueError as error:

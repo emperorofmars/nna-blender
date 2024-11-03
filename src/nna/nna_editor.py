@@ -21,12 +21,12 @@ class NNAEditor(bpy.types.Panel):
 		pass
 		
 	def draw(self, context):
-		match determineNNAObjectState(context.object):
+		match determine_nna_object_state(context.object):
 			case NNAObjectState.IsRootObject:
 				button = self.layout.operator(CreateNNATargetingObjectOperator.bl_idname, text="Create NNA Component List for Root")
 				button.target = context.object.name
 			case NNAObjectState.IsRootObjectWithTargeting:
-				self.drawNNAEditor(context)
+				self.draw_nna_editor(context)
 			case NNAObjectState.NotInited:
 				if(len(bpy.context.scene.collection.children_recursive) == 0):
 					button = self.layout.operator(operator=InitializeNNAOperator.bl_idname, text="Initialize NNA in Scene")
@@ -44,10 +44,10 @@ class NNAEditor(bpy.types.Panel):
 			case NNAObjectState.IsJsonDefinition:
 				self.layout.label(text="This part of the Json definition for: " + context.object.parent.name[8:])
 			case NNAObjectState.HasTargetingObject:
-				self.drawNNAEditor(context)
+				self.draw_nna_editor(context)
 	
-	def drawNNAEditor(self, context):
-		jsonText = getJsonFromTargetName(context.object.name)
+	def draw_nna_editor(self, context):
+		jsonText = get_json_from_targetname(context.object.name)
 		preview_operators = get_nna_operators(NNAOperatorType.Preview)
 		edit_operators = get_nna_operators(NNAOperatorType.Edit)
 		remove_operators = get_nna_operators(NNAOperatorType.Remove)

@@ -3,10 +3,10 @@ import bpy
 import re
 from .nna_tree_utils import *
 
-def getJsonFromTargetName(targetObjectName: str) -> str:
-	return getJsonFromTargetingObject(findNNATargetingObject(targetObjectName))
+def get_json_from_targetname(targetObjectName: str) -> str:
+	return get_json_from_targeting_object(find_nna_targeting_object(targetObjectName))
 
-def getJsonFromTargetingObject(targetingObject: bpy.types.Object) -> str:
+def get_json_from_targeting_object(targetingObject: bpy.types.Object) -> str:
 	list = []
 	for child in targetingObject.children:
 		m = re.match("^\$[0-9]+\$.+", child.name)
@@ -23,29 +23,29 @@ def getJsonFromTargetingObject(targetingObject: bpy.types.Object) -> str:
 				str += line[1]
 			return str
 
-def serializeJsonToTargetName(targetObjectName: str, json: str):
-	serializeJsonToTargetingObject(findNNATargetingObject(targetObjectName), json)
+def serialize_json_to_targetname(targetObjectName: str, json: str):
+	serialize_json_to_targeting_object(find_nna_targeting_object(targetObjectName), json)
 
-def serializeJsonToTargetingObject(targetingObject: bpy.types.Object, json: str):
-	clearTargetingObject(targetingObject)
+def serialize_json_to_targeting_object(targetingObject: bpy.types.Object, json: str):
+	clear_targeting_object(targetingObject)
 	remainingJsonBytes = str.encode(json) # get actual bytes
 	lineNr = 0
 	while(len(remainingJsonBytes) > 0):
 		line = remainingJsonBytes[0:61-len(str(lineNr))]
 		remainingJsonBytes = remainingJsonBytes[len(line):]
-		addLineToTargetingObject(targetingObject, line.decode(), lineNr)
+		add_line_to_targeting_object(targetingObject, line.decode(), lineNr)
 		lineNr += 1
 
-def clearTargetingObject(object: bpy.types.Object):
+def clear_targeting_object(object: bpy.types.Object):
 	for child in object.children:
 		bpy.data.objects.remove(child)
 
-def removeTargetingObject(object: bpy.types.Object):
+def remove_targeting_object(object: bpy.types.Object):
 	for child in object.children:
 		bpy.data.objects.remove(child)
 	bpy.data.objects.remove(object)
 
-def addLineToTargetingObject(targetingObject: bpy.types.Object, line: str, lineNr: int):
+def add_line_to_targeting_object(targetingObject: bpy.types.Object, line: str, lineNr: int):
 	originalSelectedObject = bpy.context.active_object
 	bpy.ops.object.empty_add()
 	nnaObject = bpy.context.active_object
@@ -53,21 +53,21 @@ def addLineToTargetingObject(targetingObject: bpy.types.Object, line: str, lineN
 	nnaObject.parent = targetingObject
 	bpy.context.view_layer.objects.active = originalSelectedObject
 
-def getComponentFromNNA(jsonText: str, componentIndex: int) -> str:
+def get_component_from_nna(jsonText: str, componentIndex: int) -> str:
 	jsonObject = json.loads(jsonText)
 	return json.dumps(jsonObject[componentIndex])
 
-def replaceComponentInNNA(jsonText: str, jsonComponentText: str, componentIndex: int) -> str:
+def replace_component_in_nna(jsonText: str, jsonComponentText: str, componentIndex: int) -> str:
 	jsonObject = json.loads(jsonText)
 	jsonObject[componentIndex] = json.loads(jsonComponentText)
 	return json.dumps(jsonObject)
 
-def removeComponentInNNA(jsonText: str, componentIndex: int) -> str:
+def remove_component_from_nna(jsonText: str, componentIndex: int) -> str:
 	jsonObject = json.loads(jsonText)
 	del(jsonObject[componentIndex])
 	return json.dumps(jsonObject)
 
-def addComponentToNNA(jsonText: str, jsonComponentText: str) -> str:
+def add_component_to_nna(jsonText: str, jsonComponentText: str) -> str:
 	if(len(jsonText) > 2):
 		jsonObject = json.loads(jsonText)
 		jsonObject.append(json.loads(jsonComponentText))

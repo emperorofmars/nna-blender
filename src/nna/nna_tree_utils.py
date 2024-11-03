@@ -12,7 +12,7 @@ class NNAObjectState(Enum):
 	IsJsonDefinition = auto()
 	HasTargetingObject = auto()
 
-def determineNNAObjectState(object: bpy.types.Object) -> NNAObjectState:
+def determine_nna_object_state(object: bpy.types.Object) -> NNAObjectState:
 	if(object.name == "$nna"):
 		for child in object.children:
 			if(child.name == "$root"):
@@ -24,7 +24,7 @@ def determineNNAObjectState(object: bpy.types.Object) -> NNAObjectState:
 	if(nnaCollection == None): return NNAObjectState.NotInited
 	for collection in [nnaCollection, *nnaCollection.children_recursive]:
 		if(collection in object.users_collection):
-			if(findNNATargetingObject(object.name)):
+			if(find_nna_targeting_object(object.name)):
 				return NNAObjectState.HasTargetingObject
 			else:
 				return NNAObjectState.InitedInsideTree
@@ -45,7 +45,7 @@ def findNNARootInCollection(collection: bpy.types.Collection) -> bpy.types.Objec
 			return child
 	return None
 
-def findNNATargetingObject(name: str) -> bpy.types.Object | None:
+def find_nna_targeting_object(name: str) -> bpy.types.Object | None:
 	for child in findNNARoot().children:
 		if(child.name.startswith("$target:" + name)):
 			return child

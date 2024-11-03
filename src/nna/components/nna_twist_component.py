@@ -13,13 +13,13 @@ class AddNNATwistComponentOperator(bpy.types.Operator):
 
 	def invoke(self, context, event):
 		self.target = context.object.name
-		self.json = getJsonFromTargetName(context.object.name)
+		self.json = get_json_from_targetname(context.object.name)
 		return context.window_manager.invoke_props_dialog(self)
 		
 	def execute(self, context):
 		try:
-			jsonText = addComponentToNNA(self.json, json.dumps({"t":"nna.twist"}))
-			serializeJsonToTargetName(self.target, jsonText)
+			jsonText = add_component_to_nna(self.json, json.dumps({"t":"nna.twist"}))
+			serialize_json_to_targetname(self.target, jsonText)
 			self.report({'INFO'}, "Component successfully added")
 			return {"FINISHED"}
 		except ValueError as error:
@@ -30,13 +30,13 @@ class AddNNATwistComponentOperator(bpy.types.Operator):
 		self.layout.label(text="Target Object: " + self.target)
 		self.layout.prop(self, "newComponent", text="Values", expand=True)
 
-def PreviewNNATwistComponent(layout, json):
+def preview_nna_twist_component(layout, json):
 	row = layout.row()
 	row.label(text="AAAAAA")
 
 nna_types = {
 	"nna.twist": {
 		NNAOperatorType.Add: AddNNATwistComponentOperator.bl_idname,
-		NNAOperatorType.Preview: PreviewNNATwistComponent
+		NNAOperatorType.Preview: preview_nna_twist_component
 	},
 }
