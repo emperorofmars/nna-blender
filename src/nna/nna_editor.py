@@ -72,12 +72,13 @@ class NNAEditor(bpy.types.Panel):
 							row.label(text=str(component[property]))
 
 					box.separator(type="LINE", factor=1)
+					row = box.row()
 					if(str(component["t"]) in edit_operators):
-						row = box.row()
+						#row = box.row()
 						editButton = row.operator(edit_operators[str(component["t"])], text="Edit")
 						editButton.componentIdx = idx
-						box.separator(factor=1)
-					row = box.row()
+						#box.separator(factor=1)
+					#row = box.row()
 					editRawButton = row.operator(EditNNARawJsonComponentOperator.bl_idname, text="Edit Raw Json")
 					editRawButton.componentIdx = idx
 					if(str(component["t"]) in remove_operators):

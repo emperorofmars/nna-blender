@@ -3,6 +3,8 @@ import inspect
 import sys
 import bpy
 
+from .nna_operators import AddNNARawJsonComponentOperator
+
 class NNAFunctionType(StrEnum):
 	Add = "add"
 	Edit = "edit"
@@ -42,6 +44,7 @@ def get_nna_operators(operator_type: NNAFunctionType) -> dict[str, str]:
 
 def _build_operator_enum(operator_type) -> list:
 	_NNAEnumCache[str(operator_type)] = [((value, key, "")) for key, value in get_nna_operators(str(operator_type)).items()]
+	_NNAEnumCache[str(operator_type)].append(((AddNNARawJsonComponentOperator.bl_idname, "Raw Json", "")))
 	return _NNAEnumCache[str(operator_type)]
 
 def _build_operator_add_enum_callback(self, context) -> list:
