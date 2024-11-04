@@ -4,18 +4,19 @@ import bpy
 from . import nna_operators_common
 from . import nna_operators_raw_json
 from . import nna_registry
+from . import nna_tree_utils
 from . import nna_json_utils
 from . import nna_name_utils
 
 
 def draw_nna_name_editor(self, context, target_id):
-	name_operators = nna_registry.get_nna_operators(nna_registry.NNAFunctionType.NameSet)
+	#name_operators = nna_registry.get_nna_operators(nna_registry.NNAFunctionType.NameSet)
 	name_match_operators = nna_registry.get_nna_operators(nna_registry.NNAFunctionType.NameMatch)
 
 	name_definition_match = False
 	for nna_type, match in name_match_operators.items():
 		if(match):
-			nna_name = nna_name_utils.get_nna_name(target_id)
+			nna_name = nna_tree_utils.get_object_by_target_id(target_id).name
 			index = match(nna_name)
 			if(index > 0):
 				self.layout.label(text="Name Definition: " + nna_type)

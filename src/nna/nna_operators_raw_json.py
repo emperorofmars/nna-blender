@@ -32,9 +32,9 @@ class AddNNARawJsonComponentOperator(bpy.types.Operator):
 	bl_label = "Add Raw Json Component"
 	bl_options = {"REGISTER", "UNDO"}
 	
-	target_id: bpy.props.StringProperty(name = "targetId") # type: ignore
+	target_id: bpy.props.StringProperty(name="targetId") # type: ignore
 
-	new_component: bpy.props.StringProperty(name = "new_component") # type: ignore
+	new_component: bpy.props.StringProperty(name="new_component", default="{\"t\":\"example\"}") # type: ignore
 
 	def invoke(self, context, event):
 		return context.window_manager.invoke_props_dialog(self)
@@ -87,5 +87,5 @@ class EditNNARawJsonComponentOperator(bpy.types.Operator):
 			return {"CANCELLED"}
 	
 	def draw(self, context):
-		self.layout.label(text="Target Object: " + self.target)
-		self.layout.prop(self, "json_component", text="{\"t\":\"example\"}", expand=True)
+		self.layout.label(text="Target Object: " + self.target_id)
+		self.layout.prop(self, "json_component", text="", expand=True)

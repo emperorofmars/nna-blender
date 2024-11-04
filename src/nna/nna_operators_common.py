@@ -90,8 +90,8 @@ class RemoveNNANameDefinitionOperator(bpy.types.Operator):
 	
 	def execute(self, context):
 		try:
-			(nna_name, symmetry) = nna_name_utils.get_symmetry(nna_name_utils.get_nna_name(self.target_id))
 			target = nna_tree_utils.get_object_by_target_id(self.target_id)
+			(nna_name, symmetry) = nna_name_utils.get_symmetry(target.name)
 			target.name = nna_name[:self.name_definition_index] + symmetry
 
 			self.report({'INFO'}, "Name definition successfully removed")
