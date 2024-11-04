@@ -20,7 +20,7 @@ class AddNNATwistComponentOperator(bpy.types.Operator):
 			self.report({'ERROR'}, str(error))
 			return {"CANCELLED"}
 
-def display_nna_twist_component(layout, json):
+def display_nna_twist_component(object, layout, json):
 	row = layout.row()
 	row.label(text="AAAAAA")
 

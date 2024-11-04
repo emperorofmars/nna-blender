@@ -63,7 +63,7 @@ class NNAEditor(bpy.types.Panel):
 					row.label(text=str(component["t"]))
 
 					if(str(component["t"]) in preview_operators):
-						preview_operators[str(component["t"])](box, component)
+						preview_operators[str(component["t"])](context.object, box, component)
 					else:
 						for property in component.keys():
 							if(property == "t"): continue
