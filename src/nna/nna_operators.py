@@ -1,6 +1,6 @@
 import bpy
-from .nna_tree_utils import *
-from .nna_json_utils import *
+from . import nna_tree_utils
+from . import nna_json_utils
 
 
 class InitializeNNAOperator(bpy.types.Operator):
@@ -12,13 +12,13 @@ class InitializeNNAOperator(bpy.types.Operator):
 	
 	def execute(self, context):
 		if bpy.context.scene.collection.name == self.nna_init_collection:
-			initNNARoot(bpy.context.scene.collection)
+			nna_tree_utils.init_nna_root(bpy.context.scene.collection)
 			self.report({"INFO"}, "NNA inited in Scene Collection")
 			return {"FINISHED"}
 		else:
 			for collection in [bpy.context.scene.collection, *bpy.context.scene.collection.children_recursive]:
 				if(collection.name == self.nna_init_collection):
-					initNNARoot(collection)
+					nna_tree_utils.init_nna_root(collection)
 					self.report({"INFO"}, "NNA inited in " + collection.name)
 					return {"FINISHED"}
 		return {"CANCELLED"}
@@ -32,7 +32,7 @@ class CreateNNATargetingObjectOperator(bpy.types.Operator):
 	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
 	
 	def execute(self, context):
-		createTargetingObject(findNNARoot(), self.target_id)
+		nna_tree_utils.create_targeting_object(nna_tree_utils.find_nna_root(), self.target_id)
 		self.report({"INFO"}, "Targeting object created")
 		return {"FINISHED"}
 
@@ -48,7 +48,7 @@ class RemoveNNATargetingObjectOperator(bpy.types.Operator):
 		return context.window_manager.invoke_confirm(self, event)
 	
 	def execute(self, context):
-		remove_targeting_object(find_nna_targeting_object(self.target_id))
+		nna_json_utils.remove_targeting_object(nna_tree_utils.find_nna_targeting_object(self.target_id))
 		self.report({"INFO"}, "NNA functionality has been removed from: " + self.target_id)
 		return {"FINISHED"}
 
@@ -65,8 +65,8 @@ class EditNNARawJsonOperator(bpy.types.Operator):
 		
 	def execute(self, context):
 		try:
-			nna_json = get_json_from_targetname(self.target_id)
-			serialize_json_to_targetname(self.target_id, nna_json)
+			nna_json = nna_json_utils.get_json_from_targetname(self.target_id)
+			nna_json_utils.serialize_json_to_targetname(self.target_id, nna_json)
 			self.report({'INFO'}, "Object Json successfully edited")
 			return {"FINISHED"}
 		except ValueError as error:
@@ -92,9 +92,9 @@ class AddNNARawJsonComponentOperator(bpy.types.Operator):
 		
 	def execute(self, context):
 		try:
-			nna_json = get_json_from_targetname(self.target_id)
-			new_nna_json = add_component_to_nna(nna_json, self.new_component)
-			serialize_json_to_targetname(self.target_id, new_nna_json)
+			nna_json = nna_json_utils.get_json_from_targetname(self.target_id)
+			new_nna_json = nna_json_utils.add_component_to_nna(nna_json, self.new_component)
+			nna_json_utils.serialize_json_to_targetname(self.target_id, new_nna_json)
 			self.report({'INFO'}, "Component successfully added")
 			return {"FINISHED"}
 		except ValueError as error:
@@ -117,9 +117,9 @@ class EditNNARawJsonComponentOperator(bpy.types.Operator):
 	json_component: bpy.props.StringProperty(name = "json_component") # type: ignore
 	
 	def invoke(self, context, event):
-		nna_json = get_json_from_targetname(self.target_id)
+		nna_json = nna_json_utils.get_json_from_targetname(self.target_id)
 		try:
-			self.json_component = get_component_from_nna(nna_json, self.component_index)
+			self.json_component = nna_json_utils.get_component_from_nna(nna_json, self.component_index)
 		except ValueError as error:
 			self.report({'ERROR'}, str(error))
 			return None
@@ -127,9 +127,9 @@ class EditNNARawJsonComponentOperator(bpy.types.Operator):
 		
 	def execute(self, context):
 		try:
-			nna_json = get_json_from_targetname(self.target_id)
-			jsonText = replace_component_in_nna(nna_json, self.json_component, self.component_index)
-			serialize_json_to_targetname(self.target_id, jsonText)
+			nna_json = nna_json_utils.get_json_from_targetname(self.target_id)
+			jsonText = nna_json_utils.replace_component_in_nna(nna_json, self.json_component, self.component_index)
+			nna_json_utils.serialize_json_to_targetname(self.target_id, jsonText)
 
 			self.report({'INFO'}, "Component successfully edited")
 			return {"FINISHED"}
@@ -155,9 +155,9 @@ class RemoveNNAJsonComponentOperator(bpy.types.Operator):
 	
 	def execute(self, context):
 		try:
-			nna_json = get_json_from_targetname(self.target_id)
-			jsonText = remove_component_from_nna(nna_json, self.component_index)
-			serialize_json_to_targetname(self.target_id, jsonText)
+			nna_json = nna_json_utils.get_json_from_targetname(self.target_id)
+			jsonText = nna_json_utils.remove_component_from_nna(nna_json, self.component_index)
+			nna_json_utils.serialize_json_to_targetname(self.target_id, jsonText)
 			self.report({'INFO'}, "Component successfully removed")
 			return {"FINISHED"}
 		except ValueError as error:

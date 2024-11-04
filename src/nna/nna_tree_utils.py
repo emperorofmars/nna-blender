@@ -21,7 +21,7 @@ def determine_nna_object_state(object: bpy.types.Object) -> NNAObjectState:
 		return NNAObjectState.IsRootObject
 	if(object.name.startswith("$target:") or object.name == "$root"): return NNAObjectState.IsTargetingObject
 	if(re.match("^\$[0-9]+\$.+", object.name)): return NNAObjectState.IsJsonDefinition
-	nnaCollection = findNNARootCollection()
+	nnaCollection = find_nna_root_collection()
 	if(nnaCollection == None): return NNAObjectState.NotInited
 	for collection in [nnaCollection, *nnaCollection.children_recursive]:
 		if(collection in object.users_collection):
@@ -36,7 +36,7 @@ def determine_nna_bone_state(object: bpy.types.Object, bone: bpy.types.Bone) -> 
 		return NNAObjectState.Invalid
 	if(object.name.startswith("$target:") or object.name == "$root"): return NNAObjectState.Invalid
 	if(re.match("^\$[0-9]+\$.+", object.name)): return NNAObjectState.Invalid
-	nnaCollection = findNNARootCollection()
+	nnaCollection = find_nna_root_collection()
 	for collection in [nnaCollection, *nnaCollection.children_recursive]:
 		if(collection in object.users_collection):
 			if(find_nna_targeting_object(object.name + "$" + bone.name)):
@@ -45,30 +45,30 @@ def determine_nna_bone_state(object: bpy.types.Object, bone: bpy.types.Bone) -> 
 				return NNAObjectState.InitedInsideTree
 	return NNAObjectState.InitedOutsideTree
 
-def findNNARootCollection() -> bpy.types.Collection | None:
+def find_nna_root_collection() -> bpy.types.Collection | None:
 	for collection in [bpy.context.scene.collection, *bpy.context.scene.collection.children_recursive]:
-		if(findNNARootInCollection(collection)):
+		if(find_nna_root_in_collection(collection)):
 			return collection
 	return None
 
-def findNNARoot() -> bpy.types.Object | None:
+def find_nna_root() -> bpy.types.Object | None:
 	return bpy.data.objects.get("$nna")
 
-def findNNARootInCollection(collection: bpy.types.Collection) -> bpy.types.Object | None:
+def find_nna_root_in_collection(collection: bpy.types.Collection) -> bpy.types.Object | None:
 	for child in collection.objects:
 		if(child.name == "$nna"):
 			return child
 	return None
 
 def find_nna_targeting_object(name: str) -> bpy.types.Object | None:
-	for child in findNNARoot().children:
+	for child in find_nna_root().children:
 		if(child.name.startswith("$target:" + name)):
 			return child
 		elif(name == "$nna" and child.name == "$root"):
 			return child
 	return None
 
-def initNNARoot(collection: bpy.types.Collection):
+def init_nna_root(collection: bpy.types.Collection):
 	originalSelectedObject = bpy.context.active_object
 	bpy.ops.object.empty_add()
 	nnaObject = bpy.context.active_object
@@ -80,7 +80,7 @@ def initNNARoot(collection: bpy.types.Collection):
 				linkedCollection.objects.unlink(nnaObject)
 	bpy.context.view_layer.objects.active = originalSelectedObject
 
-def createTargetingObject(root: bpy.types.Object, name: str):
+def create_targeting_object(root: bpy.types.Object, name: str):
 	originalSelectedObject = bpy.context.active_object
 	bpy.ops.object.empty_add()
 	nnaObject = bpy.context.active_object

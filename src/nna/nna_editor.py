@@ -1,11 +1,13 @@
+import json
+import bpy
 
-from .nna_operators import *
-from .nna_registry import *
-from .nna_json_utils import *
+from . import nna_operators
+from . import nna_registry
+from . import nna_json_utils
 
 
 def draw_nna_name_editor(self, context, target_id):
-	name_operators = get_nna_operators(NNAFunctionType.Name)
+	name_operators = nna_registry.get_nna_operators(nna_registry.NNAFunctionType.Name)
 
 	self.layout.label(text="Name Definition")
 	row = self.layout.row()
@@ -15,10 +17,10 @@ def draw_nna_name_editor(self, context, target_id):
 
 
 def draw_nna_json_editor(self, context, target_id):
-	jsonText = get_json_from_targetname(target_id)
-	preview_operators = get_nna_operators(NNAFunctionType.JsonDisplay)
-	edit_operators = get_nna_operators(NNAFunctionType.JsonEdit)
-	remove_operators = get_nna_operators(NNAFunctionType.JsonRemove)
+	jsonText = nna_json_utils.get_json_from_targetname(target_id)
+	preview_operators = nna_registry.get_nna_operators(nna_registry.NNAFunctionType.JsonDisplay)
+	edit_operators = nna_registry.get_nna_operators(nna_registry.NNAFunctionType.JsonEdit)
+	remove_operators = nna_registry.get_nna_operators(nna_registry.NNAFunctionType.JsonRemove)
 	
 	self.layout.label(text="Json Components")
 	if(len(jsonText) > 2):
@@ -46,7 +48,7 @@ def draw_nna_json_editor(self, context, target_id):
 					editButton = row.operator(edit_operators[str(component["t"])], text="Edit")
 					editButton.target_id = target_id
 					editButton.component_index = idx
-				editRawButton = row.operator(EditNNARawJsonComponentOperator.bl_idname, text="Edit Raw Json")
+				editRawButton = row.operator(nna_operators.EditNNARawJsonComponentOperator.bl_idname, text="Edit Raw Json")
 				editRawButton.target_id = target_id
 				editRawButton.component_index = idx
 				if(str(component["t"]) in remove_operators):
@@ -54,7 +56,7 @@ def draw_nna_json_editor(self, context, target_id):
 					deleteButton.target_id = target_id
 					deleteButton.component_index = idx
 				else:
-					deleteButton = row.operator(RemoveNNAJsonComponentOperator.bl_idname, text="Remove")
+					deleteButton = row.operator(nna_operators.RemoveNNAJsonComponentOperator.bl_idname, text="Remove")
 					deleteButton.target_id = target_id
 					deleteButton.component_index = idx
 
@@ -71,9 +73,9 @@ def draw_nna_json_editor(self, context, target_id):
 	button_add.target_id = target_id
 
 	self.layout.separator(factor=1)
-	button_edit_raw = self.layout.operator(EditNNARawJsonOperator.bl_idname, text="Edit Raw Json")
+	button_edit_raw = self.layout.operator(nna_operators.EditNNARawJsonOperator.bl_idname, text="Edit Raw Json")
 	button_edit_raw.target_id = target_id
 
 	self.layout.separator(type="LINE", factor=5)
-	self.layout.operator(RemoveNNATargetingObjectOperator.bl_idname)
+	self.layout.operator(nna_operators.RemoveNNATargetingObjectOperator.bl_idname)
 	button_edit_raw.target_id = target_id
