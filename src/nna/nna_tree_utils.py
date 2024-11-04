@@ -90,3 +90,9 @@ def createTargetingObject(root: bpy.types.Object, name: str):
 		nnaObject.name = "$target:" + name
 	nnaObject.parent = root
 	bpy.context.view_layer.objects.active = originalSelectedObject
+
+def get_object_by_target_id(target_id: str) -> bpy.types.Object | bpy.types.Bone | None:
+	parts = target_id.split('$')
+	object: bpy.types.Object = bpy.data.objects.get(parts[0])
+	if(len(parts) > 1): return object.data.bones.get(parts[1])
+	else: return object

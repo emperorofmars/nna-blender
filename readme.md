@@ -40,3 +40,7 @@ You can easily implement additional processors yourself!
 -->
 
 
+## Todo
+* NNA JSON definition: object name collision handling
+* Name definition tooling
+* Perhaps the ability to serialize JSON components to the node directly. Will be annoying for bones.
