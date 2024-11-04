@@ -96,7 +96,7 @@ class NNAEditor(bpy.types.Panel):
 		self.layout.separator(type="LINE", factor=1)
 		row = self.layout.row()
 		row.prop(bpy.context.scene, "nna_oparators_add", text="")
-		row.operator(NNACache[NNAFunctionType.Add][bpy.context.scene.nna_oparators_add], text="Add Component")
+		row.operator(bpy.context.scene.nna_oparators_add, text="Add Component")
 
 		self.layout.separator(factor=1)
 		self.layout.operator(EditNNARawJsonOperator.bl_idname, text="Edit Raw Json")
