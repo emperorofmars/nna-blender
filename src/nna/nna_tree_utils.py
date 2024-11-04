@@ -11,6 +11,7 @@ class NNAObjectState(Enum):
 	IsTargetingObject = auto()
 	IsJsonDefinition = auto()
 	HasTargetingObject = auto()
+	Invalid = auto()
 
 def determine_nna_object_state(object: bpy.types.Object) -> NNAObjectState:
 	if(object.name == "$nna"):
@@ -25,6 +26,20 @@ def determine_nna_object_state(object: bpy.types.Object) -> NNAObjectState:
 	for collection in [nnaCollection, *nnaCollection.children_recursive]:
 		if(collection in object.users_collection):
 			if(find_nna_targeting_object(object.name)):
+				return NNAObjectState.HasTargetingObject
+			else:
+				return NNAObjectState.InitedInsideTree
+	return NNAObjectState.InitedOutsideTree
+
+def determine_nna_bone_state(object: bpy.types.Object, bone: bpy.types.Bone) -> NNAObjectState:
+	if(object.name == "$nna"):
+		return NNAObjectState.Invalid
+	if(object.name.startswith("$target:") or object.name == "$root"): return NNAObjectState.Invalid
+	if(re.match("^\$[0-9]+\$.+", object.name)): return NNAObjectState.Invalid
+	nnaCollection = findNNARootCollection()
+	for collection in [nnaCollection, *nnaCollection.children_recursive]:
+		if(collection in object.users_collection):
+			if(find_nna_targeting_object(object.name + "$" + bone.name)):
 				return NNAObjectState.HasTargetingObject
 			else:
 				return NNAObjectState.InitedInsideTree

@@ -35,7 +35,8 @@ class EditNNATwistComponentOperator(bpy.types.Operator):
 	bl_label = "Edit Twist Component"
 	bl_options = {"REGISTER", "UNDO"}
 
-	componentIdx: bpy.props.IntProperty(name = "componentIdx", default=-1) # type: ignore
+	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
+	component_index: bpy.props.IntProperty(name = "componentIdx", default=-1) # type: ignore
 
 	weight: bpy.props.FloatProperty(name="weight", default=0.5, min=0, max=1) # type: ignore
 	
@@ -56,7 +57,7 @@ class EditNNATwistComponentOperator(bpy.types.Operator):
 			json_component = json.loads(get_component_from_nna(nna_json, self.componentIdx))
 
 			if(self.weight != 0.5): json_component["w"] = self.weight
-			if(context.scene.nna_twist_object_selector is not None): json_component["s"] = context.scene.nna_twist_object_selector.name
+			if(context.scene.nna_twist_object_selector): json_component["s"] = context.scene.nna_twist_object_selector.name
 			else: del json_component["s"]
 
 			new_nna_json = replace_component_in_nna(nna_json, json.dumps(json_component), self.componentIdx)

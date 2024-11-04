@@ -1,7 +1,7 @@
 import bpy
-import json
 from .nna_tree_utils import *
 from .nna_json_utils import *
+
 
 class InitializeNNAOperator(bpy.types.Operator):
 	bl_idname = "nna.init"
@@ -23,51 +23,50 @@ class InitializeNNAOperator(bpy.types.Operator):
 					return {"FINISHED"}
 		return {"CANCELLED"}
 
+
 class CreateNNATargetingObjectOperator(bpy.types.Operator):
 	bl_idname = "nna.create_targeting_object"
 	bl_label = "Initializie NNA for this Object"
 	bl_options = {"REGISTER", "UNDO"}
 
-	target: bpy.props.StringProperty(name = "target") # type: ignore
+	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
 	
 	def execute(self, context):
-		createTargetingObject(findNNARoot(), self.target)
+		createTargetingObject(findNNARoot(), self.target_id)
 		self.report({"INFO"}, "Targeting object created")
 		return {"FINISHED"}
+
 
 class RemoveNNATargetingObjectOperator(bpy.types.Operator):
 	bl_idname = "nna.remove_targeting_object"
 	bl_label = "Remove NNA from this Object"
 	bl_options = {"REGISTER", "UNDO"}
 
-	target: bpy.props.StringProperty(name = "target") # type: ignore
+	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
 
 	def invoke(self, context, event):
-		self.target = context.object.name
 		return context.window_manager.invoke_confirm(self, event)
 	
 	def execute(self, context):
-		remove_targeting_object(find_nna_targeting_object(self.target))
-		self.report({"INFO"}, "NNA functionality has been removed from: " + self.target)
+		remove_targeting_object(find_nna_targeting_object(self.target_id))
+		self.report({"INFO"}, "NNA functionality has been removed from: " + self.target_id)
 		return {"FINISHED"}
+
 
 class EditNNARawJsonOperator(bpy.types.Operator):
 	bl_idname = "nna.edit_raw_json"
 	bl_label = "Edit Raw NNA Json Object"
 	bl_options = {"REGISTER", "UNDO"}
 
-	target: bpy.props.StringProperty(name = "target") # type: ignore
-	json: bpy.props.StringProperty(name = "json") # type: ignore
+	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
 	
 	def invoke(self, context, event):
-		self.target = context.object.name
-		self.json = get_json_from_targetname(context.object.name)
 		return context.window_manager.invoke_props_dialog(self)
 		
 	def execute(self, context):
 		try:
-			json.loads(self.json)
-			serialize_json_to_targetname(self.target, self.json)
+			nna_json = get_json_from_targetname(self.target_id)
+			serialize_json_to_targetname(self.target_id, nna_json)
 			self.report({'INFO'}, "Object Json successfully edited")
 			return {"FINISHED"}
 		except ValueError as error:
@@ -78,24 +77,24 @@ class EditNNARawJsonOperator(bpy.types.Operator):
 		self.layout.label(text="Target Object: " + self.target)
 		self.layout.prop(self, "json", text="", expand=True)
 
+
 class AddNNARawJsonComponentOperator(bpy.types.Operator):
 	bl_idname = "nna.add_raw_json_component"
 	bl_label = "Add Raw Json Component"
 	bl_options = {"REGISTER", "UNDO"}
 	
-	target: bpy.props.StringProperty(name = "target") # type: ignore
-	json: bpy.props.StringProperty(name = "json") # type: ignore
-	newComponent: bpy.props.StringProperty(name = "newComponent") # type: ignore
+	target_id: bpy.props.StringProperty(name = "targetId") # type: ignore
+
+	new_component: bpy.props.StringProperty(name = "new_component") # type: ignore
 
 	def invoke(self, context, event):
-		self.target = context.object.name
-		self.json = get_json_from_targetname(context.object.name)
 		return context.window_manager.invoke_props_dialog(self)
 		
 	def execute(self, context):
 		try:
-			jsonText = add_component_to_nna(self.json, self.newComponent)
-			serialize_json_to_targetname(self.target, jsonText)
+			nna_json = get_json_from_targetname(self.target_id)
+			new_nna_json = add_component_to_nna(nna_json, self.new_component)
+			serialize_json_to_targetname(self.target_id, new_nna_json)
 			self.report({'INFO'}, "Component successfully added")
 			return {"FINISHED"}
 		except ValueError as error:
@@ -103,25 +102,24 @@ class AddNNARawJsonComponentOperator(bpy.types.Operator):
 			return {"CANCELLED"}
 	
 	def draw(self, context):
-		self.layout.label(text="Target Object: " + self.target)
-		self.layout.prop(self, "newComponent", text="", expand=True)
+		self.layout.label(text="Target Object: " + self.target_id)
+		self.layout.prop(self, "new_component", text="", expand=True)
+
 
 class EditNNARawJsonComponentOperator(bpy.types.Operator):
 	bl_idname = "nna.edit_raw_json_component"
 	bl_label = "Edit Raw Json Component"
 	bl_options = {"REGISTER", "UNDO"}
 
-	target: bpy.props.StringProperty(name = "target") # type: ignore
-	json: bpy.props.StringProperty(name = "json") # type: ignore
-	jsonComponent: bpy.props.StringProperty(name = "jsonComponent") # type: ignore
+	component_index: bpy.props.IntProperty(name = "component_index", default=-1) # type: ignore
+	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
 
-	componentIdx: bpy.props.IntProperty(name = "componentIdx", default=-1) # type: ignore
+	json_component: bpy.props.StringProperty(name = "json_component") # type: ignore
 	
 	def invoke(self, context, event):
-		self.target = context.object.name
-		self.json = get_json_from_targetname(context.object.name)
+		nna_json = get_json_from_targetname(self.target_id)
 		try:
-			self.jsonComponent = get_component_from_nna(self.json, self.componentIdx)
+			self.json_component = get_component_from_nna(nna_json, self.component_index)
 		except ValueError as error:
 			self.report({'ERROR'}, str(error))
 			return None
@@ -129,8 +127,10 @@ class EditNNARawJsonComponentOperator(bpy.types.Operator):
 		
 	def execute(self, context):
 		try:
-			jsonText = replace_component_in_nna(self.json, self.jsonComponent, self.componentIdx)
-			serialize_json_to_targetname(self.target, jsonText)
+			nna_json = get_json_from_targetname(self.target_id)
+			jsonText = replace_component_in_nna(nna_json, self.json_component, self.component_index)
+			serialize_json_to_targetname(self.target_id, jsonText)
+
 			self.report({'INFO'}, "Component successfully edited")
 			return {"FINISHED"}
 		except ValueError as error:
@@ -139,26 +139,25 @@ class EditNNARawJsonComponentOperator(bpy.types.Operator):
 	
 	def draw(self, context):
 		self.layout.label(text="Target Object: " + self.target)
-		self.layout.prop(self, "jsonComponent", text="", expand=True)
+		self.layout.prop(self, "json_component", text="{\"t\":\"example\"}", expand=True)
+
 
 class RemoveNNAJsonComponentOperator(bpy.types.Operator):
 	bl_idname = "nna.remove_json_component"
 	bl_label = "Remove Json Component"
 	bl_options = {"REGISTER", "UNDO"}
 
-	target: bpy.props.StringProperty(name = "target") # type: ignore
-	json: bpy.props.StringProperty(name = "json") # type: ignore
-	componentIdx: bpy.props.IntProperty(name = "componentIdx", default=-1) # type: ignore
+	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
+	component_index: bpy.props.IntProperty(name = "component_index", default=-1) # type: ignore
 
 	def invoke(self, context, event):
-		self.target = context.object.name
-		self.json = get_json_from_targetname(context.object.name)
 		return context.window_manager.invoke_confirm(self, event)
 	
 	def execute(self, context):
 		try:
-			jsonText = remove_component_from_nna(self.json, self.componentIdx)
-			serialize_json_to_targetname(self.target, jsonText)
+			nna_json = get_json_from_targetname(self.target_id)
+			jsonText = remove_component_from_nna(nna_json, self.component_index)
+			serialize_json_to_targetname(self.target_id, jsonText)
 			self.report({'INFO'}, "Component successfully removed")
 			return {"FINISHED"}
 		except ValueError as error:
