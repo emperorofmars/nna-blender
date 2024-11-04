@@ -3,16 +3,17 @@ import inspect
 import sys
 import bpy
 
-from .nna_operators import AddNNARawJsonComponentOperator
+from .nna_operators_raw_json import AddNNARawJsonComponentOperator
 
 class NNAFunctionType(StrEnum):
 	JsonAdd = "json_add"
 	JsonEdit = "json_edit"
 	JsonRemove = "json_remove"
 	JsonDisplay = "json_display"
-	Name = "name"
+	NameSet = "name_set"
+	NameMatch = "name_match"
 
-def get_nna_types_from_module(module, operator_type: NNAFunctionType) -> dict[str, str]:
+def get_nna_types_from_module(module, operator_type: NNAFunctionType) -> dict[str, any]:
 	ret = {}
 	if(nna_types := getattr(module, "nna_types", None)):
 		for nna_type, value in nna_types.items():
@@ -20,7 +21,7 @@ def get_nna_types_from_module(module, operator_type: NNAFunctionType) -> dict[st
 				ret[nna_type] = value.get(str(operator_type))
 	return ret
 
-def get_local_nna_operators(operator_type: NNAFunctionType) -> dict[str, str]:
+def get_local_nna_operators(operator_type: NNAFunctionType) -> dict[str, any]:
 	ret = {}
 	
 	from . import components
@@ -30,7 +31,7 @@ def get_local_nna_operators(operator_type: NNAFunctionType) -> dict[str, str]:
 			ret = ret | nna_types
 	return ret
 
-def get_loaded_nna_operators(operator_type: NNAFunctionType) -> dict[str, str]:
+def get_loaded_nna_operators(operator_type: NNAFunctionType) -> dict[str, any]:
 	ret = {}
 	for addon_name in bpy.context.preferences.addons.keys():
 		if(addon_name in sys.modules):
@@ -39,7 +40,7 @@ def get_loaded_nna_operators(operator_type: NNAFunctionType) -> dict[str, str]:
 				ret = ret | nna_types
 	return ret
 
-def get_nna_operators(operator_type: NNAFunctionType) -> dict[str, str]:
+def get_nna_operators(operator_type: NNAFunctionType) -> dict[str, any]:
 	return get_local_nna_operators(str(operator_type)) | get_loaded_nna_operators(str(operator_type))
 
 
@@ -52,11 +53,11 @@ def _build_operator_add_enum_callback(self, context) -> list:
 	return _build_operator_enum(NNAFunctionType.JsonAdd)
 
 def _build_operator_name_enum_callback(self, context) -> list:
-	return _build_operator_enum(NNAFunctionType.Name)
+	return _build_operator_enum(NNAFunctionType.NameSet)
 
 _NNAEnumCache = {
 	NNAFunctionType.JsonAdd: [],
-	NNAFunctionType.Name: [],
+	NNAFunctionType.NameSet: [],
 }
 
 def register():

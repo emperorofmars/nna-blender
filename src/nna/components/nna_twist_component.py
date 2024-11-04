@@ -120,12 +120,17 @@ class NNATwistNameDefinitionOperator(bpy.types.Operator):
 		self.layout.prop_search(context.scene, "nna_twist_object_selector", bpy.data, "objects", text="Source")
 
 
+def name_match_nna_twist(name: str) -> int:
+	return name.find("Twist") # TODO use legit regex instead
+
+
 nna_types = {
 	"nna.twist": {
 		"json_add": AddNNATwistComponentOperator.bl_idname,
 		"json_edit": EditNNATwistComponentOperator.bl_idname,
 		"json_display": display_nna_twist_component,
-		"name": NNATwistNameDefinitionOperator.bl_idname,
+		"name_set": NNATwistNameDefinitionOperator.bl_idname,
+		"name_match": name_match_nna_twist,
 	},
 }
 
