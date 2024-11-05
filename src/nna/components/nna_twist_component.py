@@ -90,22 +90,11 @@ class NNATwistNameDefinitionOperator(bpy.types.Operator):
 	weight: bpy.props.FloatProperty(name="weight", default=0.5, min=0, max=1) # type: ignore
 	
 	def invoke(self, context, event):
-		(nna_name, symmetry) = nna_name_utils.get_symmetry(nna_name_utils.get_nna_name(self.target_id))
-
-		# TODO parse values
-		#if("w" in json_component): self.weight = json_component["w"]
-		#if("s" in json_component): context.scene.nna_twist_object_selector = bpy.context.scene.objects[json_component["s"]]
-		#else: context.scene.nna_twist_object_selector = None
-		
-		#if("s" in json_component):
-		#	context.scene.nna_twist_object_selector = nna_tree_utils.get_base_object_by_target_id(json_component["s"], '&')
-		#else:
 		base_object = nna_tree_utils.get_base_object_by_target_id(self.target_id)
 		if(hasattr(base_object.data, "bones")):
 			context.scene.nna_twist_object_selector = base_object
 		else:
 			context.scene.nna_twist_object_selector = None
-
 		return context.window_manager.invoke_props_dialog(self)
 		
 	def execute(self, context):
