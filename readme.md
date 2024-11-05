@@ -1,7 +1,7 @@
 
 # ⛧ NNA - Node Name Abuse ⛧ | Blender 4.2+ Implementation
 
-**Find the Unity counterpart here: <https://github.com/emperorofmars/nna-unity>**
+**Find the Unity counterpart here: <https://github.com/emperorofmars/nna_unity>**
 
 Extend any 3d format by abusing node-names.\
 This works by naming nodes in a specific way, and by serializing JSON into node-names.
