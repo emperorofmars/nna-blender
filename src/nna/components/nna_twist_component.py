@@ -50,7 +50,7 @@ class EditNNATwistComponentOperator(bpy.types.Operator):
 		if("w" in json_component): self.weight = json_component["w"]
 
 		if("s" in json_component):
-			context.scene.nna_twist_object_selector = nna_tree_utils.get_base_object_by_target_id(json_component["s"])
+			context.scene.nna_twist_object_selector = nna_tree_utils.get_base_object_by_target_id(json_component["s"], '&')
 		else:
 			base_object = nna_tree_utils.get_base_object_by_target_id(self.target_id)
 			if(hasattr(base_object.data, "bones")):
@@ -70,7 +70,7 @@ class EditNNATwistComponentOperator(bpy.types.Operator):
 			if(context.scene.nna_twist_object_selector and (not context.scene.nna_twist_bone_selector or context.scene.nna_twist_bone_selector == "$")):
 				json_component["s"] = context.scene.nna_twist_object_selector.name
 			elif(context.scene.nna_twist_object_selector and context.scene.nna_twist_bone_selector):
-				json_component["s"] = context.scene.nna_twist_object_selector.name + "$" + context.scene.nna_twist_bone_selector
+				json_component["s"] = context.scene.nna_twist_object_selector.name + "&" + context.scene.nna_twist_bone_selector
 			else:
 				del json_component["s"]
 
@@ -108,7 +108,7 @@ class NNATwistNameDefinitionOperator(bpy.types.Operator):
 		#else: context.scene.nna_twist_object_selector = None
 		
 		#if("s" in json_component):
-		#	context.scene.nna_twist_object_selector = nna_tree_utils.get_base_object_by_target_id(json_component["s"])
+		#	context.scene.nna_twist_object_selector = nna_tree_utils.get_base_object_by_target_id(json_component["s"], '&')
 		#else:
 		base_object = nna_tree_utils.get_base_object_by_target_id(self.target_id)
 		if(hasattr(base_object.data, "bones")):
@@ -129,7 +129,7 @@ class NNATwistNameDefinitionOperator(bpy.types.Operator):
 			if(context.scene.nna_twist_object_selector and (not context.scene.nna_twist_bone_selector or context.scene.nna_twist_bone_selector == "$")):
 				nna_name += context.scene.nna_twist_object_selector.name
 			elif(context.scene.nna_twist_object_selector and context.scene.nna_twist_bone_selector):
-				nna_name += context.scene.nna_twist_object_selector.name + "$" + context.scene.nna_twist_bone_selector
+				nna_name += context.scene.nna_twist_object_selector.name + "&" + context.scene.nna_twist_bone_selector
 
 			target.name = nna_name + symmetry
 
