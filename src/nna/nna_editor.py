@@ -35,7 +35,7 @@ def draw_nna_name_editor(self, context, target_id):
 
 
 def draw_nna_json_editor(self, context, target_id):
-	jsonText = nna_json_utils.get_json_from_targetname(target_id)
+	jsonText = nna_json_utils.get_json_from_target_id(target_id)
 	
 	preview_operators = nna_registry.get_nna_operators(nna_registry.NNAFunctionType.JsonDisplay)
 	edit_operators = nna_registry.get_nna_operators(nna_registry.NNAFunctionType.JsonEdit)

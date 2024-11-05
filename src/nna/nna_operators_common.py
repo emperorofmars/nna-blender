@@ -73,9 +73,7 @@ class RemoveNNAJsonComponentOperator(bpy.types.Operator):
 	
 	def execute(self, context):
 		try:
-			nna_json = nna_json_utils.get_json_from_targetname(self.target_id)
-			jsonText = nna_json_utils.remove_component_from_nna(nna_json, self.component_index)
-			nna_json_utils.serialize_json_to_targetname(self.target_id, jsonText)
+			nna_json_utils.remove_component(self.target_id, self.component_index)
 			self.report({'INFO'}, "Component successfully removed")
 			return {"FINISHED"}
 		except ValueError as error:

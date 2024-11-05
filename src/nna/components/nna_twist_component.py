@@ -14,9 +14,7 @@ class AddNNATwistComponentOperator(bpy.types.Operator):
 	
 	def execute(self, context):
 		try:
-			nna_json = nna_json_utils.get_json_from_targetname(self.target_id)
-			jsonText = nna_json_utils.add_component_to_nna(nna_json, json.dumps({"t":"nna.twist"}))
-			nna_json_utils.serialize_json_to_targetname(self.target_id, jsonText)
+			nna_json_utils.add_component(self.target_id, json.dumps({"t":"nna.twist"}))
 			self.report({'INFO'}, "Component successfully added")
 			return {"FINISHED"}
 		except ValueError as error:
@@ -44,26 +42,20 @@ class EditNNATwistComponentOperator(bpy.types.Operator):
 	weight: bpy.props.FloatProperty(name="weight", default=0.5, min=0, max=1) # type: ignore
 	
 	def invoke(self, context, event):
-		nna_json = nna_json_utils.get_json_from_targetname(self.target_id)
-		json_component = json.loads(nna_json_utils.get_component_from_nna(nna_json, self.component_index))
+		json_component = nna_json_utils.get_component_dict(self.target_id, self.component_index)
 
 		if("w" in json_component): self.weight = json_component["w"]
 
 		if("s" in json_component):
 			context.scene.nna_twist_object_selector = nna_tree_utils.get_base_object_by_target_id(json_component["s"], '&')
 		else:
-			base_object = nna_tree_utils.get_base_object_by_target_id(self.target_id)
-			if(hasattr(base_object.data, "bones")):
-				context.scene.nna_twist_object_selector = base_object
-			else:
-				context.scene.nna_twist_object_selector = None
+			context.scene.nna_twist_object_selector = None
 
 		return context.window_manager.invoke_props_dialog(self)
 		
 	def execute(self, context):
 		try:
-			nna_json = nna_json_utils.get_json_from_targetname(self.target_id)
-			json_component = json.loads(nna_json_utils.get_component_from_nna(nna_json, self.component_index))
+			json_component = nna_json_utils.get_component_dict(self.target_id, self.component_index)
 
 			if(self.weight != 0.5): json_component["w"] = self.weight
 			
@@ -71,12 +63,10 @@ class EditNNATwistComponentOperator(bpy.types.Operator):
 				json_component["s"] = context.scene.nna_twist_object_selector.name
 			elif(context.scene.nna_twist_object_selector and context.scene.nna_twist_bone_selector):
 				json_component["s"] = context.scene.nna_twist_object_selector.name + "&" + context.scene.nna_twist_bone_selector
-			else:
+			elif(hasattr(json_component, "s")):
 				del json_component["s"]
 
-			new_nna_json = nna_json_utils.replace_component_in_nna(nna_json, json.dumps(json_component), self.component_index)
-			nna_json_utils.serialize_json_to_targetname(self.target_id, new_nna_json)
-
+			nna_json_utils.replace_component(self.target_id, json.dumps(json_component), self.component_index)
 			self.report({'INFO'}, "Component successfully edited")
 			return {"FINISHED"}
 		except ValueError as error:
