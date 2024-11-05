@@ -66,7 +66,8 @@ class EditNNATwistComponentOperator(bpy.types.Operator):
 			json_component = json.loads(nna_json_utils.get_component_from_nna(nna_json, self.component_index))
 
 			if(self.weight != 0.5): json_component["w"] = self.weight
-			if(context.scene.nna_twist_object_selector and not context.scene.nna_twist_bone_selector):
+			
+			if(context.scene.nna_twist_object_selector and (not context.scene.nna_twist_bone_selector or context.scene.nna_twist_bone_selector == "$")):
 				json_component["s"] = context.scene.nna_twist_object_selector.name
 			elif(context.scene.nna_twist_object_selector and context.scene.nna_twist_bone_selector):
 				json_component["s"] = context.scene.nna_twist_object_selector.name + "$" + context.scene.nna_twist_bone_selector
@@ -119,7 +120,7 @@ class NNATwistNameDefinitionOperator(bpy.types.Operator):
 			nna_name = nna_name + "Twist"
 			if(self.weight != 0.5): nna_name += str(round(self.weight, 2))
 			
-			if(context.scene.nna_twist_object_selector and not context.scene.nna_twist_bone_selector):
+			if(context.scene.nna_twist_object_selector and (not context.scene.nna_twist_bone_selector or context.scene.nna_twist_bone_selector == "$")):
 				nna_name += context.scene.nna_twist_object_selector.name
 			elif(context.scene.nna_twist_object_selector and context.scene.nna_twist_bone_selector):
 				nna_name += context.scene.nna_twist_object_selector.name + "$" + context.scene.nna_twist_bone_selector
@@ -156,7 +157,9 @@ nna_types = {
 
 def _build_bone_enum(self, context) -> list:
 	if(bpy.context.scene.nna_twist_object_selector and hasattr(bpy.context.scene.nna_twist_object_selector.data, "bones")):
-		return [((bone.name, bone.name, "")) for bone in bpy.context.scene.nna_twist_object_selector.data.bones]
+		ret = [((bone.name, bone.name, "")) for bone in bpy.context.scene.nna_twist_object_selector.data.bones]
+		ret.append((("$", "", "")))
+		return ret
 	else:
 		return []
 
