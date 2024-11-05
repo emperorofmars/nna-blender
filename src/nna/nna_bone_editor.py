@@ -24,24 +24,24 @@ class NNABoneEditor(bpy.types.Panel):
 		match determine_nna_bone_state(context.object, context.bone):
 			case NNAObjectState.NotInited:
 				nna_editor.draw_nna_name_editor(self, context, target_id)
-				self.layout.separator(type="LINE", factor=5)
-				if(len(bpy.context.scene.collection.children_recursive) == 0):
-					button = self.layout.operator(operator=nna_operators_common.InitializeNNAOperator.bl_idname, text="Initialize NNA in Scene")
-					button.nna_init_collection = bpy.context.scene.collection.name
-				else:
-					button = self.layout.operator(operator=nna_operators_common.InitializeNNAOperator.bl_idname, text="Initialize NNA in Collection")
-					button.nna_init_collection = context.collection.name
+				self.layout.separator(type="LINE", factor=2)
+				box = self.layout.box()
+				box.label(text="Json Components Not Enabled")
+				button = box.operator(operator=nna_operators_common.InitializeNNAOperator.bl_idname)
+				button.nna_init_collection = context.collection.name
 			case NNAObjectState.InitedOutsideTree:
 				nna_editor.draw_nna_name_editor(self, context, target_id)
-				self.layout.separator(type="LINE", factor=5)
-				self.layout.label(text="This object is outside the NNA tree!")
+				self.layout.separator(type="LINE", factor=2)
+				box = self.layout.box()
+				box.label(text="Json Components Not Enabled")
+				box.label(text="This object is outside the NNA tree!")
 			case NNAObjectState.InitedInsideTree:
-				nna_editor.draw_nna_name_editor(self, context, target_id)
-				self.layout.separator(type="LINE", factor=5)
-				button = self.layout.operator(nna_operators_common.CreateNNATargetingObjectOperator.bl_idname, text="Create NNA Component List")
-				button.target_id = target_id
+				if(not nna_editor.draw_nna_name_editor(self, context, target_id)):
+					self.layout.separator(type="LINE", factor=2)
+					box = self.layout.box()
+					box.label(text="Json Components Not Enabled")
+					button = box.operator(nna_operators_common.CreateNNATargetingObjectOperator.bl_idname)
+					button.target_id = target_id
 			case NNAObjectState.HasTargetingObject:
-				nna_editor.draw_nna_name_editor(self, context, target_id)
-				self.layout.separator(type="LINE", factor=5)
 				nna_editor.draw_nna_json_editor(self, context, target_id)
 		

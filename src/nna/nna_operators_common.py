@@ -6,7 +6,7 @@ from . import nna_name_utils
 
 class InitializeNNAOperator(bpy.types.Operator):
 	bl_idname = "nna.init"
-	bl_label = "Initializie NNA"
+	bl_label = "Initialize NNA in Active Collection"
 	bl_options = {"REGISTER", "UNDO"}
 
 	nna_init_collection: bpy.props.StringProperty(name = "nna_init_collection") # type: ignore

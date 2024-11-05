@@ -6,15 +6,11 @@ from . import nna_operators_raw_json
 from . import nna_registry
 from . import nna_tree_utils
 from . import nna_json_utils
-from . import nna_name_utils
 
-
-def draw_nna_name_editor(self, context, target_id):
-	#name_operators = nna_registry.get_nna_operators(nna_registry.NNAFunctionType.NameSet)
+def draw_nna_name_editor(self, context, target_id) -> bool:
 	name_match_operators = nna_registry.get_nna_operators(nna_registry.NNAFunctionType.NameMatch)
 
 	box = self.layout.box()
-
 	name_definition_match = False
 	for nna_type, match in name_match_operators.items():
 		if(match):
@@ -29,11 +25,13 @@ def draw_nna_name_editor(self, context, target_id):
 				break
 	
 	if(not name_definition_match):
-		box.label(text="Name Definition")
+		box.label(text="No Name Definition Set")
 		row = box.row()
 		row.prop(bpy.context.scene, "nna_oparators_name", text="")
 		name_button = row.operator(bpy.context.scene.nna_oparators_name, text="Set Name Definition")
 		name_button.target_id = target_id
+	
+	return name_definition_match
 
 
 def draw_nna_json_editor(self, context, target_id):
@@ -48,8 +46,8 @@ def draw_nna_json_editor(self, context, target_id):
 
 	if(len(jsonText) > 2):
 		try:
-			componentsList = json.loads(jsonText)
 			col = box.column(heading="Components")
+			componentsList = json.loads(jsonText)
 			for idx, component in enumerate(componentsList):
 				component_box = col.box()
 				row = component_box.row()

@@ -63,7 +63,7 @@ class EditNNATwistComponentOperator(bpy.types.Operator):
 				json_component["s"] = context.scene.nna_twist_object_selector.name
 			elif(context.scene.nna_twist_object_selector and context.scene.nna_twist_bone_selector):
 				json_component["s"] = context.scene.nna_twist_object_selector.name + "&" + context.scene.nna_twist_bone_selector
-			elif(hasattr(json_component, "s")):
+			elif("s" in json_component):
 				del json_component["s"]
 
 			nna_json_utils.replace_component(self.target_id, json.dumps(json_component), self.component_index)
