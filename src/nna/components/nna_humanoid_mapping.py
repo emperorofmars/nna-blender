@@ -8,7 +8,7 @@ from .. import nna_tree_utils
 
 class AddNNAHumanoidComponentOperator(bpy.types.Operator):
 	bl_idname = "nna.add_nna_humanoid"
-	bl_label = "Add Twist Component"
+	bl_label = "Add Humanoid Component"
 	bl_options = {"REGISTER", "UNDO"}
 	
 	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
@@ -25,16 +25,58 @@ class AddNNAHumanoidComponentOperator(bpy.types.Operator):
 
 def display_nna_humanoid_component(object, layout, json_dict):
 	row = layout.row()
-	row.label(text="Locomotion")
-	row.label(text=str(json_dict["lc"]) if "lc" in json_dict else "default (planti)")
+	row.label(text="Locomotion Type")
+	row.label(text=json_dict["lc"] if "lc" in json_dict else "default (planti)")
 	row = layout.row()
 	row.label(text="No Jaw Mapping")
-	row.label(text=json_dict["nj"] if "nj" in json_dict else "default (False)")
+	row.label(text=str(json_dict["nj"]) if "nj" in json_dict else "default (False)")
+
+
+class EditNNAHumanoidComponentOperator(bpy.types.Operator):
+	bl_idname = "nna.edit_nna_humanoid"
+	bl_label = "Edit Humanoid Component"
+	bl_options = {"REGISTER", "UNDO"}
+
+	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
+	component_index: bpy.props.IntProperty(name = "component_index", default=-1) # type: ignore
+
+	locomotion_type: bpy.props.EnumProperty(items=[("planti", "Plantigrade", ""),("digi", "Digitigrade", "")], name="Locomotion Type", default="planti") # type: ignore
+	no_jaw: bpy.props.BoolProperty(name="No Jaw Mapping", default=False) # type: ignore
+	
+	def invoke(self, context, event):
+		json_component = nna_json_utils.get_component_dict(self.target_id, self.component_index)
+
+		if("lc" in json_component): self.locomotion_type = json_component["lc"]
+		if("nj" in json_component): self.no_jaw = json_component["nj"]
+
+		return context.window_manager.invoke_props_dialog(self)
+		
+	def execute(self, context):
+		try:
+			json_component = nna_json_utils.get_component_dict(self.target_id, self.component_index)
+
+			if(self.locomotion_type != "planti"): json_component["lc"] = self.locomotion_type
+			elif("lc" in json_component): del json_component["lc"]
+
+			if(self.no_jaw == True): json_component["nj"] = True
+			elif("nj" in json_component): del json_component["nj"]
+
+			nna_json_utils.replace_component(self.target_id, json.dumps(json_component), self.component_index)
+			self.report({'INFO'}, "Component successfully edited")
+			return {"FINISHED"}
+		except ValueError as error:
+			self.report({'ERROR'}, str(error))
+			return {"CANCELLED"}
+	
+	def draw(self, context):
+		self.layout.prop(self, "locomotion_type", expand=True)
+		self.layout.prop(self, "no_jaw", expand=True)
 
 
 nna_types = {
 	"nna.humanoid": {
 		"json_add": AddNNAHumanoidComponentOperator.bl_idname,
+		"json_edit": EditNNAHumanoidComponentOperator.bl_idname,
 		"json_display": display_nna_humanoid_component,
 	},
 }
