@@ -106,9 +106,15 @@ class NNATwistNameDefinitionOperator(bpy.types.Operator):
 		#if("w" in json_component): self.weight = json_component["w"]
 		#if("s" in json_component): context.scene.nna_twist_object_selector = bpy.context.scene.objects[json_component["s"]]
 		#else: context.scene.nna_twist_object_selector = None
-
-
-		context.scene.nna_twist_object_selector = None
+		
+		#if("s" in json_component):
+		#	context.scene.nna_twist_object_selector = nna_tree_utils.get_base_object_by_target_id(json_component["s"])
+		#else:
+		base_object = nna_tree_utils.get_base_object_by_target_id(self.target_id)
+		if(hasattr(base_object.data, "bones")):
+			context.scene.nna_twist_object_selector = base_object
+		else:
+			context.scene.nna_twist_object_selector = None
 
 		return context.window_manager.invoke_props_dialog(self)
 		

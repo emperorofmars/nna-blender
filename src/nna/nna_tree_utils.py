@@ -94,7 +94,7 @@ def create_targeting_object(root: bpy.types.Object, name: str):
 def get_object_by_target_id(target_id: str) -> bpy.types.Object | bpy.types.Bone | None:
 	object = bpy.data.objects.get(target_id)
 	if(object): return object
-	parts = target_id.split('$')
+	parts = target_id.split('$', 1)
 	object: bpy.types.Object = bpy.data.objects.get(parts[0])
 	if(len(parts) > 1): return object.data.bones.get(parts[1])
 	else: return object
