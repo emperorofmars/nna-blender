@@ -8,8 +8,10 @@ class EditNNARawJsonOperator(bpy.types.Operator):
 	bl_options = {"REGISTER", "UNDO"}
 
 	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
+	raw_json: bpy.props.StringProperty(name = "raw_json") # type: ignore
 	
 	def invoke(self, context, event):
+		self.raw_json = nna_json_utils.get_json_from_targetname(self.target_id)
 		return context.window_manager.invoke_props_dialog(self)
 		
 	def execute(self, context):
@@ -23,8 +25,8 @@ class EditNNARawJsonOperator(bpy.types.Operator):
 			return {"CANCELLED"}
 	
 	def draw(self, context):
-		self.layout.label(text="Target Object: " + self.target)
-		self.layout.prop(self, "json", text="", expand=True)
+		self.layout.label(text="Target Object: " + self.target_id)
+		self.layout.prop(self, "raw_json", text="", expand=True)
 
 
 class AddNNARawJsonComponentOperator(bpy.types.Operator):

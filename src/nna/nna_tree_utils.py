@@ -60,11 +60,11 @@ def find_nna_root_in_collection(collection: bpy.types.Collection) -> bpy.types.O
 			return child
 	return None
 
-def find_nna_targeting_object(name: str) -> bpy.types.Object | None:
+def find_nna_targeting_object(target_id: str) -> bpy.types.Object | None:
 	for child in find_nna_root().children:
-		if(child.name == "$target:" + name):
+		if(child.name == "$target:" + target_id):
 			return child
-		elif(name == "$nna" and child.name == "$root"):
+		elif(target_id == "$nna" and child.name == "$root"):
 			return child
 	return None
 

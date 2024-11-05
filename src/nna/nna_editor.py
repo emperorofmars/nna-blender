@@ -96,5 +96,5 @@ def draw_nna_json_editor(self, context, target_id):
 	button_edit_raw.target_id = target_id
 
 	self.layout.separator(type="LINE", factor=5)
-	self.layout.operator(nna_operators_common.RemoveNNATargetingObjectOperator.bl_idname)
-	button_edit_raw.target_id = target_id
+	button_remove_nna_targeting = self.layout.operator(nna_operators_common.RemoveNNATargetingObjectOperator.bl_idname)
+	button_remove_nna_targeting.target_id = target_id

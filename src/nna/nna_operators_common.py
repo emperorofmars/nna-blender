@@ -49,9 +49,15 @@ class RemoveNNATargetingObjectOperator(bpy.types.Operator):
 		return context.window_manager.invoke_confirm(self, event)
 	
 	def execute(self, context):
-		nna_json_utils.remove_targeting_object(nna_tree_utils.find_nna_targeting_object(self.target_id))
-		self.report({"INFO"}, "NNA functionality has been removed from: " + self.target_id)
-		return {"FINISHED"}
+		targeting_object = nna_tree_utils.find_nna_targeting_object(self.target_id)
+		if(targeting_object):
+			nna_json_utils.remove_targeting_object(targeting_object)
+			self.report({"INFO"}, "NNA functionality has been removed from: " + self.target_id)
+			return {"FINISHED"}
+		else:
+			self.report({"ERROR"}, "Targeting object not found: " + self.target_id)
+			return {"CANCELLED"}
+
 
 
 class RemoveNNAJsonComponentOperator(bpy.types.Operator):
