@@ -39,12 +39,6 @@ def serialize_json_to_targeting_object(targetingObject: bpy.types.Object, json_t
 	while(len(remainingJsonCharacters) > 0):
 		line, consumed_length = _build_unique_line(remainingJsonCharacters, line_nr)
 		remainingJsonCharacters = remainingJsonCharacters[consumed_length:]
-
-		print()
-		print(json_text)
-		print(line + " :::: " + str(len(line)) + " - " + str(consumed_length) + " :::: " + remainingJsonCharacters)
-		print()
-
 		_add_line_to_targeting_object(targetingObject, line)
 		line_nr += 1
 

@@ -22,13 +22,13 @@ class AddNNATwistComponentOperator(bpy.types.Operator):
 			return {"CANCELLED"}
 
 
-def display_nna_twist_component(object, layout, json):
+def display_nna_twist_component(object, layout, json_dict):
 	row = layout.row()
 	row.label(text="weight")
-	row.label(text=str(json["w"]) if "w" in json else "default (0.5)")
+	row.label(text=str(json_dict["w"]) if "w" in json_dict else "default (0.5)")
 	row = layout.row()
 	row.label(text="source")
-	row.label(text=json["s"] if "s" in json else "default (grandparent)")
+	row.label(text=json_dict["s"] if "s" in json_dict else "default (grandparent)")
 
 
 class EditNNATwistComponentOperator(bpy.types.Operator):
