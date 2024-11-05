@@ -145,8 +145,8 @@ nna_types = {
 		"json_add": AddNNATwistComponentOperator.bl_idname,
 		"json_edit": EditNNATwistComponentOperator.bl_idname,
 		"json_display": display_nna_twist_component,
-		"name_set": NNATwistNameDefinitionOperator.bl_idname,
 		"name_match": name_match_nna_twist,
+		"name_set": NNATwistNameDefinitionOperator.bl_idname,
 	},
 }
 
