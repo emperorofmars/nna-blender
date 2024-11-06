@@ -1,5 +1,6 @@
 import bpy
 import json
+import re
 
 from ... import nna_name_utils
 from ... import nna_json_utils
@@ -125,8 +126,11 @@ class NNATwistNameDefinitionOperator(bpy.types.Operator):
 			self.layout.prop(context.scene, "nna_twist_bone_selector", text="Source Bone")
 
 
+_Match = r"(?i)twist(?P<source_node_path>[a-zA-Z][a-zA-Z._\-|:\s]*(\&[a-zA-Z][a-zA-Z._\-|:\s]*)*)?(?P<weight>[0-9]*[.][0-9]+)?(([._\-|:][lr])|[._\-|:\s]?(right|left))?$"
+
 def name_match_nna_twist(name: str) -> int:
-	return name.find("Twist") # TODO use legit regex instead
+	match = re.search(_Match, name)
+	return -1 if not match else match.start()
 
 
 nna_types = {

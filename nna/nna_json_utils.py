@@ -9,8 +9,8 @@ def get_json_from_target_id(target_id: str) -> str:
 def get_json_from_targeting_object(targeting_object: bpy.types.Object) -> str:
 	list = []
 	for child in targeting_object.children:
-		m1 = re.match("^\$[0-9]+\$.+", child.name)
-		m2 = re.match("^\$[0-9]+.[0-9]+\$.+", child.name)
+		m1 = re.match(r"^\$[0-9]+\$.+", child.name)
+		m2 = re.match(r"^\$[0-9]+.[0-9]+\$.+", child.name)
 		if(m1):
 			nnaNumIdx = child.name.index('$', 1)
 			list.append((int(child.name[1:nnaNumIdx]), child.name[nnaNumIdx + 1:]))

@@ -1,3 +1,4 @@
+import re
 import bpy
 import json
 
@@ -73,8 +74,11 @@ class EditNNAHumanoidComponentOperator(bpy.types.Operator):
 		self.layout.prop(self, "no_jaw", expand=True)
 
 
+_Match = r"(?i)humanoid(?P<digi>digi)?(?P<no_jaw>nojaw)?(([._\-|:][lr])|[._\-|:\s]?(right|left))?$"
+
 def name_match_nna_humanoid(name: str) -> int:
-	return name.find("Humanoid") # TODO use legit regex instead
+	match = re.search(_Match, name)
+	return -1 if not match else match.start()
 
 
 class NNAHumanoidNameDefinitionOperator(bpy.types.Operator):
