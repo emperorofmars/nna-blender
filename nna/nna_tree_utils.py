@@ -3,15 +3,15 @@ from enum import Enum, auto
 import re
 
 class NNAObjectState(Enum):
-	NotInited = auto()
-	InitedOutsideTree = auto()
-	InitedInsideTree = auto()
-	IsRootObject = auto()
-	IsRootObjectWithTargeting = auto()
-	IsTargetingObject = auto()
-	IsJsonDefinition = auto()
-	HasTargetingObject = auto()
-	Invalid = auto()
+	NotInited = auto()					# NNA root (`$nna`) object doesn't exist.
+	InitedOutsideTree = auto()			# NNA root (`$nna`) object exists, the current object isn't part of the Collection in which the root sits.
+	InitedInsideTree = auto()			# NNA root (`$nna`) object exists and can be used.
+	IsRootObject = auto()				# NNA root (`$nna`) is currently selected.
+	IsRootObjectWithTargeting = auto()	# NNA root (`$nna`) is currently selected, and it has a child named `$root`, used to specify components for the exported root object.
+	IsTargetingObject = auto()			# The currently selected object is a targeting object. It is parented to the NNA root (`$nna`), and it points to an object in the scene.
+	IsJsonDefinition = auto()			# The currently selected object is a line in a NNA component definition.
+	HasTargetingObject = auto()			# The currently selected object has a targeting object. In this state its components can be created or edited.
+	Invalid = auto()					# rip
 
 def determine_nna_object_state(object: bpy.types.Object) -> NNAObjectState:
 	if(object.name == "$nna"):

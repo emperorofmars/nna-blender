@@ -4,7 +4,7 @@ from . import nna_editor
 from .nna_tree_utils import NNAObjectState, determine_nna_object_state
 from . import nna_operators_common
 
-class NNAEditor(bpy.types.Panel):
+class NNAObjectPanel(bpy.types.Panel):
 	bl_idname = "OBJECT_PT_nna_editor"
 	bl_label = "NNA Editor"
 	bl_region_type = "WINDOW"
