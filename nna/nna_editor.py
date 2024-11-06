@@ -4,8 +4,8 @@ import bpy
 from . import nna_operators_common
 from . import nna_operators_raw_json
 from . import nna_registry
-from . import nna_tree_utils
-from . import nna_json_utils
+from . import nna_utils_tree
+from . import nna_utils_json
 
 def draw_nna_name_editor(self, context, target_id) -> bool:
 	name_match_operators = nna_registry.get_nna_operators(nna_registry.NNAFunctionType.NameMatch)
@@ -14,7 +14,7 @@ def draw_nna_name_editor(self, context, target_id) -> bool:
 	name_definition_match = False
 	for nna_type, match in name_match_operators.items():
 		if(match):
-			nna_name = nna_tree_utils.get_object_by_target_id(target_id).name
+			nna_name = nna_utils_tree.get_object_by_target_id(target_id).name
 			index = match(nna_name)
 			if(index > 0):
 				box.label(text="Name Definition: " + nna_type)
@@ -36,7 +36,7 @@ def draw_nna_name_editor(self, context, target_id) -> bool:
 
 
 def draw_nna_json_editor(self, context, target_id):
-	jsonText = nna_json_utils.get_json_from_target_id(target_id)
+	jsonText = nna_utils_json.get_json_from_target_id(target_id)
 	
 	preview_operators = nna_registry.get_nna_operators(nna_registry.NNAFunctionType.JsonDisplay)
 	edit_operators = nna_registry.get_nna_operators(nna_registry.NNAFunctionType.JsonEdit)

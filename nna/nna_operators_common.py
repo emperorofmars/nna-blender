@@ -1,7 +1,7 @@
 import bpy
-from . import nna_tree_utils
-from . import nna_json_utils
-from . import nna_name_utils
+from . import nna_utils_tree
+from . import nna_utils_json
+from . import nna_utils_name
 
 
 class InitializeNNAOperator(bpy.types.Operator):
@@ -13,13 +13,13 @@ class InitializeNNAOperator(bpy.types.Operator):
 	
 	def execute(self, context):
 		if bpy.context.scene.collection.name == self.nna_init_collection:
-			nna_tree_utils.init_nna_root(bpy.context.scene.collection)
+			nna_utils_tree.init_nna_root(bpy.context.scene.collection)
 			self.report({"INFO"}, "NNA inited in Scene Collection")
 			return {"FINISHED"}
 		else:
 			for collection in [bpy.context.scene.collection, *bpy.context.scene.collection.children_recursive]:
 				if(collection.name == self.nna_init_collection):
-					nna_tree_utils.init_nna_root(collection)
+					nna_utils_tree.init_nna_root(collection)
 					self.report({"INFO"}, "NNA inited in " + collection.name)
 					return {"FINISHED"}
 		return {"CANCELLED"}
@@ -33,7 +33,7 @@ class CreateNNATargetingObjectOperator(bpy.types.Operator):
 	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
 	
 	def execute(self, context):
-		nna_tree_utils.create_targeting_object(nna_tree_utils.find_nna_root(), self.target_id)
+		nna_utils_tree.create_targeting_object(nna_utils_tree.find_nna_root(), self.target_id)
 		self.report({"INFO"}, "Targeting object created")
 		return {"FINISHED"}
 
@@ -49,9 +49,9 @@ class RemoveNNATargetingObjectOperator(bpy.types.Operator):
 		return context.window_manager.invoke_confirm(self, event)
 	
 	def execute(self, context):
-		targeting_object = nna_tree_utils.find_nna_targeting_object(self.target_id)
+		targeting_object = nna_utils_tree.find_nna_targeting_object(self.target_id)
 		if(targeting_object):
-			nna_json_utils.remove_targeting_object(targeting_object)
+			nna_utils_json.remove_targeting_object(targeting_object)
 			self.report({"INFO"}, "NNA functionality has been removed from: " + self.target_id)
 			return {"FINISHED"}
 		else:
@@ -73,7 +73,7 @@ class RemoveNNAJsonComponentOperator(bpy.types.Operator):
 	
 	def execute(self, context):
 		try:
-			nna_json_utils.remove_component(self.target_id, self.component_index)
+			nna_utils_json.remove_component(self.target_id, self.component_index)
 			self.report({'INFO'}, "Component successfully removed")
 			return {"FINISHED"}
 		except ValueError as error:
@@ -94,8 +94,8 @@ class RemoveNNANameDefinitionOperator(bpy.types.Operator):
 	
 	def execute(self, context):
 		try:
-			target = nna_tree_utils.get_object_by_target_id(self.target_id)
-			(nna_name, symmetry) = nna_name_utils.get_symmetry(target.name)
+			target = nna_utils_tree.get_object_by_target_id(self.target_id)
+			(nna_name, symmetry) = nna_utils_name.get_symmetry(target.name)
 			target.name = nna_name[:self.name_definition_index] + symmetry
 
 			self.report({'INFO'}, "Name definition successfully removed")

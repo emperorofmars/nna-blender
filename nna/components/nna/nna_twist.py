@@ -2,9 +2,9 @@ import bpy
 import json
 import re
 
-from ... import nna_name_utils
-from ... import nna_json_utils
-from ... import nna_tree_utils
+from ... import nna_utils_name
+from ... import nna_utils_json
+from ... import nna_utils_tree
 
 class AddNNATwistComponentOperator(bpy.types.Operator):
 	bl_idname = "nna.add_nna_twist"
@@ -15,7 +15,7 @@ class AddNNATwistComponentOperator(bpy.types.Operator):
 	
 	def execute(self, context):
 		try:
-			nna_json_utils.add_component(self.target_id, json.dumps({"t":"nna.twist"}))
+			nna_utils_json.add_component(self.target_id, json.dumps({"t":"nna.twist"}))
 			self.report({'INFO'}, "Component successfully added")
 			return {"FINISHED"}
 		except ValueError as error:
@@ -43,12 +43,12 @@ class EditNNATwistComponentOperator(bpy.types.Operator):
 	weight: bpy.props.FloatProperty(name="weight", default=0.5, min=0, max=1) # type: ignore
 	
 	def invoke(self, context, event):
-		json_component = nna_json_utils.get_component_dict(self.target_id, self.component_index)
+		json_component = nna_utils_json.get_component_dict(self.target_id, self.component_index)
 
 		if("w" in json_component): self.weight = json_component["w"]
 
 		if("s" in json_component):
-			context.scene.nna_twist_object_selector = nna_tree_utils.get_base_object_by_target_id(json_component["s"], '&')
+			context.scene.nna_twist_object_selector = nna_utils_tree.get_base_object_by_target_id(json_component["s"], '&')
 		else:
 			context.scene.nna_twist_object_selector = None
 
@@ -56,7 +56,7 @@ class EditNNATwistComponentOperator(bpy.types.Operator):
 		
 	def execute(self, context):
 		try:
-			json_component = nna_json_utils.get_component_dict(self.target_id, self.component_index)
+			json_component = nna_utils_json.get_component_dict(self.target_id, self.component_index)
 
 			if(self.weight != 0.5): json_component["w"] = self.weight
 			
@@ -67,7 +67,7 @@ class EditNNATwistComponentOperator(bpy.types.Operator):
 			elif("s" in json_component):
 				del json_component["s"]
 
-			nna_json_utils.replace_component(self.target_id, json.dumps(json_component), self.component_index)
+			nna_utils_json.replace_component(self.target_id, json.dumps(json_component), self.component_index)
 			self.report({'INFO'}, "Component successfully edited")
 			return {"FINISHED"}
 		except ValueError as error:
@@ -91,7 +91,7 @@ class NNATwistNameDefinitionOperator(bpy.types.Operator):
 	weight: bpy.props.FloatProperty(name="weight", default=0.5, min=0, max=1) # type: ignore
 	
 	def invoke(self, context, event):
-		base_object = nna_tree_utils.get_base_object_by_target_id(self.target_id)
+		base_object = nna_utils_tree.get_base_object_by_target_id(self.target_id)
 		if(hasattr(base_object.data, "bones")):
 			context.scene.nna_twist_object_selector = base_object
 		else:
@@ -100,8 +100,8 @@ class NNATwistNameDefinitionOperator(bpy.types.Operator):
 		
 	def execute(self, context):
 		try:
-			target = nna_tree_utils.get_object_by_target_id(self.target_id)
-			(nna_name, symmetry) = nna_name_utils.get_symmetry(nna_name_utils.get_nna_name(self.target_id))
+			target = nna_utils_tree.get_object_by_target_id(self.target_id)
+			(nna_name, symmetry) = nna_utils_name.get_symmetry(nna_utils_name.get_nna_name(self.target_id))
 
 			nna_name = nna_name + "Twist"
 			if(self.weight != 0.5): nna_name += str(round(self.weight, 2))

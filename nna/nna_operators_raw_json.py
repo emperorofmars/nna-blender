@@ -1,5 +1,5 @@
 import bpy
-from . import nna_json_utils
+from . import nna_utils_json
 
 
 class EditNNARawJsonOperator(bpy.types.Operator):
@@ -11,12 +11,12 @@ class EditNNARawJsonOperator(bpy.types.Operator):
 	raw_json: bpy.props.StringProperty(name = "raw_json") # type: ignore
 	
 	def invoke(self, context, event):
-		self.raw_json = nna_json_utils.get_json_from_target_id(self.target_id)
+		self.raw_json = nna_utils_json.get_json_from_target_id(self.target_id)
 		return context.window_manager.invoke_props_dialog(self)
 		
 	def execute(self, context):
 		try:
-			nna_json_utils.serialize_json_to_target_id(self.target_id, self.raw_json)
+			nna_utils_json.serialize_json_to_target_id(self.target_id, self.raw_json)
 			self.report({'INFO'}, "Object Json successfully edited")
 			return {"FINISHED"}
 		except ValueError as error:
@@ -41,7 +41,7 @@ class AddNNARawJsonComponentOperator(bpy.types.Operator):
 		
 	def execute(self, context):
 		try:
-			nna_json_utils.add_component(self.target_id, self.new_component)
+			nna_utils_json.add_component(self.target_id, self.new_component)
 			self.report({'INFO'}, "Component successfully added")
 			return {"FINISHED"}
 		except ValueError as error:
@@ -65,7 +65,7 @@ class EditNNARawJsonComponentOperator(bpy.types.Operator):
 	
 	def invoke(self, context, event):
 		try:
-			self.json_component = nna_json_utils.get_component_json(self.target_id, self.component_index)
+			self.json_component = nna_utils_json.get_component_json(self.target_id, self.component_index)
 		except ValueError as error:
 			self.report({'ERROR'}, str(error))
 			return None
@@ -73,7 +73,7 @@ class EditNNARawJsonComponentOperator(bpy.types.Operator):
 		
 	def execute(self, context):
 		try:
-			nna_json_utils.replace_component(self.target_id, self.json_component, self.component_index)
+			nna_utils_json.replace_component(self.target_id, self.json_component, self.component_index)
 
 			self.report({'INFO'}, "Component successfully edited")
 			return {"FINISHED"}

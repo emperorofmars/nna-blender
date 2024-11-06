@@ -1,7 +1,7 @@
 import bpy
 
 from . import nna_editor
-from .nna_tree_utils import NNAObjectState, determine_nna_bone_state
+from .nna_utils_tree import NNAObjectState, determine_nna_bone_state
 from . import nna_operators_common
 
 class NNABonePanel(bpy.types.Panel):

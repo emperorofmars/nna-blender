@@ -1,9 +1,9 @@
 import bpy
 import json
 
-from ... import nna_name_utils
-from ... import nna_json_utils
-from ... import nna_tree_utils
+from ... import nna_utils_name
+from ... import nna_utils_json
+from ... import nna_utils_tree
 
 
 class AddNNAMaterialMappingComponentOperator(bpy.types.Operator):
@@ -15,7 +15,7 @@ class AddNNAMaterialMappingComponentOperator(bpy.types.Operator):
 	
 	def execute(self, context):
 		try:
-			nna_json_utils.add_component(self.target_id, json.dumps({"t":"nna.material_mapping","slots":[]}))
+			nna_utils_json.add_component(self.target_id, json.dumps({"t":"nna.material_mapping","slots":[]}))
 			self.report({'INFO'}, "Component successfully added")
 			return {"FINISHED"}
 		except ValueError as error:
@@ -41,8 +41,8 @@ class EditNNAMaterialMappingComponentOperator(bpy.types.Operator):
 	component_index: bpy.props.IntProperty(name = "component_index", default=-1) # type: ignore
 	
 	def invoke(self, context, event):
-		json_component = nna_json_utils.get_component_dict(self.target_id, self.component_index)
-		object = nna_tree_utils.get_object_by_target_id(self.target_id)
+		json_component = nna_utils_json.get_component_dict(self.target_id, self.component_index)
+		object = nna_utils_tree.get_object_by_target_id(self.target_id)
 
 		object.nna_material_mapping_collection.clear()
 		for slot in json_component["slots"]:
@@ -52,15 +52,15 @@ class EditNNAMaterialMappingComponentOperator(bpy.types.Operator):
 	
 	def execute(self, context):
 		try:
-			json_component = nna_json_utils.get_component_dict(self.target_id, self.component_index)
-			object = nna_tree_utils.get_object_by_target_id(self.target_id)
+			json_component = nna_utils_json.get_component_dict(self.target_id, self.component_index)
+			object = nna_utils_tree.get_object_by_target_id(self.target_id)
 
 			slots = []
 			for idx, slot in enumerate(object.nna_material_mapping_collection):
 				slots.append(slot.mapping)
 			json_component["slots"] = slots
 
-			nna_json_utils.replace_component(self.target_id, json.dumps(json_component), self.component_index)
+			nna_utils_json.replace_component(self.target_id, json.dumps(json_component), self.component_index)
 			self.report({'INFO'}, "Component successfully edited")
 			return {"FINISHED"}
 		except ValueError as error:
@@ -68,7 +68,7 @@ class EditNNAMaterialMappingComponentOperator(bpy.types.Operator):
 			return {"CANCELLED"}
 	
 	def draw(self, context):
-		object = nna_tree_utils.get_object_by_target_id(self.target_id)
+		object = nna_utils_tree.get_object_by_target_id(self.target_id)
 		for idx, slot in enumerate(object.nna_material_mapping_collection):
 			row = self.layout.row()
 			row.prop(slot, "mapping", text="Slot " + str(idx))

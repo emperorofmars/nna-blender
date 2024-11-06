@@ -1,10 +1,10 @@
 import json
 import bpy
 import re
-from . import nna_tree_utils
+from . import nna_utils_tree
 
 def get_json_from_target_id(target_id: str) -> str:
-	return get_json_from_targeting_object(nna_tree_utils.find_nna_targeting_object(target_id))
+	return get_json_from_targeting_object(nna_utils_tree.find_nna_targeting_object(target_id))
 
 def get_json_from_targeting_object(targeting_object: bpy.types.Object) -> str:
 	list = []
@@ -30,7 +30,7 @@ def get_json_from_targeting_object(targeting_object: bpy.types.Object) -> str:
 
 
 def serialize_json_to_target_id(target_id: str, json_text: str):
-	serialize_json_to_targeting_object(nna_tree_utils.find_nna_targeting_object(target_id), json_text)
+	serialize_json_to_targeting_object(nna_utils_tree.find_nna_targeting_object(target_id), json_text)
 
 def serialize_json_to_targeting_object(targetingObject: bpy.types.Object, json_text: str):
 	clear_targeting_object(targetingObject)
