@@ -1,5 +1,6 @@
 
-# ⛧ NNA - Node Name Abuse ⛧ | Blender 4.2+ Implementation
+# ⛧ NNA - Node Name Abuse ⛧
+## Blender 4.2+ Tooling
 
 **Find the Unity counterpart here: <https://github.com/emperorofmars/nna_unity>**
 

@@ -43,5 +43,9 @@ class NNABonePanel(bpy.types.Panel):
 					button = box.operator(nna_operators_common.CreateNNATargetingObjectOperator.bl_idname)
 					button.target_id = target_id
 			case NNAObjectState.HasTargetingObject:
+				if(nna_editor.draw_nna_name_editor(self, context, target_id)):
+					box = self.layout.box()
+					box.label(text="Warning: This Node has both a Name and Component definition.")
+					box.label(text="It is recommended to use only one.")
 				nna_editor.draw_nna_json_editor(self, context, target_id)
 		
