@@ -21,12 +21,18 @@ def get_nna_types_from_module(module, operator_type: NNAFunctionType) -> dict[st
 				ret[nna_type] = value.get(str(operator_type))
 	return ret
 
+def _concat_module_members(*modules) -> list:
+	ret = []
+	for module in modules:
+		ret = [*ret, *inspect.getmembers(module, inspect.ismodule)]
+	return ret
+
 def get_local_nna_operators(operator_type: NNAFunctionType) -> dict[str, any]:
 	ret = {}
 	
-	from .components import nna, ava
+	from .components import nna, ava, vrc, vrm
 
-	for name, module in [*inspect.getmembers(nna, inspect.ismodule), *inspect.getmembers(ava, inspect.ismodule)]:
+	for name, module in _concat_module_members(nna, ava, vrc, vrm):
 		if(nna_types := get_nna_types_from_module(module, str(operator_type))):
 			ret = ret | nna_types
 	return ret
