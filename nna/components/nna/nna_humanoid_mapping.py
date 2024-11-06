@@ -1,9 +1,9 @@
 import bpy
 import json
 
-from .. import nna_name_utils
-from .. import nna_json_utils
-from .. import nna_tree_utils
+from ... import nna_name_utils
+from ... import nna_json_utils
+from ... import nna_tree_utils
 
 
 class AddNNAHumanoidComponentOperator(bpy.types.Operator):

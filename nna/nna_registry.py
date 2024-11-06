@@ -24,9 +24,9 @@ def get_nna_types_from_module(module, operator_type: NNAFunctionType) -> dict[st
 def get_local_nna_operators(operator_type: NNAFunctionType) -> dict[str, any]:
 	ret = {}
 	
-	from . import components
+	from .components import nna, ava
 
-	for name, module in inspect.getmembers(components, inspect.ismodule):
+	for name, module in [*inspect.getmembers(nna, inspect.ismodule), *inspect.getmembers(ava, inspect.ismodule)]:
 		if(nna_types := get_nna_types_from_module(module, str(operator_type))):
 			ret = ret | nna_types
 	return ret
@@ -65,7 +65,8 @@ def register():
 		items=_build_operator_add_enum_callback,
 		name="NNA Add Operators",
 		description="Default & hot-loaded NNA add operators",
-		options={"SKIP_SAVE"}
+		options={"SKIP_SAVE"},
+		default=0
 	)
 	bpy.types.Scene.nna_oparators_name = bpy.props.EnumProperty(
 		items=_build_operator_name_enum_callback,

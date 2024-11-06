@@ -29,7 +29,8 @@ def draw_nna_name_editor(self, context, target_id) -> bool:
 		row = box.row()
 		row.prop(bpy.context.scene, "nna_oparators_name", text="")
 		name_button = row.operator(bpy.context.scene.nna_oparators_name, text="Set Name Definition")
-		name_button.target_id = target_id
+		if(name_button): name_button.target_id = target_id
+		else: row.label(text="No Types Loaded")
 	
 	return name_definition_match
 
@@ -42,7 +43,7 @@ def draw_nna_json_editor(self, context, target_id):
 	remove_operators = nna_registry.get_nna_operators(nna_registry.NNAFunctionType.JsonRemove)
 	
 	box = self.layout.box()
-	box.label(text="Json Components")
+	box.label(text="Components")
 
 	if(len(jsonText) > 2):
 		try:
@@ -91,9 +92,8 @@ def draw_nna_json_editor(self, context, target_id):
 	row = box.row()
 	row.prop(bpy.context.scene, "nna_oparators_add", text="")
 	button_add = row.operator(bpy.context.scene.nna_oparators_add, text="Add Component")
-	button_add.target_id = target_id
-
-	#box.separator(factor=1)
+	if(button_add):	button_add.target_id = target_id
+	else: row.label(text="No Types Loaded")
 	button_edit_raw = row.operator(nna_operators_raw_json.EditNNARawJsonOperator.bl_idname, text="Edit Raw Json")
 	button_edit_raw.target_id = target_id
 
