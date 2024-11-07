@@ -77,10 +77,11 @@ def draw_nna_editor(self, context, target_id, state):
 				button = box.operator(nna_operators_common.CreateNNATargetingObjectOperator.bl_idname)
 				button.target_id = target_id
 		case nna_utils_tree.NNAObjectState.IsTargetingObject:
-			self.layout.label(text="This is the Json definition for: " + ("The Scene Root" if target_id == "$root" else target_id[8:]))
 			if(target_id == "$root"):
+				self.layout.label(text="This is the Json definition for: The Scene Root")
 				draw_nna_json_editor(self, context, "$nna")
 			else:
+				self.layout.label(text="This is the Json definition for: " + target_id[8:])
 				_draw_nna_editor_for_target(self, context, target_id[8:])
 		case nna_utils_tree.NNAObjectState.IsJsonDefinition:
 			if(not context.object.parent.name[8:]):
