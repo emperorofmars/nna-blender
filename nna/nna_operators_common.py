@@ -5,6 +5,9 @@ from . import nna_utils_name
 
 
 class InitializeNNAOperator(bpy.types.Operator):
+	"""Creates the root `$nna` object in the scene.
+	If the `nna_init_collection` property is set, it will create it in that collection.
+	"""
 	bl_idname = "nna.init"
 	bl_label = "Initialize NNA in Active Collection"
 	bl_options = {"REGISTER", "UNDO"}
@@ -12,7 +15,7 @@ class InitializeNNAOperator(bpy.types.Operator):
 	nna_init_collection: bpy.props.StringProperty(name = "nna_init_collection") # type: ignore
 	
 	def execute(self, context):
-		if bpy.context.scene.collection.name == self.nna_init_collection:
+		if bpy.context.scene.collection.name == self.nna_init_collection or not self.nna_init_collection:
 			nna_utils_tree.init_nna_root(bpy.context.scene.collection)
 			self.report({"INFO"}, "NNA inited in Scene Collection")
 			return {"FINISHED"}

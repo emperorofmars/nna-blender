@@ -132,14 +132,24 @@ def name_match_nna_twist(name: str) -> int:
 	match = re.search(_Match, name)
 	return -1 if not match else match.start()
 
+def name_display_nna_twist(layout, name: str):
+	match = re.search(_Match, name)
+	row = layout.row()
+	row.label(text="weight")
+	row.label(text=str(match.groupdict()["weight"]) if "weight" in match.groupdict() and match.groupdict()["weight"] else "default (0.5)")
+	row = layout.row()
+	row.label(text="source")
+	row.label(text=match.groupdict()["source_node_path"] if "source_node_path" in match.groupdict() and match.groupdict()["source_node_path"] else "default (grandparent)")
+
 
 nna_types = {
 	"nna.twist": {
 		"json_add": AddNNATwistComponentOperator.bl_idname,
 		"json_edit": EditNNATwistComponentOperator.bl_idname,
 		"json_display": display_nna_twist_component,
-		"name_match": name_match_nna_twist,
 		"name_set": NNATwistNameDefinitionOperator.bl_idname,
+		"name_match": name_match_nna_twist,
+		"name_display": name_display_nna_twist
 	},
 }
 

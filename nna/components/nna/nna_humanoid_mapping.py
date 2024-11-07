@@ -74,13 +74,6 @@ class EditNNAHumanoidComponentOperator(bpy.types.Operator):
 		self.layout.prop(self, "no_jaw", expand=True)
 
 
-_Match = r"(?i)humanoid(?P<digi>digi)?(?P<no_jaw>nojaw)?(([._\-|:][lr])|[._\-|:\s]?(right|left))?$"
-
-def name_match_nna_humanoid(name: str) -> int:
-	match = re.search(_Match, name)
-	return -1 if not match else match.start()
-
-
 class NNAHumanoidNameDefinitionOperator(bpy.types.Operator):
 	bl_idname = "nna.nna_humanoid_name_definition"
 	bl_label = "NNA Humanoid Name Definition"
@@ -117,12 +110,29 @@ class NNAHumanoidNameDefinitionOperator(bpy.types.Operator):
 		self.layout.prop(self, "no_jaw", expand=True)
 
 
+_Match = r"(?i)humanoid(?P<digi>digi)?(?P<no_jaw>nojaw)?(([._\-|:][lr])|[._\-|:\s]?(right|left))?$"
+
+def name_match_nna_humanoid(name: str) -> int:
+	match = re.search(_Match, name)
+	return -1 if not match else match.start()
+
+def name_display_nna_humanoid(layout, name: str):
+	match = re.search(_Match, name)
+	row = layout.row()
+	row.label(text="Locomotion Type")
+	row.label(text="Digitigrade" if "digi" in match.groupdict() and match.groupdict()["digi"] else "default (Plantigrade)")
+	row = layout.row()
+	row.label(text="No Jaw Mapping")
+	row.label(text="True" if "no_jaw" in match.groupdict() and match.groupdict()["no_jaw"] else "False")
+
+
 nna_types = {
 	"nna.humanoid": {
 		"json_add": AddNNAHumanoidComponentOperator.bl_idname,
 		"json_edit": EditNNAHumanoidComponentOperator.bl_idname,
 		"json_display": display_nna_humanoid_component,
+		"name_set": NNAHumanoidNameDefinitionOperator.bl_idname,
 		"name_match": name_match_nna_humanoid,
-		"name_set": NNAHumanoidNameDefinitionOperator.bl_idname
+		"name_display": name_display_nna_humanoid
 	},
 }

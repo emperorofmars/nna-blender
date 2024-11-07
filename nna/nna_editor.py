@@ -87,6 +87,7 @@ def draw_nna_editor(self, context, target_id, state):
 
 def draw_nna_name_editor(self, context, target_id) -> bool:
 	name_match_operators = nna_registry.get_nna_operators(nna_registry.NNAFunctionType.NameMatch)
+	name_draw_operators = nna_registry.get_nna_operators(nna_registry.NNAFunctionType.NameDisplay)
 
 	box = self.layout.box()
 	name_definition_match = False
@@ -96,6 +97,8 @@ def draw_nna_name_editor(self, context, target_id) -> bool:
 			index = match(nna_name)
 			if(index > 0):
 				box.label(text="Name Definition: " + nna_type)
+				if(nna_type in name_draw_operators):
+					name_draw_operators[nna_type](box, nna_name)
 				remove_button = box.operator(nna_operators_common.RemoveNNANameDefinitionOperator.bl_idname, text="Remove")
 				remove_button.target_id = target_id
 				remove_button.name_definition_index = index
