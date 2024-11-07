@@ -159,8 +159,8 @@ def name_display_ava_eyetracking_bone_limits(layout, name: str):
 		row = layout.row(); row.label(text="Limits for both eyes.")
 	row = layout.row(); row.label(text="Up"); row.label(text=match.groupdict()["up"])
 	row = layout.row(); row.label(text="Down"); row.label(text=match.groupdict()["down"])
-	row = layout.row(); row.label(text="Left"); row.label(text=match.groupdict()["in"])
-	row = layout.row(); row.label(text="Right"); row.label(text=match.groupdict()["out"])
+	row = layout.row(); row.label(text="In"); row.label(text=match.groupdict()["in"])
+	row = layout.row(); row.label(text="Out"); row.label(text=match.groupdict()["out"])
 
 
 nna_types = {
