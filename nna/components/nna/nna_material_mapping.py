@@ -1,5 +1,4 @@
 import bpy
-import json
 
 from ... import nna_utils_name
 from ... import nna_utils_json
@@ -15,7 +14,7 @@ class AddNNAMaterialMappingComponentOperator(bpy.types.Operator):
 	
 	def execute(self, context):
 		try:
-			nna_utils_json.add_component(self.target_id, json.dumps({"t":"nna.material_mapping","slots":[]}))
+			nna_utils_json.add_component(self.target_id, {"t":"nna.material_mapping","slots":[]})
 			self.report({'INFO'}, "Component successfully added")
 			return {"FINISHED"}
 		except ValueError as error:
@@ -41,7 +40,7 @@ class EditNNAMaterialMappingComponentOperator(bpy.types.Operator):
 	component_index: bpy.props.IntProperty(name = "component_index", default=-1) # type: ignore
 	
 	def invoke(self, context, event):
-		json_component = nna_utils_json.get_component_dict(self.target_id, self.component_index)
+		json_component = nna_utils_json.get_component(self.target_id, self.component_index)
 		object = nna_utils_tree.get_object_by_target_id(self.target_id)
 
 		object.nna_material_mapping_collection.clear()
@@ -52,7 +51,7 @@ class EditNNAMaterialMappingComponentOperator(bpy.types.Operator):
 	
 	def execute(self, context):
 		try:
-			json_component = nna_utils_json.get_component_dict(self.target_id, self.component_index)
+			json_component = nna_utils_json.get_component(self.target_id, self.component_index)
 			object = nna_utils_tree.get_object_by_target_id(self.target_id)
 
 			slots = []
@@ -60,7 +59,7 @@ class EditNNAMaterialMappingComponentOperator(bpy.types.Operator):
 				slots.append(slot.mapping)
 			json_component["slots"] = slots
 
-			nna_utils_json.replace_component(self.target_id, json.dumps(json_component), self.component_index)
+			nna_utils_json.replace_component(self.target_id, json_component, self.component_index)
 			self.report({'INFO'}, "Component successfully edited")
 			return {"FINISHED"}
 		except ValueError as error:

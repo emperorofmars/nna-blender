@@ -1,5 +1,4 @@
 import bpy
-import json
 import re
 
 from ... import nna_utils_name
@@ -15,7 +14,7 @@ class AddNNATwistComponentOperator(bpy.types.Operator):
 	
 	def execute(self, context):
 		try:
-			nna_utils_json.add_component(self.target_id, json.dumps({"t":"nna.twist"}))
+			nna_utils_json.add_component(self.target_id, {"t":"nna.twist"})
 			self.report({'INFO'}, "Component successfully added")
 			return {"FINISHED"}
 		except ValueError as error:
@@ -43,7 +42,7 @@ class EditNNATwistComponentOperator(bpy.types.Operator):
 	weight: bpy.props.FloatProperty(name="weight", default=0.5, min=0, max=1) # type: ignore
 	
 	def invoke(self, context, event):
-		json_component = nna_utils_json.get_component_dict(self.target_id, self.component_index)
+		json_component = nna_utils_json.get_component(self.target_id, self.component_index)
 
 		if("w" in json_component): self.weight = json_component["w"]
 
@@ -56,7 +55,7 @@ class EditNNATwistComponentOperator(bpy.types.Operator):
 		
 	def execute(self, context):
 		try:
-			json_component = nna_utils_json.get_component_dict(self.target_id, self.component_index)
+			json_component = nna_utils_json.get_component(self.target_id, self.component_index)
 
 			if(self.weight != 0.5): json_component["w"] = self.weight
 			
@@ -67,7 +66,7 @@ class EditNNATwistComponentOperator(bpy.types.Operator):
 			elif("s" in json_component):
 				del json_component["s"]
 
-			nna_utils_json.replace_component(self.target_id, json.dumps(json_component), self.component_index)
+			nna_utils_json.replace_component(self.target_id, json_component, self.component_index)
 			self.report({'INFO'}, "Component successfully edited")
 			return {"FINISHED"}
 		except ValueError as error:

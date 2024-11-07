@@ -1,3 +1,4 @@
+import json
 import bpy
 from . import nna_utils_json
 
@@ -41,7 +42,7 @@ class AddNNARawJsonComponentOperator(bpy.types.Operator):
 		
 	def execute(self, context):
 		try:
-			nna_utils_json.add_component(self.target_id, self.new_component)
+			nna_utils_json.add_component(self.target_id, json.loads(self.new_component))
 			self.report({'INFO'}, "Component successfully added")
 			return {"FINISHED"}
 		except ValueError as error:
@@ -65,7 +66,7 @@ class EditNNARawJsonComponentOperator(bpy.types.Operator):
 	
 	def invoke(self, context, event):
 		try:
-			self.json_component = nna_utils_json.get_component_json(self.target_id, self.component_index)
+			self.json_component = json.dumps(nna_utils_json.get_component(self.target_id, self.component_index))
 		except ValueError as error:
 			self.report({'ERROR'}, str(error))
 			return None
@@ -73,7 +74,7 @@ class EditNNARawJsonComponentOperator(bpy.types.Operator):
 		
 	def execute(self, context):
 		try:
-			nna_utils_json.replace_component(self.target_id, self.json_component, self.component_index)
+			nna_utils_json.replace_component(self.target_id, json.loads(self.json_component), self.component_index)
 
 			self.report({'INFO'}, "Component successfully edited")
 			return {"FINISHED"}

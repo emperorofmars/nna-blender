@@ -3,10 +3,13 @@ import bpy
 import re
 from . import nna_utils_tree
 
+
 def get_json_from_target_id(target_id: str) -> str:
+	"""Parses the numbered Json lines from the targeting object based on the `target_id`."""
 	return get_json_from_targeting_object(nna_utils_tree.find_nna_targeting_object(target_id))
 
 def get_json_from_targeting_object(targeting_object: bpy.types.Object) -> str:
+	"""Parses the numbered Json lines from its child objects."""
 	list = []
 	for child in targeting_object.children:
 		m1 = re.match(r"^\$[0-9]+\$.+", child.name)
@@ -30,10 +33,12 @@ def get_json_from_targeting_object(targeting_object: bpy.types.Object) -> str:
 
 
 def serialize_json_to_target_id(target_id: str, json_text: str):
+	"""Serializes the Json text into a targeting object based on the `target_id`. Any previous Json text will be removed."""
 	serialize_json_to_targeting_object(nna_utils_tree.find_nna_targeting_object(target_id), json_text)
 
 def serialize_json_to_targeting_object(targetingObject: bpy.types.Object, json_text: str):
-	clear_targeting_object(targetingObject)
+	"""Serializes the Json text into a targeting object. Any previous Json text will be removed."""
+	_clear_targeting_object(targetingObject)
 	remainingJsonCharacters = json_text # get actual bytes
 	line_nr = 0
 	while(len(remainingJsonCharacters) > 0):
@@ -71,59 +76,35 @@ def _add_line_to_targeting_object(targetingObject: bpy.types.Object, line: str):
 	bpy.context.view_layer.objects.active = originalSelectedObject
 
 
-def clear_targeting_object(object: bpy.types.Object):
-	for child in object.children:
-		bpy.data.objects.remove(child)
-
 def remove_targeting_object(object: bpy.types.Object):
-	for child in object.children:
-		bpy.data.objects.remove(child)
+	"""Remove a NNA targeting object, including all of its children (Json lines)."""
+	_clear_targeting_object(object)
 	bpy.data.objects.remove(object)
 
+def _clear_targeting_object(object: bpy.types.Object):
+	"""Remove all Json lines from a targeting object"""
+	for child in object.children:
+		bpy.data.objects.remove(child)
 
-def get_component_from_json(json_text: str, component_index: int) -> str:
-	jsonObject = json.loads(json_text)
-	return json.dumps(jsonObject[component_index])
 
-def add_component_to_json(json_text: str, json_component_text: str) -> str:
+def get_component(target_id: str, component_index: int) -> dict:
+	return json.loads(get_json_from_target_id(target_id))[component_index]
+
+def add_component(target_id: str, json_component: dict):
+	json_text = get_json_from_target_id(target_id)
 	if(len(json_text) > 2):
-		jsonObject = json.loads(json_text)
-		jsonObject.append(json.loads(json_component_text))
-		return json.dumps(jsonObject)
+		json_object = json.loads()
+		json_object.append(json_component)
+		serialize_json_to_target_id(target_id, json.dumps(json_object))
 	else:
-		return json.dumps([json.loads(json_component_text)])
+		serialize_json_to_target_id(target_id, json.dumps([json_component]))
 
-def replace_component_in_json(json_text: str, json_component_text: str, component_index: int) -> str:
-	jsonObject = json.loads(json_text)
-	jsonObject[component_index] = json.loads(json_component_text)
-	return json.dumps(jsonObject)
-
-def remove_component_from_json(json_text: str, component_index: int) -> str:
-	jsonObject = json.loads(json_text)
-	del(jsonObject[component_index])
-	return json.dumps(jsonObject)
-
-
-def get_component_json(target_id: str, component_index: int) -> str:
-	json_text = get_json_from_target_id(target_id)
-	return get_component_from_json(json_text, component_index)
-
-def get_component_dict(target_id: str, component_index: int) -> dict:
-	json_text = get_json_from_target_id(target_id)
-	return json.loads(get_component_from_json(json_text, component_index))
-
-def add_component(target_id: str, json_component_text: str):
-	json_text = get_json_from_target_id(target_id)
-	json_text = add_component_to_json(json_text, json_component_text)
-	serialize_json_to_target_id(target_id, json_text)
-
-def replace_component(target_id: str, json_component_text: str, component_index: int):
-	json_text = get_json_from_target_id(target_id)
-	json_text = replace_component_in_json(json_text, json_component_text, component_index)
-	serialize_json_to_target_id(target_id, json_text)
+def replace_component(target_id: str, json_component: dict, component_index: int):
+	json_object = json.loads(get_json_from_target_id(target_id))
+	json_object[component_index] = json_component
+	serialize_json_to_target_id(target_id, json.dumps(json_object))
 
 def remove_component(target_id: str, component_index: int):
-	json_text = get_json_from_target_id(target_id)
-	json_text = remove_component_from_json(json_text, component_index)
-	serialize_json_to_target_id(target_id, json_text)
-
+	json_object = json.loads(get_json_from_target_id(target_id))
+	del(json_object[component_index])
+	serialize_json_to_target_id(target_id, json.dumps(json_object))

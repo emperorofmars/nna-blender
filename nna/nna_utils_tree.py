@@ -2,6 +2,7 @@ import bpy
 from enum import Enum, auto
 import re
 
+
 class NNAObjectState(Enum):
 	NotInited = auto()					# NNA root (`$nna`) object doesn't exist.
 	InitedOutsideTree = auto()			# NNA root (`$nna`) object exists, the current object isn't part of the Collection in which the root sits.
@@ -45,6 +46,7 @@ def determine_nna_bone_state(object: bpy.types.Object, bone: bpy.types.Bone) -> 
 				return NNAObjectState.InitedInsideTree
 	return NNAObjectState.InitedOutsideTree
 
+
 def find_nna_root_collection() -> bpy.types.Collection | None:
 	for collection in [bpy.context.scene.collection, *bpy.context.scene.collection.children_recursive]:
 		if(find_nna_root_in_collection(collection)):
@@ -68,6 +70,22 @@ def find_nna_targeting_object(target_id: str) -> bpy.types.Object | None:
 			return child
 	return None
 
+
+def get_object_by_target_id(target_id: str, split_char = '$') -> bpy.types.Object | bpy.types.Bone | None:
+	object = bpy.data.objects.get(target_id)
+	if(object): return object
+	parts = target_id.split(split_char)
+	object: bpy.types.Object = bpy.data.objects.get(parts[0])
+	if(len(parts) > 1): return object.data.bones.get(parts[1])
+	else: return object
+
+def get_base_object_by_target_id(target_id: str, split_char = '$') -> bpy.types.Object | None:
+	object = bpy.data.objects.get(target_id)
+	if(object): return object
+	parts = target_id.split(split_char)
+	return bpy.data.objects.get(parts[0])
+
+
 def init_nna_root(collection: bpy.types.Collection):
 	originalSelectedObject = bpy.context.active_object
 	bpy.ops.object.empty_add()
@@ -90,17 +108,3 @@ def create_targeting_object(root: bpy.types.Object, name: str):
 		nnaObject.name = "$target:" + name
 	nnaObject.parent = root
 	bpy.context.view_layer.objects.active = originalSelectedObject
-
-def get_object_by_target_id(target_id: str, split_char = '$') -> bpy.types.Object | bpy.types.Bone | None:
-	object = bpy.data.objects.get(target_id)
-	if(object): return object
-	parts = target_id.split(split_char)
-	object: bpy.types.Object = bpy.data.objects.get(parts[0])
-	if(len(parts) > 1): return object.data.bones.get(parts[1])
-	else: return object
-
-def get_base_object_by_target_id(target_id: str, split_char = '$') -> bpy.types.Object | None:
-	object = bpy.data.objects.get(target_id)
-	if(object): return object
-	parts = target_id.split(split_char)
-	return bpy.data.objects.get(parts[0])

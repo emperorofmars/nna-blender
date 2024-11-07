@@ -9,6 +9,7 @@ from . import nna_utils_json
 
 
 class NNAObjectPanel(bpy.types.Panel):
+	"""Display the NNA editor for Blender objects"""
 	bl_idname = "OBJECT_PT_nna_editor"
 	bl_label = "NNA Editor"
 	bl_region_type = "WINDOW"
@@ -28,6 +29,7 @@ class NNAObjectPanel(bpy.types.Panel):
 
 
 class NNABonePanel(bpy.types.Panel):
+	"""Display the NNA editor for Blender bones"""
 	bl_idname = "OBJECT_PT_nna_bone_editor"
 	bl_label = "NNA Bone Editor"
 	bl_region_type = "WINDOW"

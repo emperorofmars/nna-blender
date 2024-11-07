@@ -1,6 +1,5 @@
 import re
 import bpy
-import json
 
 from ... import nna_utils_name
 from ... import nna_utils_json
@@ -16,7 +15,7 @@ class AddNNAHumanoidComponentOperator(bpy.types.Operator):
 	
 	def execute(self, context):
 		try:
-			nna_utils_json.add_component(self.target_id, json.dumps({"t":"nna.humanoid"}))
+			nna_utils_json.add_component(self.target_id, {"t":"nna.humanoid"})
 			self.report({'INFO'}, "Component successfully added")
 			return {"FINISHED"}
 		except ValueError as error:
@@ -45,7 +44,7 @@ class EditNNAHumanoidComponentOperator(bpy.types.Operator):
 	no_jaw: bpy.props.BoolProperty(name="No Jaw Mapping", default=False) # type: ignore
 	
 	def invoke(self, context, event):
-		json_component = nna_utils_json.get_component_dict(self.target_id, self.component_index)
+		json_component = nna_utils_json.get_component(self.target_id, self.component_index)
 
 		if("lc" in json_component): self.locomotion_type = json_component["lc"]
 		if("nj" in json_component): self.no_jaw = json_component["nj"]
@@ -54,7 +53,7 @@ class EditNNAHumanoidComponentOperator(bpy.types.Operator):
 		
 	def execute(self, context):
 		try:
-			json_component = nna_utils_json.get_component_dict(self.target_id, self.component_index)
+			json_component = nna_utils_json.get_component(self.target_id, self.component_index)
 
 			if(self.locomotion_type != "planti"): json_component["lc"] = self.locomotion_type
 			elif("lc" in json_component): del json_component["lc"]
@@ -62,7 +61,7 @@ class EditNNAHumanoidComponentOperator(bpy.types.Operator):
 			if(self.no_jaw == True): json_component["nj"] = True
 			elif("nj" in json_component): del json_component["nj"]
 
-			nna_utils_json.replace_component(self.target_id, json.dumps(json_component), self.component_index)
+			nna_utils_json.replace_component(self.target_id, json_component, self.component_index)
 			self.report({'INFO'}, "Component successfully edited")
 			return {"FINISHED"}
 		except ValueError as error:
