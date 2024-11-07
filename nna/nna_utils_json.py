@@ -82,7 +82,6 @@ def remove_targeting_object(object: bpy.types.Object):
 	bpy.data.objects.remove(object)
 
 def _clear_targeting_object(object: bpy.types.Object):
-	"""Remove all Json lines from a targeting object"""
 	for child in object.children:
 		bpy.data.objects.remove(child)
 
@@ -93,7 +92,7 @@ def get_component(target_id: str, component_index: int) -> dict:
 def add_component(target_id: str, json_component: dict):
 	json_text = get_json_from_target_id(target_id)
 	if(len(json_text) > 2):
-		json_object = json.loads()
+		json_object = json.loads(json_text)
 		json_object.append(json_component)
 		serialize_json_to_target_id(target_id, json.dumps(json_object))
 	else:

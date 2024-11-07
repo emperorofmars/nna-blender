@@ -77,37 +77,54 @@ def draw_nna_editor(self, context, target_id, state):
 				button.target_id = target_id
 		case nna_utils_tree.NNAObjectState.IsTargetingObject:
 			self.layout.label(text="This is the Json definition for: " + ("The Scene Root" if target_id == "$root" else target_id[8:]))
+			if(target_id == "$root"):
+				draw_nna_json_editor(self, context, "$nna")
+			else:
+				_draw_nna_editor_for_target(self, context, target_id[8:])
 		case nna_utils_tree.NNAObjectState.IsJsonDefinition:
-			self.layout.label(text="This part of the Json definition for: " + context.object.parent.name[8:])
+			if(not context.object.parent.name[8:]):
+				self.layout.label(text="This part of the Json definition for: The Scene Root" + context.object.parent.name[8:])
+				draw_nna_json_editor(self, context, "$nna")
+			else:
+				self.layout.label(text="This part of the Json definition for: " + context.object.parent.name[8:])
+				_draw_nna_editor_for_target(self, context, context.object.parent.name[8:])
+		case nna_utils_tree.NNAObjectState.IsInvalidTargetingObject:
+			self.layout.label(text="Invalid Target: '" + context.object.name[8:] + "' does NOT exist!")
 		case nna_utils_tree.NNAObjectState.HasTargetingObject:
-			if(draw_nna_name_editor(self, context, target_id)):
-				box = self.layout.box()
-				box.label(text="Warning: This Node has both a Name and Component definition.")
-				box.label(text="It is recommended to use only one.")
-			draw_nna_json_editor(self, context, target_id)
+			_draw_nna_editor_for_target(self, context, target_id)
+
+def _draw_nna_editor_for_target(self, context, target_id):
+	if(draw_nna_name_editor(self, context, target_id, True)):
+		box = self.layout.box()
+		box.label(text="Warning: This Node has both a Name and Component definition.")
+		box.label(text="It is recommended to use only one.")
+	draw_nna_json_editor(self, context, target_id)
 
 
-def draw_nna_name_editor(self, context, target_id) -> bool:
+def draw_nna_name_editor(self, context, target_id, ignore_no_match = False) -> bool:
 	name_match_operators = nna_registry.get_nna_operators(nna_registry.NNAFunctionType.NameMatch)
 	name_draw_operators = nna_registry.get_nna_operators(nna_registry.NNAFunctionType.NameDisplay)
 
-	box = self.layout.box()
-	name_definition_match = False
+	name_definition_match = None
 	for nna_type, match in name_match_operators.items():
 		if(match):
 			nna_name = nna_utils_tree.get_object_by_target_id(target_id).name
 			index = match(nna_name)
 			if(index > 0):
-				box.label(text="Name Definition: " + nna_type)
-				if(nna_type in name_draw_operators):
-					name_draw_operators[nna_type](box, nna_name)
-				remove_button = box.operator(nna_operators_common.RemoveNNANameDefinitionOperator.bl_idname, text="Remove")
-				remove_button.target_id = target_id
-				remove_button.name_definition_index = index
-				name_definition_match = True
+				name_definition_match = {"nna_name": nna_name, "index": index, "nna_type": nna_type}
 				break
 	
-	if(not name_definition_match):
+	if(name_definition_match):
+		box = self.layout.box()
+		box.label(text="Name Definition: " + name_definition_match["nna_type"])
+		if(name_definition_match["nna_type"] in name_draw_operators):
+			name_draw_operators[name_definition_match["nna_type"]](box, name_definition_match["nna_name"])
+		remove_button = box.operator(nna_operators_common.RemoveNNANameDefinitionOperator.bl_idname, text="Remove")
+		remove_button.target_id = target_id
+		remove_button.name_definition_index = name_definition_match["index"]
+		name_definition_match = True
+	elif(not name_definition_match and not ignore_no_match):
+		box = self.layout.box()
 		box.label(text="No Name Definition Set")
 		row = box.row()
 		row.prop(bpy.context.scene, "nna_oparators_name", text="")

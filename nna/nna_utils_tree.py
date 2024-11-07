@@ -12,6 +12,7 @@ class NNAObjectState(Enum):
 	IsTargetingObject = auto()			# The currently selected object is a targeting object. It is parented to the NNA root (`$nna`), and it points to an object in the scene.
 	IsJsonDefinition = auto()			# The currently selected object is a line in a NNA component definition.
 	HasTargetingObject = auto()			# The currently selected object has a targeting object. In this state its components can be created or edited.
+	IsInvalidTargetingObject = auto()	# The currently selected object is a targeting object with an invalid target_id
 	Invalid = auto()					# rip
 
 def determine_nna_object_state(object: bpy.types.Object) -> NNAObjectState:
@@ -20,10 +21,18 @@ def determine_nna_object_state(object: bpy.types.Object) -> NNAObjectState:
 			if(child.name == "$root"):
 				return NNAObjectState.IsRootObjectWithTargeting
 		return NNAObjectState.IsRootObject
-	if(object.name.startswith("$target:") or object.name == "$root"): return NNAObjectState.IsTargetingObject
-	if(re.match("^\$[0-9]+\$.+", object.name)): return NNAObjectState.IsJsonDefinition
+	if(object.name.startswith("$target:") and object.parent and object.parent.name == "$nna"):
+		if(get_base_object_by_target_id(object.name[8:])):
+			return NNAObjectState.IsTargetingObject
+		else:
+			return NNAObjectState.IsInvalidTargetingObject
+	elif(object.name == "$root" and object.parent and object.parent.name == "$nna"):
+		return NNAObjectState.IsTargetingObject
+	if(re.match("^\$[0-9]+\$.+", object.name)):
+		return NNAObjectState.IsJsonDefinition
 	nnaCollection = find_nna_root_collection()
-	if(nnaCollection == None): return NNAObjectState.NotInited
+	if(nnaCollection == None):
+		return NNAObjectState.NotInited
 	for collection in [nnaCollection, *nnaCollection.children_recursive]:
 		if(collection in object.users_collection):
 			if(find_nna_targeting_object(object.name)):

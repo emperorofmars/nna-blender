@@ -5,6 +5,7 @@ from ... import nna_utils_name
 from ... import nna_utils_json
 from ... import nna_utils_tree
 
+
 class AddNNATwistComponentOperator(bpy.types.Operator):
 	bl_idname = "nna.add_nna_twist"
 	bl_label = "Add Twist Component"
