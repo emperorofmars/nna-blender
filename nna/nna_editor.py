@@ -54,6 +54,7 @@ def draw_nna_editor(self, context, target_id, state):
 			button = self.layout.operator(nna_operators_common.CreateNNATargetingObjectOperator.bl_idname, text="Initializie NNA for the Export Root")
 			button.target_id = target_id
 		case nna_utils_tree.NNAObjectState.IsRootObjectWithTargeting:
+			self.layout.label(text="This is the Json definition for: The Scene Root")
 			draw_nna_json_editor(self, context, target_id)
 		case nna_utils_tree.NNAObjectState.NotInited:
 			draw_nna_name_editor(self, context, target_id)
