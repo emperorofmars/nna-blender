@@ -24,6 +24,40 @@ class AddAVAAvatarComponentOperator(bpy.types.Operator):
 			return {"CANCELLED"}
 
 
+class EditAVAAvatarComponentOperator(bpy.types.Operator):
+	bl_idname = "nna.edit_ava_avatar"
+	bl_label = "Edit AVA Avatar Component"
+	bl_options = {"REGISTER", "UNDO"}
+
+	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
+	component_index: bpy.props.IntProperty(name = "component_index", default=-1) # type: ignore
+
+	automap: bpy.props.BoolProperty(name="Automap", default=True) # type: ignore
+	
+	def invoke(self, context, event):
+		json_component = nna_utils_json.get_component(self.target_id, self.component_index)
+		if("auto" in json_component): self.automap = json_component["auto"]
+		return context.window_manager.invoke_props_dialog(self)
+		
+	def execute(self, context):
+		try:
+			json_component = nna_utils_json.get_component(self.target_id, self.component_index)
+
+			if(not self.automap): json_component["auto"] = False
+			elif("auto" in json_component):
+				del json_component["auto"]
+
+			nna_utils_json.replace_component(self.target_id, json_component, self.component_index)
+			self.report({'INFO'}, "Component successfully edited")
+			return {"FINISHED"}
+		except ValueError as error:
+			self.report({'ERROR'}, str(error))
+			return {"CANCELLED"}
+	
+	def draw(self, context):
+		self.layout.prop(self, "automap", expand=True)
+
+
 def display_ava_avatar_component(object, layout, json_dict):
 	autodect = "auto" in json_dict and not json_dict["auto"]
 	row = layout.row()
@@ -40,17 +74,17 @@ def display_ava_avatar_component(object, layout, json_dict):
 		row.operator(CreateNewObjectOperator.bl_idname, text="Create Viewport Object").target_name = "ViewportFirstPerson"
 
 
+def name_match_ava_viewport_first_person(name: str) -> int:
+	return 0 if name == "ViewportFirstPerson" else -1
+
 
 nna_types = {
 	"ava.avatar": {
 		"json_add": AddAVAAvatarComponentOperator.bl_idname,
-#		"json_edit": EditNNATwistComponentOperator.bl_idname,
+		"json_edit": EditAVAAvatarComponentOperator.bl_idname,
 		"json_display": display_ava_avatar_component,
-#		"name_set": NNATwistNameDefinitionOperator.bl_idname,
-#		"name_match": name_match_nna_twist,
-#		"name_display": name_display_nna_twist
 	},
 	"ava.viewport_first_person": {
-#		"name_match": name_match_nna_twist,
+		"name_match": name_match_ava_viewport_first_person,
 	}
 }

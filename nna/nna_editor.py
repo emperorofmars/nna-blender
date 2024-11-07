@@ -110,7 +110,7 @@ def draw_nna_name_editor(self, context, target_id, ignore_no_match = False) -> b
 		if(match):
 			nna_name = nna_utils_tree.get_object_by_target_id(target_id).name
 			index = match(nna_name)
-			if(index > 0):
+			if(index >= 0):
 				name_definition_match = {"nna_name": nna_name, "index": index, "nna_type": nna_type}
 				break
 	
@@ -119,10 +119,10 @@ def draw_nna_name_editor(self, context, target_id, ignore_no_match = False) -> b
 		box.label(text="Name Definition: " + name_definition_match["nna_type"])
 		if(name_definition_match["nna_type"] in name_draw_operators):
 			name_draw_operators[name_definition_match["nna_type"]](box, name_definition_match["nna_name"])
-		remove_button = box.operator(nna_operators_common.RemoveNNANameDefinitionOperator.bl_idname, text="Remove")
-		remove_button.target_id = target_id
-		remove_button.name_definition_index = name_definition_match["index"]
-		name_definition_match = True
+		if(name_definition_match["index"] > 0):
+			remove_button = box.operator(nna_operators_common.RemoveNNANameDefinitionOperator.bl_idname, text="Remove")
+			remove_button.target_id = target_id
+			remove_button.name_definition_index = name_definition_match["index"]
 	elif(not name_definition_match and not ignore_no_match):
 		box = self.layout.box()
 		box.label(text="No Name Definition Set")
