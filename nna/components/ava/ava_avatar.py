@@ -8,6 +8,9 @@ from ... import nna_utils_tree
 
 
 class AddAVAAvatarComponentOperator(bpy.types.Operator):
+	"""Specifies this object to be a VR & V-Tubing avatar.
+	This component is not nescessary, unless you want to disable on-import-automapping of features.
+	"""
 	bl_idname = "ava.add_ava_avatar"
 	bl_label = "Add AVA Avatar Component"
 	bl_options = {"REGISTER", "UNDO"}
@@ -25,6 +28,9 @@ class AddAVAAvatarComponentOperator(bpy.types.Operator):
 
 
 class EditAVAAvatarComponentOperator(bpy.types.Operator):
+	"""Specifies this object to be a VR & V-Tubing avatar.
+	This component is not nescessary, unless you want to disable on-import-automapping of features.
+	"""
 	bl_idname = "nna.edit_ava_avatar"
 	bl_label = "Edit AVA Avatar Component"
 	bl_options = {"REGISTER", "UNDO"}

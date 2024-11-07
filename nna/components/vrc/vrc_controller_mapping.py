@@ -8,7 +8,7 @@ from ... import nna_utils_tree
 
 
 class AddVRCControllerMappingComponentOperator(bpy.types.Operator):
-	"""Adds a VRC Controller Mapping Component. This will search for the appropriate Animator Controller in Unity and assign them on import."""
+	"""This component will search for the appropriate Animator Controller in Unity and assign them on import."""
 	bl_idname = "nna.add_vrc_controller_mapping"
 	bl_label = "Add VRChat Controller Mapping Component"
 	bl_options = {"REGISTER", "UNDO"}
@@ -36,7 +36,7 @@ class AddVRCControllerMappingComponentOperator(bpy.types.Operator):
 
 
 class EditVRCControllerMappingComponentOperator(bpy.types.Operator):
-	"""Edit this VRChat Controller Mapping"""
+	"""This component will search for the appropriate Animator Controller in Unity and assign them on import."""
 	bl_idname = "nna.edit_vrc_controller_mapping"
 	bl_label = "Edit VRChat Controller Mapping"
 	bl_options = {"REGISTER", "UNDO"}

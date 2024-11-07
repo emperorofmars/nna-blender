@@ -6,6 +6,7 @@ from ... import nna_utils_tree
 
 
 class AddNNAMaterialMappingComponentOperator(bpy.types.Operator):
+	"""Maps materials to this mesh from the game-engine projects assets on import based, on the name."""
 	bl_idname = "nna.add_nna_material_mapping"
 	bl_label = "Add Material Mapping Component"
 	bl_options = {"REGISTER", "UNDO"}
@@ -22,16 +23,8 @@ class AddNNAMaterialMappingComponentOperator(bpy.types.Operator):
 			return {"CANCELLED"}
 
 
-def display_nna_material_mapping_component(object, layout, json_dict):
-	for idx, slot in enumerate(json_dict["slots"]):
-		row = layout.row()
-		row.label(text=str(idx))
-		row.label(text=slot)
-	if(len(json_dict["slots"]) == 0):
-		layout.label(text="No Material Slots Mapped")
-
-
 class EditNNAMaterialMappingComponentOperator(bpy.types.Operator):
+	"""Maps materials to this mesh from the game-engine projects assets on import based, on the name."""
 	bl_idname = "nna.edit_nna_material_mapping"
 	bl_label = "Edit Material Mapping Component"
 	bl_options = {"REGISTER", "UNDO"}
@@ -83,6 +76,15 @@ class EditNNAMaterialMappingComponentOperator(bpy.types.Operator):
 			if(idx == len(object.nna_material_mapping_collection) - 1): col.enabled = False
 			row.operator(NNAMaterialSlotsDeleteOperator.bl_idname, text="", icon="X").index = idx
 		self.layout.operator(NNAMaterialSlotsAddOperator.bl_idname)
+
+
+def display_nna_material_mapping_component(object, layout, json_dict):
+	for idx, slot in enumerate(json_dict["slots"]):
+		row = layout.row()
+		row.label(text=str(idx))
+		row.label(text=slot)
+	if(len(json_dict["slots"]) == 0):
+		layout.label(text="No Material Slots Mapped")
 
 
 class NNAMaterialSlotsProperty(bpy.types.PropertyGroup):

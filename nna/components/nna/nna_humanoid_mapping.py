@@ -7,6 +7,7 @@ from ... import nna_utils_tree
 
 
 class AddNNAHumanoidComponentOperator(bpy.types.Operator):
+	"""Specifies options for the automapping of the Unity compatible humanoid rig"""
 	bl_idname = "nna.add_nna_humanoid"
 	bl_label = "Add Humanoid Component"
 	bl_options = {"REGISTER", "UNDO"}
@@ -23,16 +24,8 @@ class AddNNAHumanoidComponentOperator(bpy.types.Operator):
 			return {"CANCELLED"}
 
 
-def display_nna_humanoid_component(object, layout, json_dict):
-	row = layout.row()
-	row.label(text="Locomotion Type")
-	row.label(text=json_dict["lc"] if "lc" in json_dict else "default (planti)")
-	row = layout.row()
-	row.label(text="No Jaw Mapping")
-	row.label(text=str(json_dict["nj"]) if "nj" in json_dict else "default (False)")
-
-
 class EditNNAHumanoidComponentOperator(bpy.types.Operator):
+	"""Specifies options for the automapping of the Unity compatible humanoid rig"""
 	bl_idname = "nna.edit_nna_humanoid"
 	bl_label = "Edit Humanoid Component"
 	bl_options = {"REGISTER", "UNDO"}
@@ -73,7 +66,17 @@ class EditNNAHumanoidComponentOperator(bpy.types.Operator):
 		self.layout.prop(self, "no_jaw", expand=True)
 
 
+def display_nna_humanoid_component(object, layout, json_dict):
+	row = layout.row()
+	row.label(text="Locomotion Type")
+	row.label(text=json_dict["lc"] if "lc" in json_dict else "default (planti)")
+	row = layout.row()
+	row.label(text="No Jaw Mapping")
+	row.label(text=str(json_dict["nj"]) if "nj" in json_dict else "default (False)")
+
+
 class NNAHumanoidNameDefinitionOperator(bpy.types.Operator):
+	"""Specifies options for the automapping of the Unity compatible humanoid rig"""
 	bl_idname = "nna.nna_humanoid_name_definition"
 	bl_label = "NNA Humanoid Name Definition"
 	bl_options = {"REGISTER", "UNDO"}

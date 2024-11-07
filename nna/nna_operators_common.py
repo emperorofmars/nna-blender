@@ -5,9 +5,7 @@ from . import nna_utils_name
 
 
 class InitializeNNAOperator(bpy.types.Operator):
-	"""Creates the root `$nna` object in the scene.
-	If the `nna_init_collection` property is set, it will create it in that collection.
-	"""
+	"""Creates the root `$nna` object in the active collection"""
 	bl_idname = "nna.init"
 	bl_label = "Initialize NNA in Active Collection"
 	bl_options = {"REGISTER", "UNDO"}
@@ -29,7 +27,7 @@ class InitializeNNAOperator(bpy.types.Operator):
 
 
 class CreateNNATargetingObjectOperator(bpy.types.Operator):
-	"""Creates a new targeting object in the `$nna` root for the specified `target_id`"""
+	"""Creates a new targeting object in the `$nna` root for the selected node (Object or Bone)"""
 	bl_idname = "nna.create_targeting_object"
 	bl_label = "Initializie NNA for this Object"
 	bl_options = {"REGISTER", "UNDO"}
@@ -43,7 +41,7 @@ class CreateNNATargetingObjectOperator(bpy.types.Operator):
 
 
 class RemoveNNATargetingObjectOperator(bpy.types.Operator):
-	"""Removes the targeting object in the `$nna` root for the specified `target_id`"""
+	"""Removes the targeting object in the `$nna` root for the selected node (Object or Bone)"""
 	bl_idname = "nna.remove_targeting_object"
 	bl_label = "Remove NNA from this Object"
 	bl_options = {"REGISTER", "UNDO"}
@@ -65,7 +63,7 @@ class RemoveNNATargetingObjectOperator(bpy.types.Operator):
 
 
 class RemoveNNAJsonComponentOperator(bpy.types.Operator):
-	"""Removes a component, specified by `component_index` in the serialized Json definition for the `target_id`"""
+	"""Removes this component"""
 	bl_idname = "nna.remove_json_component"
 	bl_label = "Remove Json Component"
 	bl_options = {"REGISTER", "UNDO"}
@@ -87,9 +85,7 @@ class RemoveNNAJsonComponentOperator(bpy.types.Operator):
 
 
 class RemoveNNANameDefinitionOperator(bpy.types.Operator):
-	"""Renames a Node (Object or Bone), specified by `target_id` to its original name, without the appended NNA name definition.
-	The start index in the name of the NNA definition must be specified in `name_definition_index`.
-	"""
+	"""Rename this bode (Object or Bone), to its original name, without the appended NNA name definition."""
 	bl_idname = "nna.remove_name_definition"
 	bl_label = "Remove Name Definition"
 	bl_options = {"REGISTER", "UNDO"}

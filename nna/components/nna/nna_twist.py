@@ -7,6 +7,7 @@ from ... import nna_utils_tree
 
 
 class AddNNATwistComponentOperator(bpy.types.Operator):
+	"""Specifies a twist-bone constraint"""
 	bl_idname = "nna.add_nna_twist"
 	bl_label = "Add Twist Component"
 	bl_options = {"REGISTER", "UNDO"}
@@ -23,16 +24,8 @@ class AddNNATwistComponentOperator(bpy.types.Operator):
 			return {"CANCELLED"}
 
 
-def display_nna_twist_component(object, layout, json_dict):
-	row = layout.row()
-	row.label(text="weight")
-	row.label(text=str(json_dict["w"]) if "w" in json_dict else "default (0.5)")
-	row = layout.row()
-	row.label(text="source")
-	row.label(text=json_dict["s"] if "s" in json_dict else "default (grandparent)")
-
-
 class EditNNATwistComponentOperator(bpy.types.Operator):
+	"""Specifies a twist-bone constraint"""
 	bl_idname = "nna.edit_nna_twist"
 	bl_label = "Edit Twist Component"
 	bl_options = {"REGISTER", "UNDO"}
@@ -81,7 +74,17 @@ class EditNNATwistComponentOperator(bpy.types.Operator):
 			self.layout.prop(context.scene, "nna_twist_bone_selector", text="Source Bone")
 
 
+def display_nna_twist_component(object, layout, json_dict):
+	row = layout.row()
+	row.label(text="weight")
+	row.label(text=str(json_dict["w"]) if "w" in json_dict else "default (0.5)")
+	row = layout.row()
+	row.label(text="source")
+	row.label(text=json_dict["s"] if "s" in json_dict else "default (grandparent)")
+
+
 class NNATwistNameDefinitionOperator(bpy.types.Operator):
+	"""Specifies a twist-bone constraint"""
 	bl_idname = "nna.nna_twist_name_definition"
 	bl_label = "NNA Twist Name Definition"
 	bl_options = {"REGISTER", "UNDO"}
