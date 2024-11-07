@@ -144,10 +144,10 @@ def name_display_nna_twist(layout, name: str):
 	match = re.search(_Match, name)
 	row = layout.row()
 	row.label(text="weight")
-	row.label(text=str(match.groupdict()["weight"]) if "weight" in match.groupdict() and match.groupdict()["weight"] else "default (0.5)")
+	row.label(text=str(match.groupdict()["weight"]) if match.groupdict()["weight"] else "default (0.5)")
 	row = layout.row()
 	row.label(text="source")
-	row.label(text=match.groupdict()["source_node_path"] if "source_node_path" in match.groupdict() and match.groupdict()["source_node_path"] else "default (grandparent)")
+	row.label(text=match.groupdict()["source_node_path"] if match.groupdict()["source_node_path"] else "default (grandparent)")
 
 
 nna_types = {

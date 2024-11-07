@@ -127,10 +127,10 @@ def name_display_nna_humanoid(layout, name: str):
 	match = re.search(_Match, name)
 	row = layout.row()
 	row.label(text="Locomotion Type")
-	row.label(text="Digitigrade" if "digi" in match.groupdict() and match.groupdict()["digi"] else "default (Plantigrade)")
+	row.label(text="Digitigrade" if match.groupdict()["digi"] else "default (Plantigrade)")
 	row = layout.row()
 	row.label(text="No Jaw Mapping")
-	row.label(text="True" if "no_jaw" in match.groupdict() and match.groupdict()["no_jaw"] else "False")
+	row.label(text="True" if match.groupdict()["no_jaw"] else "False")
 
 
 nna_types = {
