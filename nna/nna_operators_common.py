@@ -65,7 +65,7 @@ class RemoveNNATargetingObjectOperator(bpy.types.Operator):
 
 
 class RemoveNNAJsonComponentOperator(bpy.types.Operator):
-	"""Removes a component, specified py `component_index` in the serialized Json definition for the `target_id`"""
+	"""Removes a component, specified by `component_index` in the serialized Json definition for the `target_id`"""
 	bl_idname = "nna.remove_json_component"
 	bl_label = "Remove Json Component"
 	bl_options = {"REGISTER", "UNDO"}
@@ -87,7 +87,7 @@ class RemoveNNAJsonComponentOperator(bpy.types.Operator):
 
 
 class RemoveNNANameDefinitionOperator(bpy.types.Operator):
-	"""Renames a Node (Object or Bone), specified py `target_id` to its original name, without the appended NNA name definition.
+	"""Renames a Node (Object or Bone), specified by `target_id` to its original name, without the appended NNA name definition.
 	The start index in the name of the NNA definition must be specified in `name_definition_index`.
 	"""
 	bl_idname = "nna.remove_name_definition"

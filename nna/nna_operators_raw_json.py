@@ -4,6 +4,7 @@ from . import nna_utils_json
 
 
 class EditNNARawJsonOperator(bpy.types.Operator):
+	"""Edit the raw Json for the whole object"""
 	bl_idname = "nna.edit_raw_json"
 	bl_label = "Edit Raw NNA Json Object"
 	bl_options = {"REGISTER", "UNDO"}
@@ -30,6 +31,7 @@ class EditNNARawJsonOperator(bpy.types.Operator):
 
 
 class AddNNARawJsonComponentOperator(bpy.types.Operator):
+	"""Add a new component specified in raw Json"""
 	bl_idname = "nna.add_raw_json_component"
 	bl_label = "Add Raw Json Component"
 	bl_options = {"REGISTER", "UNDO"}
@@ -55,6 +57,7 @@ class AddNNARawJsonComponentOperator(bpy.types.Operator):
 
 
 class EditNNARawJsonComponentOperator(bpy.types.Operator):
+	"""Edit the raw Json of this component"""
 	bl_idname = "nna.edit_raw_json_component"
 	bl_label = "Edit Raw Json Component"
 	bl_options = {"REGISTER", "UNDO"}

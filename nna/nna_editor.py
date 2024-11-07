@@ -55,22 +55,22 @@ def draw_nna_editor(self, context, target_id, state):
 			button.target_id = target_id
 		case nna_utils_tree.NNAObjectState.IsRootObjectWithTargeting:
 			self.layout.label(text="This is the Json definition for: The Scene Root")
-			draw_nna_json_editor(self, context, target_id)
+			_draw_nna_json_editor(self, context, target_id)
 		case nna_utils_tree.NNAObjectState.NotInited:
-			draw_nna_name_editor(self, context, target_id)
+			_draw_nna_name_editor(self, context, target_id)
 			self.layout.separator(type="LINE", factor=2)
 			box = self.layout.box()
 			box.label(text="Json Components Not Enabled")
 			button = box.operator(operator=nna_operators_common.InitializeNNAOperator.bl_idname)
 			button.nna_init_collection = context.collection.name
 		case nna_utils_tree.NNAObjectState.InitedOutsideTree:
-			draw_nna_name_editor(self, context, target_id)
+			_draw_nna_name_editor(self, context, target_id)
 			self.layout.separator(type="LINE", factor=2)
 			box = self.layout.box()
 			box.label(text="Json Components Not Enabled")
 			box.label(text="This Node is outside the NNA tree!")
 		case nna_utils_tree.NNAObjectState.InitedInsideTree:
-			if(not draw_nna_name_editor(self, context, target_id)):
+			if(not _draw_nna_name_editor(self, context, target_id)):
 				self.layout.separator(type="LINE", factor=2)
 				box = self.layout.box()
 				box.label(text="Json Components Not Enabled")
@@ -79,31 +79,31 @@ def draw_nna_editor(self, context, target_id, state):
 		case nna_utils_tree.NNAObjectState.IsTargetingObject:
 			if(target_id == "$root"):
 				self.layout.label(text="This is the Json definition for: The Scene Root")
-				draw_nna_json_editor(self, context, "$nna")
+				_draw_nna_json_editor(self, context, "$nna")
 			else:
 				self.layout.label(text="This is the Json definition for: " + target_id[8:])
-				_draw_nna_editor_for_target(self, context, target_id[8:])
+				_draw_nna_editors_for_target(self, context, target_id[8:])
 		case nna_utils_tree.NNAObjectState.IsJsonDefinition:
 			if(not context.object.parent.name[8:]):
 				self.layout.label(text="This part of the Json definition for: The Scene Root" + context.object.parent.name[8:])
-				draw_nna_json_editor(self, context, "$nna")
+				_draw_nna_json_editor(self, context, "$nna")
 			else:
 				self.layout.label(text="This part of the Json definition for: " + context.object.parent.name[8:])
-				_draw_nna_editor_for_target(self, context, context.object.parent.name[8:])
+				_draw_nna_editors_for_target(self, context, context.object.parent.name[8:])
 		case nna_utils_tree.NNAObjectState.IsInvalidTargetingObject:
 			self.layout.label(text="Invalid Target: '" + context.object.name[8:] + "' does NOT exist!")
 		case nna_utils_tree.NNAObjectState.HasTargetingObject:
-			_draw_nna_editor_for_target(self, context, target_id)
+			_draw_nna_editors_for_target(self, context, target_id)
 
-def _draw_nna_editor_for_target(self, context, target_id):
-	if(draw_nna_name_editor(self, context, target_id, True)):
+def _draw_nna_editors_for_target(self, context, target_id):
+	if(_draw_nna_name_editor(self, context, target_id, True)):
 		box = self.layout.box()
 		box.label(text="Warning: This Node has both a Name and Component definition.")
 		box.label(text="It is recommended to use only one.")
-	draw_nna_json_editor(self, context, target_id)
+	_draw_nna_json_editor(self, context, target_id)
 
 
-def draw_nna_name_editor(self, context, target_id, ignore_no_match = False) -> bool:
+def _draw_nna_name_editor(self, context, target_id, ignore_no_match = False) -> bool:
 	name_match_operators = nna_registry.get_nna_operators(nna_registry.NNAFunctionType.NameMatch)
 	name_draw_operators = nna_registry.get_nna_operators(nna_registry.NNAFunctionType.NameDisplay)
 
@@ -137,7 +137,7 @@ def draw_nna_name_editor(self, context, target_id, ignore_no_match = False) -> b
 	return name_definition_match
 
 
-def draw_nna_json_editor(self, context, target_id):
+def _draw_nna_json_editor(self, context, target_id):
 	jsonText = nna_utils_json.get_json_from_target_id(target_id)
 	
 	preview_operators = nna_registry.get_nna_operators(nna_registry.NNAFunctionType.JsonDisplay)

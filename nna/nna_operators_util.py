@@ -5,6 +5,7 @@ from . import nna_utils_name
 
 
 class SetActiveObjectOperator(bpy.types.Operator):
+	"""Select the specified object in the scene"""
 	bl_idname = "nna.util_set_active_object"
 	bl_label = "Select"
 	bl_options = {"REGISTER", "UNDO"}
@@ -21,6 +22,7 @@ class SetActiveObjectOperator(bpy.types.Operator):
 
 
 class CreateNewObjectOperator(bpy.types.Operator):
+	"""Create a new object with the specified name"""
 	bl_idname = "nna.util_create_new_object"
 	bl_label = "Select"
 	bl_options = {"REGISTER", "UNDO"}
