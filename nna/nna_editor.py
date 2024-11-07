@@ -7,6 +7,84 @@ from . import nna_registry
 from . import nna_utils_tree
 from . import nna_utils_json
 
+
+class NNAObjectPanel(bpy.types.Panel):
+	bl_idname = "OBJECT_PT_nna_editor"
+	bl_label = "NNA Editor"
+	bl_region_type = "WINDOW"
+	bl_space_type = "PROPERTIES"
+	bl_category = "NNA"
+	bl_context = "object"
+
+	@classmethod
+	def poll(cls, context):
+		return (context.object is not None)
+
+	def draw_header(self, context):
+		pass
+		
+	def draw(self, context):
+		draw_nna_editor(self, context, context.object.name, nna_utils_tree.determine_nna_object_state(context.object))
+
+
+class NNABonePanel(bpy.types.Panel):
+	bl_idname = "OBJECT_PT_nna_bone_editor"
+	bl_label = "NNA Bone Editor"
+	bl_region_type = "WINDOW"
+	bl_space_type = "PROPERTIES"
+	bl_category = "NNA"
+	bl_context = "bone"
+
+	@classmethod
+	def poll(cls, context):
+		return (context.object is not None)
+
+	def draw_header(self, context):
+		pass
+		
+	def draw(self, context):
+		draw_nna_editor(self, context, context.object.name + "$" + context.bone.name, nna_utils_tree.determine_nna_bone_state(context.object, context.bone))
+
+
+def draw_nna_editor(self, context, target_id, state):
+	match state:
+		case nna_utils_tree.NNAObjectState.IsRootObject:
+			button = self.layout.operator(nna_operators_common.CreateNNATargetingObjectOperator.bl_idname, text="Initializie NNA for the Export Root")
+			button.target_id = target_id
+		case nna_utils_tree.NNAObjectState.IsRootObjectWithTargeting:
+			draw_nna_json_editor(self, context, target_id)
+		case nna_utils_tree.NNAObjectState.NotInited:
+			draw_nna_name_editor(self, context, target_id)
+			self.layout.separator(type="LINE", factor=2)
+			box = self.layout.box()
+			box.label(text="Json Components Not Enabled")
+			button = box.operator(operator=nna_operators_common.InitializeNNAOperator.bl_idname)
+			button.nna_init_collection = context.collection.name
+		case nna_utils_tree.NNAObjectState.InitedOutsideTree:
+			draw_nna_name_editor(self, context, target_id)
+			self.layout.separator(type="LINE", factor=2)
+			box = self.layout.box()
+			box.label(text="Json Components Not Enabled")
+			box.label(text="This Node is outside the NNA tree!")
+		case nna_utils_tree.NNAObjectState.InitedInsideTree:
+			if(not draw_nna_name_editor(self, context, target_id)):
+				self.layout.separator(type="LINE", factor=2)
+				box = self.layout.box()
+				box.label(text="Json Components Not Enabled")
+				button = box.operator(nna_operators_common.CreateNNATargetingObjectOperator.bl_idname)
+				button.target_id = target_id
+		case nna_utils_tree.NNAObjectState.IsTargetingObject:
+			self.layout.label(text="This is the Json definition for: " + ("The Scene Root" if target_id == "$root" else target_id[8:]))
+		case nna_utils_tree.NNAObjectState.IsJsonDefinition:
+			self.layout.label(text="This part of the Json definition for: " + context.object.parent.name[8:])
+		case nna_utils_tree.NNAObjectState.HasTargetingObject:
+			if(draw_nna_name_editor(self, context, target_id)):
+				box = self.layout.box()
+				box.label(text="Warning: This Node has both a Name and Component definition.")
+				box.label(text="It is recommended to use only one.")
+			draw_nna_json_editor(self, context, target_id)
+
+
 def draw_nna_name_editor(self, context, target_id) -> bool:
 	name_match_operators = nna_registry.get_nna_operators(nna_registry.NNAFunctionType.NameMatch)
 
