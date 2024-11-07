@@ -144,7 +144,7 @@ class SetAVAEyetrackingBoneLimitsNameDefinitionOperator(bpy.types.Operator):
 		self.layout.prop(self, "outer", expand=True)
 
 
-_Match = r"(?i)EyeBoneLimits(?P<up>[0-9]*[.][0-9]+),(?P<down>[0-9]*[.][0-9]+),(?P<in>[0-9]*[.][0-9]+),(?P<out>[0-9]*[.][0-9]+)?(?P<side>([._\-|:][lr])|[._\-|:\s]?(right|left))?$"
+_Match = r"(?i)EyeBoneLimits(?P<up>[0-9]*[.][0-9]+),(?P<down>[0-9]*[.][0-9]+),(?P<in>[0-9]*[.][0-9]+),(?P<out>[0-9]*[.][0-9]+)(?P<side>([._\-|:][lr])|[._\-|:\s]?(right|left))?$"
 
 def name_match_ava_eyetracking_bone_limits(name: str) -> int:
 	match = re.search(_Match, name)
