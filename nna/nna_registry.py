@@ -14,13 +14,13 @@ The values must match the string value of the `NNAFunctionType` enum.
 Example:
 ```
 nna_types = {
-	"nna.twist": {
-		"json_add": AddNNATwistComponentOperator.bl_idname,
-		"json_edit": EditNNATwistComponentOperator.bl_idname,
-		"json_display": display_nna_twist_component,
-		"name_match": name_match_nna_twist,
-		"name_set": NNATwistNameDefinitionOperator.bl_idname,
-		"name_display": name_display_nna_twist
+	"your.component_name": {
+		"json_add": AddYourJsonComponent.bl_idname,
+		"json_edit": EditYourJsonComponent.bl_idname,
+		"json_display": display_your_json_component,
+		"name_match": match_your_name_definition,
+		"name_set": SetYourNameDefinition.bl_idname,
+		"name_display": display_your_name_definition
 	},
 }
 ```
@@ -30,23 +30,23 @@ class NNAFunctionType(StrEnum):
 	"""Types of hot-loadable code for an NNA type.
 		
 	* `JsonAdd`: str (bl_idname of a Blender operator)
-		Properties:
+		Operator Properties:
 			* target_id: str
 		Creates a new component of your NNA type.
 	* `JsonEdit`: str (bl_idname of a Blender operator)
-		Properties:
+		Operator Properties:
 			* target_id: str
 			* component_index: int
 		Lets the user edit the values of your NNA component
 	`JsonRemove`: str (bl_idname of a Blender operator)
-		Properties:
+		Operator Properties:
 			* target_id: str
 			* component_index: int
 		Removes the NNA component. Unless your type does something special, this is not needed. NNA can just remove it.
 	`JsonDisplay`: function(object, layout, json_dict)
 		Callback function which draws your NNA component, passed as a dict
 	`NameSet`: str (bl_idname of a Blender operator)
-		Properties:
+		Operator Properties:
 			* target_id: str
 		Renames the Node (Object or Bone) to add your NNA name definition.
 	`NameMatch`: function(name: str) -> int

@@ -1,9 +1,14 @@
 import re
 import bpy
 
+from ...nna_registry import NNAFunctionType
+
 from ... import nna_utils_name
 from ... import nna_utils_json
 from ... import nna_utils_tree
+
+
+_nna_name = "nna.humanoid"
 
 
 class AddNNAHumanoidComponentOperator(bpy.types.Operator):
@@ -16,7 +21,7 @@ class AddNNAHumanoidComponentOperator(bpy.types.Operator):
 	
 	def execute(self, context):
 		try:
-			nna_utils_json.add_component(self.target_id, {"t":"nna.humanoid"})
+			nna_utils_json.add_component(self.target_id, {"t":_nna_name})
 			self.report({'INFO'}, "Component successfully added")
 			return {"FINISHED"}
 		except ValueError as error:
@@ -129,12 +134,12 @@ def name_display_nna_humanoid(layout, name: str):
 
 
 nna_types = {
-	"nna.humanoid": {
-		"json_add": AddNNAHumanoidComponentOperator.bl_idname,
-		"json_edit": EditNNAHumanoidComponentOperator.bl_idname,
-		"json_display": display_nna_humanoid_component,
-		"name_set": NNAHumanoidNameDefinitionOperator.bl_idname,
-		"name_match": name_match_nna_humanoid,
-		"name_display": name_display_nna_humanoid
+	_nna_name: {
+		NNAFunctionType.JsonAdd: AddNNAHumanoidComponentOperator.bl_idname,
+		NNAFunctionType.JsonEdit: EditNNAHumanoidComponentOperator.bl_idname,
+		NNAFunctionType.JsonDisplay: display_nna_humanoid_component,
+		NNAFunctionType.NameSet: NNAHumanoidNameDefinitionOperator.bl_idname,
+		NNAFunctionType.NameMatch: name_match_nna_humanoid,
+		NNAFunctionType.NameDisplay: name_display_nna_humanoid
 	},
 }

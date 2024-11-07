@@ -1,10 +1,14 @@
 import bpy
 
+from ...nna_registry import NNAFunctionType
 from ...nna_operators_util import CreateNewObjectOperator, SetActiveObjectOperator
 
 from ... import nna_utils_name
 from ... import nna_utils_json
 from ... import nna_utils_tree
+
+
+_nna_name = "ava.avatar"
 
 
 class AddAVAAvatarComponentOperator(bpy.types.Operator):
@@ -19,7 +23,7 @@ class AddAVAAvatarComponentOperator(bpy.types.Operator):
 	
 	def execute(self, context):
 		try:
-			nna_utils_json.add_component(self.target_id, {"t":"ava.avatar"})
+			nna_utils_json.add_component(self.target_id, {"t":_nna_name})
 			self.report({'INFO'}, "Component successfully added")
 			return {"FINISHED"}
 		except ValueError as error:
@@ -85,12 +89,12 @@ def name_match_ava_viewport_first_person(name: str) -> int:
 
 
 nna_types = {
-	"ava.avatar": {
-		"json_add": AddAVAAvatarComponentOperator.bl_idname,
-		"json_edit": EditAVAAvatarComponentOperator.bl_idname,
-		"json_display": display_ava_avatar_component,
+	_nna_name: {
+		NNAFunctionType.JsonAdd: AddAVAAvatarComponentOperator.bl_idname,
+		NNAFunctionType.JsonEdit: EditAVAAvatarComponentOperator.bl_idname,
+		NNAFunctionType.JsonDisplay: display_ava_avatar_component,
 	},
 	"ava.viewport_first_person": {
-		"name_match": name_match_ava_viewport_first_person,
+		NNAFunctionType.NameMatch: name_match_ava_viewport_first_person,
 	}
 }

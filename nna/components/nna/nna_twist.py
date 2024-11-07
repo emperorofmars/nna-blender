@@ -1,9 +1,14 @@
 import bpy
 import re
 
+from ...nna_registry import NNAFunctionType
+
 from ... import nna_utils_name
 from ... import nna_utils_json
 from ... import nna_utils_tree
+
+
+_nna_name = "nna.twist"
 
 
 class AddNNATwistComponentOperator(bpy.types.Operator):
@@ -16,7 +21,7 @@ class AddNNATwistComponentOperator(bpy.types.Operator):
 	
 	def execute(self, context):
 		try:
-			nna_utils_json.add_component(self.target_id, {"t":"nna.twist"})
+			nna_utils_json.add_component(self.target_id, {"t":_nna_name})
 			self.report({'INFO'}, "Component successfully added")
 			return {"FINISHED"}
 		except ValueError as error:
@@ -33,7 +38,7 @@ class EditNNATwistComponentOperator(bpy.types.Operator):
 	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
 	component_index: bpy.props.IntProperty(name = "component_index", default=-1) # type: ignore
 
-	weight: bpy.props.FloatProperty(name="weight", default=0.5, min=0, max=1) # type: ignore
+	weight: bpy.props.FloatProperty(name="weight", default=0.5, min=0, max=1, precision=2, step=2) # type: ignore
 	
 	def invoke(self, context, event):
 		json_component = nna_utils_json.get_component(self.target_id, self.component_index)
@@ -91,7 +96,7 @@ class NNATwistNameDefinitionOperator(bpy.types.Operator):
 
 	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
 
-	weight: bpy.props.FloatProperty(name="weight", default=0.5, min=0, max=1) # type: ignore
+	weight: bpy.props.FloatProperty(name="weight", default=0.5, min=0, max=1, precision=2, step=2) # type: ignore
 	
 	def invoke(self, context, event):
 		base_object = nna_utils_tree.get_base_object_by_target_id(self.target_id)
@@ -146,13 +151,13 @@ def name_display_nna_twist(layout, name: str):
 
 
 nna_types = {
-	"nna.twist": {
-		"json_add": AddNNATwistComponentOperator.bl_idname,
-		"json_edit": EditNNATwistComponentOperator.bl_idname,
-		"json_display": display_nna_twist_component,
-		"name_set": NNATwistNameDefinitionOperator.bl_idname,
-		"name_match": name_match_nna_twist,
-		"name_display": name_display_nna_twist
+	_nna_name: {
+		NNAFunctionType.JsonAdd: AddNNATwistComponentOperator.bl_idname,
+		NNAFunctionType.JsonEdit: EditNNATwistComponentOperator.bl_idname,
+		NNAFunctionType.JsonDisplay: display_nna_twist_component,
+		NNAFunctionType.NameSet: NNATwistNameDefinitionOperator.bl_idname,
+		NNAFunctionType.NameMatch: name_match_nna_twist,
+		NNAFunctionType.NameDisplay: name_display_nna_twist
 	},
 }
 

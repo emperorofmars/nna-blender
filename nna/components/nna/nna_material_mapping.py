@@ -1,8 +1,13 @@
 import bpy
 
+from ...nna_registry import NNAFunctionType
+
 from ... import nna_utils_name
 from ... import nna_utils_json
 from ... import nna_utils_tree
+
+
+_nna_name = "nna.material_mapping"
 
 
 class AddNNAMaterialMappingComponentOperator(bpy.types.Operator):
@@ -15,7 +20,7 @@ class AddNNAMaterialMappingComponentOperator(bpy.types.Operator):
 	
 	def execute(self, context):
 		try:
-			nna_utils_json.add_component(self.target_id, {"t":"nna.material_mapping","slots":[]})
+			nna_utils_json.add_component(self.target_id, {"t":_nna_name,"slots":[]})
 			self.report({'INFO'}, "Component successfully added")
 			return {"FINISHED"}
 		except ValueError as error:
@@ -127,10 +132,10 @@ class NNAMaterialSlotsMoveOperator(bpy.types.Operator):
 
 
 nna_types = {
-	"nna.material_mapping": {
-		"json_add": AddNNAMaterialMappingComponentOperator.bl_idname,
-		"json_edit": EditNNAMaterialMappingComponentOperator.bl_idname,
-		"json_display": display_nna_material_mapping_component,
+	_nna_name: {
+		NNAFunctionType.JsonAdd: AddNNAMaterialMappingComponentOperator.bl_idname,
+		NNAFunctionType.JsonEdit: EditNNAMaterialMappingComponentOperator.bl_idname,
+		NNAFunctionType.JsonDisplay: display_nna_material_mapping_component,
 	},
 }
 

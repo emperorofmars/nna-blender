@@ -1,10 +1,13 @@
 import bpy
 
+from ...nna_registry import NNAFunctionType
 from ...nna_operators_util import CreateNewObjectOperator, SetActiveObjectOperator
 
 from ... import nna_utils_name
 from ... import nna_utils_json
 from ... import nna_utils_tree
+
+_nna_name = "vrc.controller_mapping"
 
 
 class AddVRCControllerMappingComponentOperator(bpy.types.Operator):
@@ -18,7 +21,7 @@ class AddVRCControllerMappingComponentOperator(bpy.types.Operator):
 	def execute(self, context):
 		try:
 			nna_utils_json.add_component(self.target_id, {
-				"t":"vrc.controller_mapping",
+				"t": _nna_name,
 				"base": None,
 				"additive": None,
 				"gesture": None,
@@ -118,9 +121,9 @@ def display_vrc_controller_mapping_component(object, layout, json_component):
 
 
 nna_types = {
-	"vrc.controller_mapping": {
-		"json_add": AddVRCControllerMappingComponentOperator.bl_idname,
-		"json_edit": EditVRCControllerMappingComponentOperator.bl_idname,
-		"json_display": display_vrc_controller_mapping_component,
+	_nna_name: {
+		NNAFunctionType.JsonAdd: AddVRCControllerMappingComponentOperator.bl_idname,
+		NNAFunctionType.JsonEdit: EditVRCControllerMappingComponentOperator.bl_idname,
+		NNAFunctionType.JsonDisplay: display_vrc_controller_mapping_component,
 	},
 }
