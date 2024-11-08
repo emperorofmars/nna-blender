@@ -154,7 +154,7 @@ class SetAVAEyetrackingBoneLimitsNameDefinitionOperator(bpy.types.Operator):
 
 	def invoke(self, context, event):
 		target = nna_utils_tree.get_object_by_target_id(self.target_id)
-		match(nna_utils_name.detect_symmetry(nna_utils_name.get_nna_name(self.target_id))):
+		match(nna_utils_name.detect_side(nna_utils_name.get_nna_name(self.target_id))):
 			case nna_utils_name.SymmetrySide.Both: self.side = "_"; self.side_changable = True
 			case nna_utils_name.SymmetrySide.Left: self.side = ".L"; self.side_changable = False
 			case nna_utils_name.SymmetrySide.Right: self.side = ".R"; self.side_changable = False
@@ -198,7 +198,7 @@ def name_match_ava_eyetracking_bone_limits(name: str) -> int:
 def name_display_ava_eyetracking_bone_limits(layout, name: str):
 	match = re.search(_Match, name)
 	if(match.groupdict()["side"]):
-		side = nna_utils_name.detect_symmetry(name)
+		side = nna_utils_name.detect_side(name)
 		row = layout.row(); row.label(text="Limits for the " + str(side) + " eye.")
 	else:
 		row = layout.row(); row.label(text="Limits for both eyes.")

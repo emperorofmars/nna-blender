@@ -22,7 +22,7 @@ def get_symmetry(name: str) -> tuple[str, str]:
 	else:
 		return (name, "")
 
-def detect_symmetry(name: str) -> SymmetrySide:
+def detect_side(name: str) -> SymmetrySide:
 	if(_match_l.search(name)): return SymmetrySide.Left
 	elif(_match_r.search(name)): return SymmetrySide.Right
 	else: return SymmetrySide.Both
