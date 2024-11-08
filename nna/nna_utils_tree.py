@@ -62,6 +62,14 @@ def determine_nna_bone_state(object: bpy.types.Object, bone: bpy.types.Bone) -> 
 	return NNAObjectState.InitedOutsideTree
 
 
+def determine_nna_meta() -> bpy.types.Object | None:
+	for child in find_nna_root().children:
+		if(child.name == "$meta"):
+			return child
+	else:
+		return None
+
+
 def find_nna_root_collection() -> bpy.types.Collection | None:
 	for collection in [bpy.context.scene.collection, *bpy.context.scene.collection.children_recursive]:
 		if(find_nna_root_in_collection(collection)):

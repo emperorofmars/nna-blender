@@ -14,19 +14,19 @@ class NNAExportFBX(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
 
 	def invoke(self, context, _event):
 		# Determine export file name
-		export_name = ""
-		nna_collection = nna_utils_tree.find_nna_root_collection()
-		if(nna_collection != bpy.context.scene.collection):
-			export_name = nna_collection.name
-		# TODO also check $meta definition
-		else:
-			blend_filepath = context.blend_data.filepath
-			if not blend_filepath:
-				blend_filepath = nna_utils_tree.find_nna_root_collection().name
+		if(not self.filepath):
+			export_name = ""
+			nna_collection = nna_utils_tree.find_nna_root_collection()
+			if(nna_collection != bpy.context.scene.collection):
+				export_name = nna_collection.name
+			# TODO also check $meta definition
 			else:
-				blend_filepath = os.path.splitext(blend_filepath)[0]
-		
-		self.filepath = export_name
+				blend_filepath = context.blend_data.filepath
+				if not blend_filepath:
+					blend_filepath = nna_utils_tree.find_nna_root_collection().name
+				else:
+					blend_filepath = os.path.splitext(blend_filepath)[0]
+			self.filepath = export_name
 
 		context.window_manager.fileselect_add(self)
 		return {'RUNNING_MODAL'}

@@ -1,6 +1,8 @@
 import json
 import bpy
 
+from . import nna_meta
+
 from .exporter.export_helper import NNAExportFBX
 
 from . import nna_operators_common
@@ -56,10 +58,16 @@ def draw_nna_editor(self, context, target_id, state):
 			self.layout.operator(NNAExportFBX.bl_idname)
 			self.layout.separator(type="LINE", factor=2)
 
+			_draw_meta_editor(self, context)
+			self.layout.separator(type="LINE", factor=2)
+
 			button = self.layout.operator(nna_operators_common.CreateNNATargetingObjectOperator.bl_idname, text="Initializie NNA for the Export Root")
 			button.target_id = target_id
 		case nna_utils_tree.NNAObjectState.IsRootObjectWithTargeting:
 			self.layout.operator(NNAExportFBX.bl_idname)
+			self.layout.separator(type="LINE", factor=2)
+
+			_draw_meta_editor(self, context)
 			self.layout.separator(type="LINE", factor=2)
 
 			self.layout.label(text="This is the NNA definition for: The Scene Root")
@@ -108,6 +116,33 @@ def _draw_nna_editors_for_target(self, context, target_id):
 		box.label(text="Warning: This Node has both a Name and Component definition.")
 		box.label(text="It is recommended to use only one.")
 	_draw_nna_json_editor(self, context, target_id)
+
+
+def _draw_meta_editor(self, context):
+	meta = nna_utils_tree.determine_nna_meta()
+	box = self.layout.box()
+	box.label(text="Asset Meta")
+	if(meta):
+		json_text = nna_utils_json.get_json_from_targeting_object(meta)
+		json_meta = json.loads(json_text) if json_text else {}
+
+		row = box.row(); row.label(text="Name"); row.label(text=json_meta["name"] if "name" in json_meta else "not set")
+		if("version" in json_meta): row = box.row(); row.label(text="Version"); row.label(text=json_meta["version"])
+		row = box.row(); row.label(text="Author"); row.label(text=json_meta["author"] if "author" in json_meta else "not set")
+		if("url" in json_meta): row = box.row(); row.label(text="URL"); row.label(text=json_meta["url"])
+		if("license" in json_meta): row = box.row(); row.label(text="License"); row.label(text=json_meta["license"])
+		if("license_url" in json_meta): row = box.row(); row.label(text="License Link"); row.label(text=json_meta["license_url"])
+		if("documentation" in json_meta): row = box.row(); row.label(text="Documentation"); row.label(text=json_meta["documentation"])
+		if("documentation_url" in json_meta): row = box.row(); row.label(text="Documentation Link"); row.label(text=json_meta["documentation_url"])
+		if(len(json_meta.keys()) > 8):
+			box.separator(factor=1)
+			row = box.row(); row.label(text="Custom Properties")
+			for property in json_meta.keys():
+				if(property in ["name", "version", "author", "url", "license", "license_url", "documentation", "documentation_url"]): continue
+				row = json_meta.row(); row.label(text=property); row.label(text=str(json_meta[property]))
+		box.operator(nna_meta.EditNNAMetaOperator.bl_idname)
+	else:
+		box.operator(nna_meta.SetupNNAMetaOperator.bl_idname)
 
 
 def _draw_nna_name_editor(self, context, target_id, ignore_no_match = False) -> bool:
