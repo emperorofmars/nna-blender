@@ -1,6 +1,8 @@
 import json
 import bpy
 
+from .exporter.export_helper import NNAExportFBX
+
 from . import nna_operators_common
 from . import nna_operators_raw_json
 from . import nna_registry
@@ -51,9 +53,15 @@ class NNABonePanel(bpy.types.Panel):
 def draw_nna_editor(self, context, target_id, state):
 	match state:
 		case nna_utils_tree.NNAObjectState.IsRootObject:
+			self.layout.operator(NNAExportFBX.bl_idname)
+			self.layout.separator(type="LINE", factor=2)
+
 			button = self.layout.operator(nna_operators_common.CreateNNATargetingObjectOperator.bl_idname, text="Initializie NNA for the Export Root")
 			button.target_id = target_id
 		case nna_utils_tree.NNAObjectState.IsRootObjectWithTargeting:
+			self.layout.operator(NNAExportFBX.bl_idname)
+			self.layout.separator(type="LINE", factor=2)
+
 			self.layout.label(text="This is the NNA definition for: The Scene Root")
 			_draw_nna_json_editor(self, context, target_id)
 		case nna_utils_tree.NNAObjectState.NotInited:
