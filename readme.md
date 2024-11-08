@@ -3,6 +3,10 @@
 ## Blender 4.2+ Tooling
 ### Early in development version, do not use productively!
 
+Download the latest release: <https://github.com/emperorofmars/nna_blender/releases/latest>\
+Install it in Blender as a new extension from disk:\
+Under `Edit` → `Preferences` → `Get Extensions` find the upper right drop-down menu and press `Install from disk`.
+
 **Find the Unity counterpart here: <https://github.com/emperorofmars/nna_unity>**
 
 ---

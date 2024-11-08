@@ -1,9 +1,9 @@
 schema_version = "1.0.0"
 
 id = "nna_blender"
-version = "0.0.1"
+version = "0.0.2"
 name = "NNA Blender"
-tagline = "Blender Addon for Creating NNA Definitions"
+tagline = "Blender Extension for Creating NNA Definitions"
 maintainer = "Mars (https://squirrelbite.com)"
 # Supported types: "add-on", "theme"
 type = "add-on"
