@@ -204,7 +204,10 @@ def _draw_nna_json_editor(self, context, target_id):
 				row.label(text=str(component["t"]))
 
 				if(str(component["t"]) in preview_operators):
-					preview_operators[str(component["t"])](context.object, component_box, component)
+					try:
+						preview_operators[str(component["t"])](context.object, component_box, component)
+					except:
+						component_box.label(text="Invalid Definition!")
 				else:
 					for property in component.keys():
 						if(property == "t"): continue
@@ -232,7 +235,8 @@ def _draw_nna_json_editor(self, context, target_id):
 
 				if(idx < len(componentsList) - 1): col.separator(factor=1)
 		except ValueError as e:
-			box.label(text="Invalid Json: " + str(e))
+			box = self.layout.box()
+			box.label(text="Name Definition Error: " + str(e))
 	else:
 		box.label(text="No Components Added")
 	

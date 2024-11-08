@@ -26,10 +26,11 @@ class AddAVAEyetrackingBoneLimitsComponentOperator(bpy.types.Operator):
 		try:
 			nna_utils_json.add_component(self.target_id, {
 				"t": _nna_name,
-				"up": 15.,
-				"down": 12.,
-				"in": 15.,
-				"out": 16.,
+				"left_up": 15.,
+				"left_down": 12.,
+				"left_in": 15.,
+				"left_out": 16.,
+				"linked": True,
 			})
 			self.report({'INFO'}, "Component successfully added")
 			return {"FINISHED"}
@@ -49,18 +50,32 @@ class EditAVAEyetrackingBoneLimitsComponentOperator(bpy.types.Operator):
 	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
 	component_index: bpy.props.IntProperty(name = "component_index", default=-1) # type: ignore
 
-	up: bpy.props.FloatProperty(name="Up", default=15, min=0, soft_min=4, max=90, soft_max=30, precision=2, step=2) # type: ignore
-	down: bpy.props.FloatProperty(name="Down", default=12, min=0, soft_min=4, max=90, soft_max=30, precision=2, step=2) # type: ignore
-	inner: bpy.props.FloatProperty(name="In", default=15, min=0, soft_min=4, max=90, soft_max=30, precision=2, step=2) # type: ignore
-	outer: bpy.props.FloatProperty(name="Out", default=16, min=0, soft_min=4, max=90, soft_max=30, precision=2, step=2) # type: ignore
+	left_up: bpy.props.FloatProperty(name="Left Up", default=15, min=0, soft_min=4, max=90, soft_max=30, precision=2, step=2) # type: ignore
+	left_down: bpy.props.FloatProperty(name="Left Down", default=12, min=0, soft_min=4, max=90, soft_max=30, precision=2, step=2) # type: ignore
+	left_in: bpy.props.FloatProperty(name="Left In", default=15, min=0, soft_min=4, max=90, soft_max=30, precision=2, step=2) # type: ignore
+	left_out: bpy.props.FloatProperty(name="Left Out", default=16, min=0, soft_min=4, max=90, soft_max=30, precision=2, step=2) # type: ignore
+
+	linked: bpy.props.BoolProperty(name="Linked", default=True) # type: ignore
+
+	right_up: bpy.props.FloatProperty(name="Right Up", default=15, min=0, soft_min=4, max=90, soft_max=30, precision=2, step=2) # type: ignore
+	right_down: bpy.props.FloatProperty(name="Right Down", default=12, min=0, soft_min=4, max=90, soft_max=30, precision=2, step=2) # type: ignore
+	right_in: bpy.props.FloatProperty(name="Right In", default=15, min=0, soft_min=4, max=90, soft_max=30, precision=2, step=2) # type: ignore
+	right_out: bpy.props.FloatProperty(name="Right Out", default=16, min=0, soft_min=4, max=90, soft_max=30, precision=2, step=2) # type: ignore
 	
 	def invoke(self, context, event):
 		json_component = nna_utils_json.get_component(self.target_id, self.component_index)
 
-		if("up" in json_component): self.up = json_component["up"]
-		if("down" in json_component): self.down = json_component["down"]
-		if("in" in json_component): self.inner = json_component["in"]
-		if("out" in json_component): self.outer = json_component["out"]
+		if("left_up" in json_component): self.left_up = json_component["left_up"]
+		if("left_down" in json_component): self.left_down = json_component["left_down"]
+		if("left_in" in json_component): self.left_in = json_component["left_in"]
+		if("left_out" in json_component): self.left_out = json_component["left_out"]
+		
+		if("linked" in json_component): self.linked = json_component["linked"]
+
+		if("right_up" in json_component): self.right_up = json_component["right_up"]
+		if("right_down" in json_component): self.right_down = json_component["right_down"]
+		if("right_in" in json_component): self.right_in = json_component["right_in"]
+		if("right_out" in json_component): self.right_out = json_component["right_out"]
 
 		return context.window_manager.invoke_props_dialog(self)
 		
@@ -68,10 +83,18 @@ class EditAVAEyetrackingBoneLimitsComponentOperator(bpy.types.Operator):
 		try:
 			json_component = nna_utils_json.get_component(self.target_id, self.component_index)
 			
-			json_component["up"] = round(self.up, 2)
-			json_component["down"] = round(self.down, 2)
-			json_component["in"] = round(self.inner, 2)
-			json_component["out"] = round(self.outer, 2)
+			json_component["left_up"] = round(self.left_up, 2)
+			json_component["left_down"] = round(self.left_down, 2)
+			json_component["left_in"] = round(self.left_in, 2)
+			json_component["left_out"] = round(self.left_out, 2)
+			
+			json_component["linked"] = self.linked
+
+			if(not self.linked):
+				json_component["right_up"] = round(self.right_up, 2)
+				json_component["right_down"] = round(self.right_down, 2)
+				json_component["right_in"] = round(self.right_in, 2)
+				json_component["right_out"] = round(self.right_out, 2)
 
 			nna_utils_json.replace_component(self.target_id, json_component, self.component_index)
 			self.report({'INFO'}, "Component successfully edited")
@@ -81,17 +104,34 @@ class EditAVAEyetrackingBoneLimitsComponentOperator(bpy.types.Operator):
 			return {"CANCELLED"}
 	
 	def draw(self, context):
-		self.layout.prop(self, "up", expand=True)
-		self.layout.prop(self, "down", expand=True)
-		self.layout.prop(self, "inner", expand=True)
-		self.layout.prop(self, "outer", expand=True)
+		self.layout.prop(self, "linked", expand=True)
+
+		self.layout.prop(self, "left_up", expand=True)
+		self.layout.prop(self, "left_down", expand=True)
+		self.layout.prop(self, "left_in", expand=True)
+		self.layout.prop(self, "left_out", expand=True)
+
+		if(not self.linked):
+			self.layout.prop(self, "right_up", expand=True)
+			self.layout.prop(self, "right_down", expand=True)
+			self.layout.prop(self, "right_in", expand=True)
+			self.layout.prop(self, "right_out", expand=True)
 
 
 def display_ava_eyetracking_bone_limits_component(object, layout, json_component):
-	row = layout.row(); row.label(text="Up"); row.label(text=str(json_component["up"]))
-	row = layout.row(); row.label(text="Down"); row.label(text=str(json_component["down"]))
-	row = layout.row(); row.label(text="In"); row.label(text=str(json_component["in"]))
-	row = layout.row(); row.label(text="Out"); row.label(text=str(json_component["out"]))
+	row = layout.row(); row.label(text="Linked"); row.label(text=str(json_component["linked"]))
+	side_str = ""
+	if(not json_component["linked"]): side_str = "Left "
+	row = layout.row(); row.label(text=side_str + "Up"); row.label(text=str(json_component["left_up"]))
+	row = layout.row(); row.label(text=side_str + "Down"); row.label(text=str(json_component["left_down"]))
+	row = layout.row(); row.label(text=side_str + "In"); row.label(text=str(json_component["left_in"]))
+	row = layout.row(); row.label(text=side_str + "Out"); row.label(text=str(json_component["left_out"]))
+	if(not json_component["linked"]):
+		side_str = "Right "
+		row = layout.row(); row.label(text=side_str + "Up"); row.label(text=str(json_component["right_up"]))
+		row = layout.row(); row.label(text=side_str + "Down"); row.label(text=str(json_component["right_down"]))
+		row = layout.row(); row.label(text=side_str + "In"); row.label(text=str(json_component["right_in"]))
+		row = layout.row(); row.label(text=side_str + "Out"); row.label(text=str(json_component["right_out"]))
 
 
 class SetAVAEyetrackingBoneLimitsNameDefinitionOperator(bpy.types.Operator):
@@ -118,7 +158,6 @@ class SetAVAEyetrackingBoneLimitsNameDefinitionOperator(bpy.types.Operator):
 			case nna_utils_name.SymmetrySide.Both: self.side = "_"; self.side_changable = True
 			case nna_utils_name.SymmetrySide.Left: self.side = ".L"; self.side_changable = False
 			case nna_utils_name.SymmetrySide.Right: self.side = ".R"; self.side_changable = False
-		
 		return context.window_manager.invoke_props_dialog(self)
 		
 	def execute(self, context):
