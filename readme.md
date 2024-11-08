@@ -71,11 +71,13 @@ An `id` is a string that must be unique within the model, and can be used to ref
 The structure is pretty much there, and specific functionality is being worked on.
 
 ### Stage 1: MVP
-Export decently featured VR avatars into `*.nna.fbx` files Some resources like animations, animation logic or materials will be mapped by name int the game-engine project.
+Export decently featured VR avatars into `*.nna.fbx` files Some resources like animations, animation logic or materials will be mapped by name in the game-engine project.
 
 The 'export from Blender, drag into Unity, and get a ready to upload VR avatar' experience is generally there, but the file depends on resources in the Unity project.
 
 #### TODO
+* Handle name definition removal with an existing targeting node.
+* Validate manually entered Json
 * More constraint types.
 * More VR & V-tubing avatar components & features.
 	* Bone based eyelid animation.
