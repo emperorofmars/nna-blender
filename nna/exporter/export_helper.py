@@ -1,8 +1,10 @@
+import json
 import bpy
 import bpy_extras
 import os
 
 from .. import nna_utils_tree
+from .. import nna_utils_json
 
 
 class NNAExportFBX(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
@@ -14,18 +16,25 @@ class NNAExportFBX(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
 
 	def invoke(self, context, _event):
 		# Determine export file name
+		export_name = ""
 		if(not self.filepath):
-			export_name = ""
-			nna_collection = nna_utils_tree.find_nna_root_collection()
-			if(nna_collection != bpy.context.scene.collection):
-				export_name = nna_collection.name
-			# TODO also check $meta definition
-			else:
-				blend_filepath = context.blend_data.filepath
-				if not blend_filepath:
-					blend_filepath = nna_utils_tree.find_nna_root_collection().name
+			meta = nna_utils_tree.determine_nna_meta()
+			if(meta):
+				json_text = nna_utils_json.get_json_from_targeting_object(meta)
+				json_meta = json.loads(json_text) if json_text else {}
+				if("name" in json_meta):
+					export_name = json_meta["name"]
+			if(not export_name):
+				nna_collection = nna_utils_tree.find_nna_root_collection()
+				if(nna_collection != bpy.context.scene.collection):
+					export_name = nna_collection.name
+				# TODO also check $meta definition
 				else:
-					blend_filepath = os.path.splitext(blend_filepath)[0]
+					export_name = context.blend_data.filepath
+					if(not export_name):
+						export_name = "superawesomemodel"
+					else:
+						export_name = os.path.splitext(export_name)[0]
 			self.filepath = export_name
 
 		context.window_manager.fileselect_add(self)
