@@ -28,7 +28,6 @@ class NNAExportFBX(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
 				nna_collection = nna_utils_tree.find_nna_root_collection()
 				if(nna_collection != bpy.context.scene.collection):
 					export_name = nna_collection.name
-				# TODO also check $meta definition
 				else:
 					export_name = context.blend_data.filepath
 					if(not export_name):
