@@ -86,7 +86,7 @@ class NNAHumanoidNameDefinitionOperator(bpy.types.Operator):
 	bl_label = "NNA Humanoid Name Definition"
 	bl_options = {"REGISTER", "UNDO"}
 
-	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
+	target_id: bpy.props.StringProperty(name="target_id") # type: ignore
 	
 	locomotion_type: bpy.props.EnumProperty(items=[("planti", "Plantigrade", ""),("digi", "Digitigrade", "")], name="Locomotion Type", default="planti") # type: ignore
 	no_jaw: bpy.props.BoolProperty(name="No Jaw Mapping", default=False) # type: ignore
