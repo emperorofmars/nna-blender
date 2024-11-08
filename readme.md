@@ -1,23 +1,18 @@
 
 # ⛧ NNA - Node Name Abuse ⛧
-## Blender 4.2+ Tooling
-### Early in development version, do not use productively!
+#### Blender 4.2+ Tooling
+Extend any 3d format by abusing node-names to store data!\
+This project is an abomination and the sooner it can burn in a fire, the better.\
+⭐ Star this repo if you love heresy! ⭐
 
-Download the latest release: <https://github.com/emperorofmars/nna_blender/releases/latest>\
+#### Early in development version, do not use productively!
+[Download the latest release](https://github.com/emperorofmars/nna_blender/releases/download/v0.0.1/nna_blender-0.0.1.zip)\
 Install it in Blender as a new extension from disk:\
 Under `Edit` → `Preferences` → `Get Extensions` find the upper right drop-down menu and press `Install from disk`.
 
-**Find the Unity counterpart here: <https://github.com/emperorofmars/nna_unity>**
+Find the Unity counterpart here: <https://github.com/emperorofmars/nna_unity>
 
 ---
-
-Extend any 3d format by abusing node-names.\
-This works by naming nodes in a specific way, and by serializing JSON into node-names.
-
-This project is an abomination and the sooner it can burn in a fire, the better.
-
-⭐ Star this repo if you love heresy! ⭐
-
 ![](./Docs/img/nna_cover_image.png)
 
 Issues, discussions & PRs Welcome!
