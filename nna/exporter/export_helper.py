@@ -25,15 +25,11 @@ class NNAExportFBX(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
 				if("name" in json_meta):
 					export_name = json_meta["name"]
 			if(not export_name):
-				nna_collection = nna_utils_tree.find_nna_root_collection()
-				if(nna_collection != bpy.context.scene.collection):
-					export_name = nna_collection.name
+				export_name = context.blend_data.filepath
+				if(not export_name):
+					export_name = "superawesomemodel"
 				else:
-					export_name = context.blend_data.filepath
-					if(not export_name):
-						export_name = "superawesomemodel"
-					else:
-						export_name = os.path.splitext(export_name)[0]
+					export_name = os.path.splitext(export_name)[0]
 			self.filepath = export_name
 
 		context.window_manager.fileselect_add(self)
