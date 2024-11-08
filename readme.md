@@ -27,8 +27,8 @@ Use this Blender Addon to create and edit NNA JSON definitions.
 
 ### Goals
 * A 3d file should be a self-contained single source of truth for all its functionality, and work across different game engines.
-* Artists without too much technical knowledge beyond 3d modeling, should have an easy time creating VR avatars.
-* End users without too much technical knowledge, should be able to easily adapt and upload their avatars.
+* Artists without technical knowledge beyond 3d modeling, should have an easy time creating VR avatars.
+* End users without technical knowledge, should be able to easily adapt and upload their avatars.
 
 ## How
 For simpler definitions, information can be encoded into a node name directly.\
