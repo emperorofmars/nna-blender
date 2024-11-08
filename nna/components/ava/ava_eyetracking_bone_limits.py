@@ -127,11 +127,17 @@ class SetAVAEyetrackingBoneLimitsNameDefinitionOperator(bpy.types.Operator):
 			(nna_name, symmetry) = nna_utils_name.get_symmetry(nna_utils_name.get_nna_name(self.target_id))
 
 			nna_name = nna_name + "EyeBoneLimits" + str(round(self.up, 2)) + "," + str(round(self.down, 2)) + "," + str(round(self.inner, 2)) + "," + str(round(self.outer, 2))
-			if(self.side_changable and self.side != "_"): target.name = nna_name + self.side
-			else: target.name = nna_name + symmetry
+			
+			if(self.side_changable and self.side != "_"): target.name += self.side
+			else: nna_name += symmetry
 
-			self.report({'INFO'}, "Component successfully edited")
-			return {"FINISHED"}
+			if(len(str.encode(nna_name)) > 63):
+				self.report({'ERROR'}, "Name too long")
+				return {"CANCELLED"}
+			else:
+				target.name = nna_name
+				self.report({'INFO'}, "Component successfully edited")
+				return {"FINISHED"}
 		except ValueError as error:
 			self.report({'ERROR'}, str(error))
 			return {"CANCELLED"}

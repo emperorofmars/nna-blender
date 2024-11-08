@@ -104,10 +104,15 @@ class NNAHumanoidNameDefinitionOperator(bpy.types.Operator):
 			if(self.locomotion_type != "planti"): nna_name += str(self.locomotion_type).capitalize()
 			if(self.no_jaw == True): nna_name += "NoJaw"
 
-			target.name = nna_name + symmetry
+			nna_name += symmetry
 
-			self.report({'INFO'}, "Component successfully edited")
-			return {"FINISHED"}
+			if(len(str.encode(nna_name)) > 63):
+				self.report({'ERROR'}, "Name too long")
+				return {"CANCELLED"}
+			else:
+				target.name = nna_name
+				self.report({'INFO'}, "Component successfully edited")
+				return {"FINISHED"}
 		except ValueError as error:
 			self.report({'ERROR'}, str(error))
 			return {"CANCELLED"}

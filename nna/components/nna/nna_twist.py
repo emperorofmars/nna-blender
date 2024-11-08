@@ -119,10 +119,15 @@ class NNATwistNameDefinitionOperator(bpy.types.Operator):
 			elif(context.scene.nna_twist_object_selector and context.scene.nna_twist_bone_selector):
 				nna_name += context.scene.nna_twist_object_selector.name + "&" + context.scene.nna_twist_bone_selector
 
-			target.name = nna_name + symmetry
+			nna_name += symmetry
 
-			self.report({'INFO'}, "Component successfully edited")
-			return {"FINISHED"}
+			if(len(str.encode(nna_name)) > 63):
+				self.report({'ERROR'}, "Name too long")
+				return {"CANCELLED"}
+			else:
+				target.name = nna_name
+				self.report({'INFO'}, "Component successfully edited")
+				return {"FINISHED"}
 		except ValueError as error:
 			self.report({'ERROR'}, str(error))
 			return {"CANCELLED"}
