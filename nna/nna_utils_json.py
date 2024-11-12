@@ -123,7 +123,7 @@ def validate_component_text(json_text: str) -> dict:
 def validate_component(json_component: dict) -> str | None:
 	if(type(json_component) != dict):
 		return "Invalid NNA Json! Not an object"
-	if(json_component or not json_component["t"]):
+	if(not json_component["t"]):
 		return "Invalid NNA Json! Must be an object with a \"t\" property"
 	return None
 
