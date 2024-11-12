@@ -214,6 +214,13 @@ def _draw_nna_json_editor(self: bpy.types.Panel, context: bpy.types.Context | No
 				editIDButton.target_id = target_id
 				editIDButton.component_index = idx
 
+				row = component_box.row()
+				row.label(text="Overrides")
+				row.label(text=str(component.get("overrides", "No Overrides set")))
+				editOverridesButton = row.operator(nna_operators_common.EditNNAComponentOverridesOperator.bl_idname, text="Edit Overrides")
+				editOverridesButton.target_id = target_id
+				editOverridesButton.component_index = idx
+
 				if(str(component["t"]) in preview_operators):
 					try:
 						preview_operators[str(component["t"])](target_id, component_box, component)
@@ -221,7 +228,7 @@ def _draw_nna_json_editor(self: bpy.types.Panel, context: bpy.types.Context | No
 						component_box.label(text="Invalid Definition! Error: " + str(error))
 				else:
 					for property in component.keys():
-						if(property == "t"): continue
+						if(property in ["t", "id", "overrides"]): continue
 						row = component_box.row(); row.label(text=property); row.label(text=str(component[property]))
 
 				component_box.separator(type="LINE", factor=1)

@@ -147,3 +147,52 @@ class EditNNAComponentIDOperator(bpy.types.Operator):
 	def draw(self, context):
 		self.layout.label(text="Target Object: " + self.target_id)
 		self.layout.prop(self, "component_id", expand=True)
+
+
+class EditNNAComponentOverridesOperator(bpy.types.Operator):
+	"""Edit the Overrides of a NNA Json component"""
+	bl_idname = "nna.edit_component_overrides"
+	bl_label = "Edit the Overrides of a NNA Json component"
+	bl_options = {"REGISTER", "UNDO"}
+
+	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
+	component_index: bpy.props.IntProperty(name = "component_index", default=-1) # type: ignore
+	
+	component_overrides: bpy.props.StringProperty(name = "Overrides") # type: ignore
+	
+	def invoke(self, context, event):
+		try:
+			json_component = nna_utils_json.get_component(self.target_id, self.component_index)
+			overrides_text = ""
+			for idx, override in enumerate(json_component.get("overrides", [])):
+				overrides_text += override
+				if(idx < len(json_component.get("overrides", [])) - 1):
+					overrides_text += ","
+			self.component_overrides = overrides_text
+		except Exception as error:
+			self.report({'ERROR'}, str(error))
+			return None
+		return context.window_manager.invoke_props_dialog(self)
+		
+	def execute(self, context):
+		try:
+			json_component = nna_utils_json.get_component(self.target_id, self.component_index)
+
+			if(self.component_overrides):
+				overrides_json = []
+				for idx, override in enumerate(self.component_overrides.split(",")):
+					overrides_json.append(override.strip())
+				json_component["overrides"] = overrides_json
+			elif("overrides" in json_component): del json_component["overrides"]
+			
+			nna_utils_json.replace_component(self.target_id, json_component, self.component_index)
+			self.report({'INFO'}, "Component successfully edited")
+			return {"FINISHED"}
+		except Exception as error:
+			self.report({'ERROR'}, str(error))
+			return {"CANCELLED"}
+	
+	def draw(self, context):
+		self.layout.label(text="Target Object: " + self.target_id)
+		self.layout.label(text="Specify a list of IDs, separated by a comma.")
+		self.layout.prop(self, "component_overrides", expand=True)
