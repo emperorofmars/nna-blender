@@ -183,7 +183,7 @@ def _draw_nna_name_editor(self, context, target_id, ignore_no_match = False) -> 
 			else: row.label(text="No Types Loaded")
 	except Exception as error:
 		box = self.layout.box()
-		box.label(text="Name Definition Error: " + str(e))
+		box.label(text="Name Definition Error: " + str(error))
 	
 	return name_definition_match
 
