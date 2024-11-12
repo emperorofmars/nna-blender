@@ -28,7 +28,9 @@ class AddVRCControllerMappingComponentOperator(bpy.types.Operator):
 				"fx": None,
 				"sitting": None,
 				"tpose": None,
-				"ikpose": None
+				"ikpose": None,
+				"parameters": None,
+				"menu": None,
 			})
 			self.report({'INFO'}, "Component successfully added")
 			return {"FINISHED"}
@@ -56,6 +58,9 @@ class EditVRCControllerMappingComponentOperator(bpy.types.Operator):
 	tpose: bpy.props.StringProperty(name="TPose", default="") # type: ignore
 	ikpose: bpy.props.StringProperty(name="IKPose", default="") # type: ignore
 	
+	parameters: bpy.props.StringProperty(name="Parameters", default="") # type: ignore
+	menu: bpy.props.StringProperty(name="Menu", default="") # type: ignore
+	
 	def invoke(self, context, event):
 		json_component = nna_utils_json.get_component(self.target_id, self.component_index)
 		if("base" in json_component): self.base = json_component["base"]
@@ -66,6 +71,8 @@ class EditVRCControllerMappingComponentOperator(bpy.types.Operator):
 		if("sitting" in json_component): self.sitting = json_component["sitting"]
 		if("tpose" in json_component): self.tpose = json_component["tpose"]
 		if("ikpose" in json_component): self.base = json_component["ikpose"]
+		if("parameters" in json_component): self.parameters = json_component["parameters"]
+		if("menu" in json_component): self.menu = json_component["menu"]
 		return context.window_manager.invoke_props_dialog(self)
 		
 	def execute(self, context):
@@ -88,6 +95,10 @@ class EditVRCControllerMappingComponentOperator(bpy.types.Operator):
 			elif("tpose" in json_component): del json_component["tpose"]
 			if(self.ikpose): json_component["ikpose"] = self.ikpose
 			elif("ikpose" in json_component): del json_component["ikpose"]
+			if(self.parameters): json_component["parameters"] = self.parameters
+			elif("parameters" in json_component): del json_component["parameters"]
+			if(self.menu): json_component["menu"] = self.menu
+			elif("menu" in json_component): del json_component["menu"]
 
 			nna_utils_json.replace_component(self.target_id, json_component, self.component_index)
 			self.report({'INFO'}, "Component successfully edited")
@@ -106,6 +117,9 @@ class EditVRCControllerMappingComponentOperator(bpy.types.Operator):
 		self.layout.prop(self, "sitting", expand=True)
 		self.layout.prop(self, "tpose", expand=True)
 		self.layout.prop(self, "ikpose", expand=True)
+		self.layout.separator(factor=1)
+		self.layout.prop(self, "parameters", expand=True)
+		self.layout.prop(self, "menu", expand=True)
 
 
 def display_vrc_controller_mapping_component(target_id: str, layout: bpy.types.UILayout, json_component: dict):
@@ -117,6 +131,8 @@ def display_vrc_controller_mapping_component(target_id: str, layout: bpy.types.U
 	if("sitting" in json_component): row = layout.row(); row.label(text="Sitting"); row.label(text=json_component["sitting"])
 	if("tpose" in json_component): row = layout.row(); row.label(text="TPose"); row.label(text=json_component["tpose"])
 	if("ikpose" in json_component): row = layout.row(); row.label(text="IKPose"); row.label(text=json_component["ikpose"])
+	if("parameters" in json_component): row = layout.row(); row.label(text="Parameters"); row.label(text=json_component["parameters"])
+	if("menu" in json_component): row = layout.row(); row.label(text="Menu"); row.label(text=json_component["menu"])
 
 
 nna_types = {
