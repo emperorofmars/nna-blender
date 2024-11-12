@@ -96,12 +96,3 @@ class EditNNAMetaOperator(bpy.types.Operator):
 		self.layout.prop(self, "license_url", expand=True)
 		self.layout.prop(self, "documentation", expand=True)
 		self.layout.prop(self, "documentation_url", expand=True)
-
-
-def display_nna_humanoid_component(object, layout, json_dict):
-	row = layout.row()
-	row.label(text="Locomotion Type")
-	row.label(text=json_dict["lc"] if "lc" in json_dict else "default (planti)")
-	row = layout.row()
-	row.label(text="No Jaw Mapping")
-	row.label(text=str(json_dict["nj"]) if "nj" in json_dict else "default (False)")
