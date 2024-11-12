@@ -9,6 +9,7 @@ class NNAObjectState(Enum):
 	InitedInsideTree = auto()			# NNA root (`$nna`) object exists and can be used.
 	IsRootObject = auto()				# NNA root (`$nna`) is currently selected.
 	IsRootObjectWithTargeting = auto()	# NNA root (`$nna`) is currently selected, and it has a child named `$root`, used to specify components for the exported root object.
+	IsMetaObject = auto()				# NNA meta data object is currently selected.
 	IsTargetingObject = auto()			# The currently selected object is a targeting object. It is parented to the NNA root (`$nna`), and it points to an object in the scene.
 	IsJsonDefinition = auto()			# The currently selected object is a line in a NNA component definition.
 	HasTargetingObject = auto()			# The currently selected object has a targeting object. In this state its components can be created or edited.
@@ -27,6 +28,8 @@ def determine_nna_object_state(object: bpy.types.Object) -> NNAObjectState:
 			return NNAObjectState.IsTargetingObject
 		else:
 			return NNAObjectState.IsInvalidTargetingObject
+	if(object.name == "$meta" and object.parent and object.parent.name == "$nna"):
+		return NNAObjectState.IsMetaObject
 	elif(object.name == "$root" and object.parent and object.parent.name == "$nna"):
 		return NNAObjectState.IsTargetingObject
 	if(re.match("^\$[0-9]+\$.+", object.name) and object.parent and object.parent.name.startswith("$target:") and object.parent.parent and object.parent.parent.name == "$nna"):

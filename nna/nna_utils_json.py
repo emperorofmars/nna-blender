@@ -107,3 +107,44 @@ def remove_component(target_id: str, component_index: int):
 	json_object = json.loads(get_json_from_target_id(target_id))
 	del(json_object[component_index])
 	serialize_json_to_target_id(target_id, json.dumps(json_object))
+
+
+def validate_component_text(json_text: str) -> dict:
+	try:
+		json_component = json.loads(json_text)
+	except ValueError as e:
+		return e
+	ret = validate_component(json_component)
+	if(ret):
+		return { "success": False, "error": ret }
+	else:
+		return { "success": True, "value": json_component }
+
+def validate_component(json_component: dict) -> str | None:
+	if(type(json_component) != dict):
+		return "Invalid NNA Json! Not an object"
+	if(json_component or not json_component["t"]):
+		return "Invalid NNA Json! Must be an object with a \"t\" property"
+	return None
+
+
+def validate_component_list_text(json_text: str) -> dict:
+	try:
+		json_component_list = json.loads(json_text)
+	except ValueError as e:
+		return e
+	ret = validate_component_list(json_component_list)
+	if(ret):
+		return { "success": False, "error": ret }
+	else:
+		return { "success": True, "value": json_component_list }
+
+
+def validate_component_list(json_component_list: list) -> str | None:
+	if(type(json_component_list) != list):
+		return "Invalid NNA Json! Not an object"
+	for json_component in json_component_list:
+		err = validate_component(json_component)
+		if(err):
+			return err
+	return None

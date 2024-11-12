@@ -70,8 +70,10 @@ def draw_nna_editor(self, context, target_id, state):
 			_draw_meta_editor(self, context)
 			self.layout.separator(type="LINE", factor=2)
 
-			self.layout.label(text="This is the NNA definition for: The Scene Root")
+			self.layout.label(text="This is the NNA definition for the Scene Root")
 			_draw_nna_json_editor(self, context, target_id)
+		case nna_utils_tree.NNAObjectState.IsMetaObject:
+			_draw_meta_editor(self, context)
 		case nna_utils_tree.NNAObjectState.NotInited:
 			_draw_nna_name_editor(self, context, target_id)
 			self.layout.separator(type="LINE", factor=2)
@@ -93,14 +95,14 @@ def draw_nna_editor(self, context, target_id, state):
 				button.target_id = target_id
 		case nna_utils_tree.NNAObjectState.IsTargetingObject:
 			if(target_id == "$root"):
-				self.layout.label(text="This is the NNA definition for: The Scene Root")
+				self.layout.label(text="This is the NNA definition for the Scene Root")
 				_draw_nna_json_editor(self, context, "$nna")
 			else:
 				self.layout.label(text="This is the NNA definition for: " + target_id[8:])
 				_draw_nna_editors_for_target(self, context, target_id[8:])
 		case nna_utils_tree.NNAObjectState.IsJsonDefinition:
 			if(not context.object.parent.name[8:]):
-				self.layout.label(text="This part of the NNA definition for: The Scene Root" + context.object.parent.name[8:])
+				self.layout.label(text="This part of the NNA definition for the Scene Root" + context.object.parent.name[8:])
 				_draw_nna_json_editor(self, context, "$nna")
 			else:
 				self.layout.label(text="This part of the NNA definition for: " + context.object.parent.name[8:])
@@ -109,13 +111,8 @@ def draw_nna_editor(self, context, target_id, state):
 			self.layout.label(text="Invalid Target: '" + context.object.name[8:] + "' does NOT exist!")
 		case nna_utils_tree.NNAObjectState.HasTargetingObject:
 			_draw_nna_editors_for_target(self, context, target_id)
-
-def _draw_nna_editors_for_target(self, context, target_id):
-	if(_draw_nna_name_editor(self, context, target_id, True)):
-		box = self.layout.box()
-		box.label(text="Warning: This Node has both a Name and Component definition.")
-		box.label(text="It is recommended to use only one.")
-	_draw_nna_json_editor(self, context, target_id)
+		case _:
+			self.layout.label(text="Invalid!")
 
 
 def _draw_meta_editor(self, context):
@@ -143,6 +140,14 @@ def _draw_meta_editor(self, context):
 		box.operator(nna_meta.EditNNAMetaOperator.bl_idname)
 	else:
 		box.operator(nna_meta.SetupNNAMetaOperator.bl_idname)
+
+
+def _draw_nna_editors_for_target(self, context, target_id):
+	if(_draw_nna_name_editor(self, context, target_id, True)):
+		box = self.layout.box()
+		box.label(text="Warning: This Node has both a Name and Component definition.")
+		box.label(text="It is recommended to use only one.")
+	_draw_nna_json_editor(self, context, target_id)
 
 
 def _draw_nna_name_editor(self, context, target_id, ignore_no_match = False) -> bool:
@@ -176,7 +181,7 @@ def _draw_nna_name_editor(self, context, target_id, ignore_no_match = False) -> 
 			name_button = row.operator(bpy.context.scene.nna_oparators_name, text="Set Name Definition")
 			if(name_button): name_button.target_id = target_id
 			else: row.label(text="No Types Loaded")
-	except ValueError as e:
+	except Exception as error:
 		box = self.layout.box()
 		box.label(text="Name Definition Error: " + str(e))
 	
@@ -206,8 +211,8 @@ def _draw_nna_json_editor(self, context, target_id):
 				if(str(component["t"]) in preview_operators):
 					try:
 						preview_operators[str(component["t"])](context.object, component_box, component)
-					except:
-						component_box.label(text="Invalid Definition!")
+					except Exception as error:
+						component_box.label(text="Invalid Definition! Error: " + str(error))
 				else:
 					for property in component.keys():
 						if(property == "t"): continue
@@ -234,9 +239,9 @@ def _draw_nna_json_editor(self, context, target_id):
 					deleteButton.component_index = idx
 
 				if(idx < len(componentsList) - 1): col.separator(factor=1)
-		except ValueError as e:
+		except Exception as error:
 			box = self.layout.box()
-			box.label(text="Name Definition Error: " + str(e))
+			box.label(text="Name Definition Error: " + str(error))
 	else:
 		box.label(text="No Components Added")
 	

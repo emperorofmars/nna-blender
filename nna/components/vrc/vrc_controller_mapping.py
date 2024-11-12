@@ -1,7 +1,6 @@
 import bpy
 
 from ...nna_registry import NNAFunctionType
-from ...nna_operators_util import CreateNewObjectOperator, SetActiveObjectOperator
 
 from ... import nna_utils_name
 from ... import nna_utils_json

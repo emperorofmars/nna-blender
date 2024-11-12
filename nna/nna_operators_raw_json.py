@@ -18,6 +18,11 @@ class EditNNARawJsonOperator(bpy.types.Operator):
 		
 	def execute(self, context):
 		try:
+			component_list_valid = nna_utils_json.validate_component_list_text(self.raw_json)
+			if(not component_list_valid["success"]):
+				self.report({'ERROR'}, component_list_valid["error"])
+				return {"CANCELLED"}
+
 			nna_utils_json.serialize_json_to_target_id(self.target_id, self.raw_json)
 			self.report({'INFO'}, "Object Json successfully edited")
 			return {"FINISHED"}
@@ -37,14 +42,19 @@ class AddNNARawJsonComponentOperator(bpy.types.Operator):
 	bl_options = {"REGISTER", "UNDO"}
 	
 	target_id: bpy.props.StringProperty(name="targetId") # type: ignore
-	new_component: bpy.props.StringProperty(name="new_component", default="{\"t\":\"example\"}") # type: ignore
+	new_component: bpy.props.StringProperty(name="new_component", default="{\"t\":\"example_type\"}") # type: ignore
 
 	def invoke(self, context, event):
 		return context.window_manager.invoke_props_dialog(self)
 		
 	def execute(self, context):
 		try:
-			nna_utils_json.add_component(self.target_id, json.loads(self.new_component))
+			json_component_valid = nna_utils_json.validate_component_text(self.new_component)
+			if(not json_component_valid["success"]):
+				self.report({'ERROR'}, json_component_valid["error"])
+				return {"CANCELLED"}
+			
+			nna_utils_json.add_component(self.target_id, json_component_valid["value"])
 			self.report({'INFO'}, "Component successfully added")
 			return {"FINISHED"}
 		except ValueError as error:
@@ -70,18 +80,22 @@ class EditNNARawJsonComponentOperator(bpy.types.Operator):
 	def invoke(self, context, event):
 		try:
 			self.json_component = json.dumps(nna_utils_json.get_component(self.target_id, self.component_index))
-		except ValueError as error:
+		except Exception as error:
 			self.report({'ERROR'}, str(error))
 			return None
 		return context.window_manager.invoke_props_dialog(self)
 		
 	def execute(self, context):
 		try:
-			nna_utils_json.replace_component(self.target_id, json.loads(self.json_component), self.component_index)
-
+			json_component_valid = nna_utils_json.validate_component_text(self.json_component)
+			if(not json_component_valid["success"]):
+				self.report({'ERROR'}, json_component_valid["error"])
+				return {"CANCELLED"}
+			
+			nna_utils_json.replace_component(self.target_id, json_component_valid["value"], self.component_index)
 			self.report({'INFO'}, "Component successfully edited")
 			return {"FINISHED"}
-		except ValueError as error:
+		except Exception as error:
 			self.report({'ERROR'}, str(error))
 			return {"CANCELLED"}
 	
