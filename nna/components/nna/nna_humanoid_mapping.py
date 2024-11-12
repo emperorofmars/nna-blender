@@ -71,13 +71,13 @@ class EditNNAHumanoidComponentOperator(bpy.types.Operator):
 		self.layout.prop(self, "no_jaw", expand=True)
 
 
-def display_nna_humanoid_component(object, layout, json_dict):
+def display_nna_humanoid_component(target_id: str, layout: bpy.types.UILayout, json_component: dict):
 	row = layout.row()
 	row.label(text="Locomotion Type")
-	row.label(text=json_dict["lc"] if "lc" in json_dict else "default (planti)")
+	row.label(text=json_component["lc"] if "lc" in json_component else "default (planti)")
 	row = layout.row()
 	row.label(text="No Jaw Mapping")
-	row.label(text=str(json_dict["nj"]) if "nj" in json_dict else "default (False)")
+	row.label(text=str(json_component["nj"]) if "nj" in json_component else "default (False)")
 
 
 class NNAHumanoidNameDefinitionOperator(bpy.types.Operator):

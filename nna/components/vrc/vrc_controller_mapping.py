@@ -108,7 +108,7 @@ class EditVRCControllerMappingComponentOperator(bpy.types.Operator):
 		self.layout.prop(self, "ikpose", expand=True)
 
 
-def display_vrc_controller_mapping_component(object, layout, json_component):
+def display_vrc_controller_mapping_component(target_id: str, layout: bpy.types.UILayout, json_component: dict):
 	if("base" in json_component): row = layout.row(); row.label(text="Base"); row.label(text=json_component["base"])
 	if("additive" in json_component): row = layout.row(); row.label(text="Additive"); row.label(text=json_component["additive"])
 	if("gesture" in json_component): row = layout.row(); row.label(text="Gesture"); row.label(text=json_component["gesture"])

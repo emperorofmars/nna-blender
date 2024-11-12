@@ -52,7 +52,7 @@ class NNABonePanel(bpy.types.Panel):
 		draw_nna_editor(self, context, context.object.name + "$" + context.bone.name, nna_utils_tree.determine_nna_bone_state(context.object, context.bone))
 
 
-def draw_nna_editor(self, context, target_id, state):
+def draw_nna_editor(self: bpy.types.Panel, context: bpy.types.Context | None, target_id: str, state: nna_utils_tree.NNAObjectState):
 	match state:
 		case nna_utils_tree.NNAObjectState.IsRootObject:
 			self.layout.operator(NNAExportFBX.bl_idname)
@@ -115,7 +115,7 @@ def draw_nna_editor(self, context, target_id, state):
 			self.layout.label(text="Invalid!")
 
 
-def _draw_meta_editor(self, context):
+def _draw_meta_editor(self: bpy.types.Panel, context: bpy.types.Context | None):
 	meta = nna_utils_tree.determine_nna_meta()
 	box = self.layout.box()
 	box.label(text="Asset Meta")
@@ -142,7 +142,7 @@ def _draw_meta_editor(self, context):
 		box.operator(nna_meta.SetupNNAMetaOperator.bl_idname)
 
 
-def _draw_nna_editors_for_target(self, context, target_id):
+def _draw_nna_editors_for_target(self: bpy.types.Panel, context: bpy.types.Context | None, target_id: str):
 	if(_draw_nna_name_editor(self, context, target_id, True)):
 		box = self.layout.box()
 		box.label(text="Warning: This Node has both a Name and Component definition.")
@@ -150,7 +150,7 @@ def _draw_nna_editors_for_target(self, context, target_id):
 	_draw_nna_json_editor(self, context, target_id)
 
 
-def _draw_nna_name_editor(self, context, target_id, ignore_no_match = False) -> bool:
+def _draw_nna_name_editor(self: bpy.types.Panel, context: bpy.types.Context | None, target_id: str, ignore_no_match = False) -> bool:
 	name_match_operators = nna_registry.get_nna_operators(nna_registry.NNAFunctionType.NameMatch)
 	name_draw_operators = nna_registry.get_nna_operators(nna_registry.NNAFunctionType.NameDisplay)
 
@@ -188,7 +188,7 @@ def _draw_nna_name_editor(self, context, target_id, ignore_no_match = False) -> 
 	return name_definition_match
 
 
-def _draw_nna_json_editor(self, context, target_id):
+def _draw_nna_json_editor(self: bpy.types.Panel, context: bpy.types.Context | None, target_id: str):
 	jsonText = nna_utils_json.get_json_from_target_id(target_id)
 	
 	preview_operators = nna_registry.get_nna_operators(nna_registry.NNAFunctionType.JsonDisplay)
@@ -204,21 +204,25 @@ def _draw_nna_json_editor(self, context, target_id):
 			componentsList = json.loads(jsonText)
 			for idx, component in enumerate(componentsList):
 				component_box = col.box()
+
+				row = component_box.row(); row.label(text="Type"); row.label(text=str(component["t"]))
+
 				row = component_box.row()
-				row.label(text="Type")
-				row.label(text=str(component["t"]))
+				row.label(text="ID")
+				row.label(text=component.get("id", "No ID set"))
+				editIDButton = row.operator(nna_operators_common.EditNNAComponentIDOperator.bl_idname, text="Edit ID")
+				editIDButton.target_id = target_id
+				editIDButton.component_index = idx
 
 				if(str(component["t"]) in preview_operators):
 					try:
-						preview_operators[str(component["t"])](context.object, component_box, component)
+						preview_operators[str(component["t"])](target_id, component_box, component)
 					except Exception as error:
 						component_box.label(text="Invalid Definition! Error: " + str(error))
 				else:
 					for property in component.keys():
 						if(property == "t"): continue
-						row = component_box.row()
-						row.label(text=property)
-						row.label(text=str(component[property]))
+						row = component_box.row(); row.label(text=property); row.label(text=str(component[property]))
 
 				component_box.separator(type="LINE", factor=1)
 				row = component_box.row()

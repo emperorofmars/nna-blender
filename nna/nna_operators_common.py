@@ -1,3 +1,4 @@
+import json
 import bpy
 from . import nna_utils_tree
 from . import nna_utils_json
@@ -85,7 +86,7 @@ class RemoveNNAJsonComponentOperator(bpy.types.Operator):
 
 
 class RemoveNNANameDefinitionOperator(bpy.types.Operator):
-	"""Rename this bode (Object or Bone), to its original name, without the appended NNA name definition."""
+	"""Rename this bode (Object or Bone), to its original name, without the appended NNA name definition"""
 	bl_idname = "nna.remove_name_definition"
 	bl_label = "Remove Name Definition"
 	bl_options = {"REGISTER", "UNDO"}
@@ -107,3 +108,42 @@ class RemoveNNANameDefinitionOperator(bpy.types.Operator):
 		except ValueError as error:
 			self.report({'ERROR'}, str(error))
 			return {"CANCELLED"}
+
+
+class EditNNAComponentIDOperator(bpy.types.Operator):
+	"""Edit the ID of a NNA Json component"""
+	bl_idname = "nna.edit_component_id"
+	bl_label = "Edit the ID of a NNA Json component"
+	bl_options = {"REGISTER", "UNDO"}
+
+	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
+	component_index: bpy.props.IntProperty(name = "component_index", default=-1) # type: ignore
+	
+	component_id: bpy.props.StringProperty(name = "ID") # type: ignore
+	
+	def invoke(self, context, event):
+		try:
+			json_component = nna_utils_json.get_component(self.target_id, self.component_index)
+			self.component_id = json_component.get("id", "")
+		except Exception as error:
+			self.report({'ERROR'}, str(error))
+			return None
+		return context.window_manager.invoke_props_dialog(self)
+		
+	def execute(self, context):
+		try:
+			json_component = nna_utils_json.get_component(self.target_id, self.component_index)
+
+			if(self.component_id): json_component["id"] = self.component_id
+			elif("id" in json_component): del json_component["id"]
+			
+			nna_utils_json.replace_component(self.target_id, json_component, self.component_index)
+			self.report({'INFO'}, "Component successfully edited")
+			return {"FINISHED"}
+		except Exception as error:
+			self.report({'ERROR'}, str(error))
+			return {"CANCELLED"}
+	
+	def draw(self, context):
+		self.layout.label(text="Target Object: " + self.target_id)
+		self.layout.prop(self, "component_id", expand=True)

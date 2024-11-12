@@ -118,7 +118,7 @@ class EditAVAEyetrackingBoneLimitsComponentOperator(bpy.types.Operator):
 			self.layout.prop(self, "right_out", expand=True)
 
 
-def display_ava_eyetracking_bone_limits_component(object, layout, json_component):
+def display_ava_eyetracking_bone_limits_component(target_id: str, layout: bpy.types.UILayout, json_component: dict):
 	row = layout.row(); row.label(text="Linked"); row.label(text=str(json_component["linked"]))
 	side_str = ""
 	if(not json_component["linked"]): side_str = "Left "

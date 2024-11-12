@@ -79,13 +79,13 @@ class EditNNATwistComponentOperator(bpy.types.Operator):
 			self.layout.prop(context.scene, "nna_twist_bone_selector", text="Source Bone")
 
 
-def display_nna_twist_component(object, layout, json_dict):
+def display_nna_twist_component(target_id: str, layout: bpy.types.UILayout, json_component: dict):
 	row = layout.row()
 	row.label(text="weight")
-	row.label(text=str(json_dict["w"]) if "w" in json_dict else "default (0.5)")
+	row.label(text=str(json_component.get("w", "default (0.5)")))
 	row = layout.row()
 	row.label(text="source")
-	row.label(text=json_dict["s"] if "s" in json_dict else "default (grandparent)")
+	row.label(text=str(json_component.get("s", "default (grandparent)")))
 
 
 class NNATwistNameDefinitionOperator(bpy.types.Operator):
