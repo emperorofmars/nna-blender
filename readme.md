@@ -6,7 +6,7 @@ This project is an abomination and the sooner it can burn in a fire, the better.
 ⭐ Star this repo if you love heresy! ⭐
 
 #### Early in development version, do not use productively!
-[Download the latest release](https://github.com/emperorofmars/nna_blender/releases/download/v0.0.1/nna_blender-0.0.1.zip)\
+[Download the latest release](https://github.com/emperorofmars/nna_blender/releases/latest)\
 Install it in Blender as a new extension from disk:\
 Under `Edit` → `Preferences` → `Get Extensions` find the upper right drop-down menu and press `Install from disk`.
 
