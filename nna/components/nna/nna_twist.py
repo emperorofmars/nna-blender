@@ -99,6 +99,11 @@ class NNATwistNameDefinitionOperator(bpy.types.Operator):
 	weight: bpy.props.FloatProperty(name="weight", default=0.5, min=0, max=1, precision=2, step=2) # type: ignore
 	
 	def invoke(self, context, event):
+		name = nna_utils_name.get_nna_name(self.target_id)
+		match = re.search(_Match, name)
+		if(match.groupdict()["weight"]): self.weight = float(match.groupdict()["weight"])
+		if(match.groupdict()["source_node_path"]): pass # TODO
+
 		base_object = nna_utils_tree.get_base_object_by_target_id(self.target_id)
 		if(hasattr(base_object.data, "bones")):
 			context.scene.nna_twist_object_selector = base_object
@@ -110,6 +115,9 @@ class NNATwistNameDefinitionOperator(bpy.types.Operator):
 		try:
 			target = nna_utils_tree.get_object_by_target_id(self.target_id)
 			(nna_name, symmetry) = nna_utils_name.get_symmetry(nna_utils_name.get_nna_name(self.target_id))
+			
+			match = re.search(_Match, nna_name)
+			if(match): nna_name = nna_name[:match.start()]
 
 			nna_name = nna_name + "Twist"
 			if(self.weight != 0.5): nna_name += str(round(self.weight, 2))
@@ -134,9 +142,9 @@ class NNATwistNameDefinitionOperator(bpy.types.Operator):
 	
 	def draw(self, context):
 		self.layout.prop(self, "weight", text="Weight", expand=True)
-		self.layout.prop_search(context.scene, "nna_twist_object_selector", bpy.data, "objects", text="Source")
+		self.layout.prop_search(context.scene, "nna_twist_object_selector", bpy.data, "objects")
 		if(context.scene.nna_twist_object_selector and hasattr(context.scene.nna_twist_object_selector.data, "bones")):
-			self.layout.prop(context.scene, "nna_twist_bone_selector", text="Source Bone")
+			self.layout.prop(context.scene, "nna_twist_bone_selector")
 
 
 _Match = r"(?i)twist(?P<source_node_path>[a-zA-Z][a-zA-Z._\-|:\s]*(\&[a-zA-Z][a-zA-Z._\-|:\s]*)*)?(?P<weight>[0-9]*[.][0-9]+)?(([._\-|:][lr])|[._\-|:\s]?(right|left))?$"
@@ -177,8 +185,8 @@ def _build_bone_enum(self, context) -> list:
 
 
 def register():
-	bpy.types.Scene.nna_twist_object_selector = bpy.props.PointerProperty(type=bpy.types.Object, name="source object", options={"SKIP_SAVE"}) # type: ignore
-	bpy.types.Scene.nna_twist_bone_selector = bpy.props.EnumProperty(items=_build_bone_enum, name="source object", options={"SKIP_SAVE"}) # type: ignore
+	bpy.types.Scene.nna_twist_object_selector = bpy.props.PointerProperty(type=bpy.types.Object, name="Source Object", options={"SKIP_SAVE"}) # type: ignore
+	bpy.types.Scene.nna_twist_bone_selector = bpy.props.EnumProperty(items=_build_bone_enum, name="Source Bone", options={"SKIP_SAVE"}) # type: ignore
 
 def unregister():
 	if hasattr(bpy.types.Scene, "nna_twist_object_selector"):

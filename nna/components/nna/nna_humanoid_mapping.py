@@ -92,12 +92,20 @@ class NNAHumanoidNameDefinitionOperator(bpy.types.Operator):
 	no_jaw: bpy.props.BoolProperty(name="No Jaw Mapping", default=False) # type: ignore
 
 	def invoke(self, context, event):
+		name = nna_utils_name.get_nna_name(self.target_id)
+		match = re.search(_Match, name)
+		if(match.groupdict()["digi"]): self.locomotion_type = "digi"
+		if(match.groupdict()["no_jaw"]): self.no_jaw = True
+
 		return context.window_manager.invoke_props_dialog(self)
 		
 	def execute(self, context):
 		try:
 			target = nna_utils_tree.get_object_by_target_id(self.target_id)
 			(nna_name, symmetry) = nna_utils_name.get_symmetry(nna_utils_name.get_nna_name(self.target_id))
+
+			match = re.search(_Match, nna_name)
+			if(match): nna_name = nna_name[:match.start()]
 
 			nna_name = nna_name + "Humanoid"
 			

@@ -153,17 +153,28 @@ class SetAVAEyetrackingBoneLimitsNameDefinitionOperator(bpy.types.Operator):
 	side: bpy.props.EnumProperty(name="Side", items=[("_", "Both", ""),(".L", "Left", ""),(".R", "Right", "")], default=0) # type: ignore
 
 	def invoke(self, context, event):
-		target = nna_utils_tree.get_object_by_target_id(self.target_id)
-		match(nna_utils_name.detect_side(nna_utils_name.get_nna_name(self.target_id))):
+		nna_name = nna_utils_name.get_nna_name(self.target_id)
+		#target = nna_utils_tree.get_object_by_target_id(self.target_id)
+		match(nna_utils_name.detect_side(nna_name)):
 			case nna_utils_name.SymmetrySide.Both: self.side = "_"; self.side_changable = True
 			case nna_utils_name.SymmetrySide.Left: self.side = ".L"; self.side_changable = False
 			case nna_utils_name.SymmetrySide.Right: self.side = ".R"; self.side_changable = False
+		
+		match = re.search(_Match, nna_name)
+		if(match.groupdict()["up"]): self.up = float(match.groupdict()["up"])
+		if(match.groupdict()["down"]): self.down = float(match.groupdict()["down"])
+		if(match.groupdict()["in"]): self.inner = float(match.groupdict()["in"])
+		if(match.groupdict()["out"]): self.outer = float(match.groupdict()["out"])
+
 		return context.window_manager.invoke_props_dialog(self)
 		
 	def execute(self, context):
 		try:
 			target = nna_utils_tree.get_object_by_target_id(self.target_id)
 			(nna_name, symmetry) = nna_utils_name.get_symmetry(nna_utils_name.get_nna_name(self.target_id))
+
+			match = re.search(_Match, nna_name)
+			if(match): nna_name = nna_name[:match.start()]
 
 			nna_name = nna_name + "EyeBoneLimits" + str(round(self.up, 2)) + "," + str(round(self.down, 2)) + "," + str(round(self.inner, 2)) + "," + str(round(self.outer, 2))
 			

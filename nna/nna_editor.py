@@ -153,6 +153,7 @@ def _draw_nna_editors_for_target(self: bpy.types.Panel, context: bpy.types.Conte
 def _draw_nna_name_editor(self: bpy.types.Panel, context: bpy.types.Context | None, target_id: str, ignore_no_match = False) -> bool:
 	name_match_operators = nna_registry.get_nna_operators(nna_registry.NNAFunctionType.NameMatch)
 	name_draw_operators = nna_registry.get_nna_operators(nna_registry.NNAFunctionType.NameDisplay)
+	name_set_operators = nna_registry.get_nna_operators(nna_registry.NNAFunctionType.NameSet)
 
 	name_definition_match = None
 	try:
@@ -169,8 +170,15 @@ def _draw_nna_name_editor(self: bpy.types.Panel, context: bpy.types.Context | No
 			box.label(text="Name Definition: " + name_definition_match["nna_type"])
 			if(name_definition_match["nna_type"] in name_draw_operators):
 				name_draw_operators[name_definition_match["nna_type"]](box, name_definition_match["nna_name"])
+			else:
+				pass
+			
+			row = box.row()
+			if(name_definition_match["nna_type"] in name_set_operators):
+				edit_button = row.operator(name_set_operators[name_definition_match["nna_type"]], text="Edit")
+				edit_button.target_id = target_id
 			if(name_definition_match["index"] > 0):
-				remove_button = box.operator(nna_operators_common.RemoveNNANameDefinitionOperator.bl_idname, text="Remove")
+				remove_button = row.operator(nna_operators_common.RemoveNNANameDefinitionOperator.bl_idname, text="Remove")
 				remove_button.target_id = target_id
 				remove_button.name_definition_index = name_definition_match["index"]
 		elif(not name_definition_match and not ignore_no_match):
