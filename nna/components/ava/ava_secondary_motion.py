@@ -64,7 +64,7 @@ class EditAVASecondaryMotionComponentOperator(bpy.types.Operator):
 
 
 def display_ava_secondary_motion_component(otarget_id: str, layout: bpy.types.UILayout, json_component: dict):
-	row = layout.row(); row.label(text="Intensity"); row.label(text=str(json_component.get("intensity", "default (0.3)")))
+	row = layout.split(factor=0.4); row.label(text="Intensity"); row.label(text=str(json_component.get("intensity", "default (0.3)")))
 
 
 

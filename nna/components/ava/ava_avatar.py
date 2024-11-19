@@ -70,7 +70,7 @@ class EditAVAAvatarComponentOperator(bpy.types.Operator):
 
 def display_ava_avatar_component(target_id: str, layout: bpy.types.UILayout, json_component: dict):
 	autodect = "auto" in json_component and not json_component["auto"]
-	row = layout.row()
+	row = layout.split(factor=0.4)
 	row.label(text="Automap")
 	row.label(text="False" if autodect else "True")
 

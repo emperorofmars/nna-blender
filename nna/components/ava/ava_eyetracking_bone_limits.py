@@ -119,19 +119,19 @@ class EditAVAEyetrackingBoneLimitsComponentOperator(bpy.types.Operator):
 
 
 def display_ava_eyetracking_bone_limits_component(target_id: str, layout: bpy.types.UILayout, json_component: dict):
-	row = layout.row(); row.label(text="Linked"); row.label(text=str(json_component["linked"]))
+	row = layout.split(factor=0.4); row.label(text="Linked"); row.label(text=str(json_component["linked"]))
 	side_str = ""
 	if(not json_component["linked"]): side_str = "Left "
-	row = layout.row(); row.label(text=side_str + "Up"); row.label(text=str(json_component["left_up"]))
-	row = layout.row(); row.label(text=side_str + "Down"); row.label(text=str(json_component["left_down"]))
-	row = layout.row(); row.label(text=side_str + "In"); row.label(text=str(json_component["left_in"]))
-	row = layout.row(); row.label(text=side_str + "Out"); row.label(text=str(json_component["left_out"]))
+	row = layout.split(factor=0.4); row.label(text=side_str + "Up"); row.label(text=str(json_component["left_up"]))
+	row = layout.split(factor=0.4); row.label(text=side_str + "Down"); row.label(text=str(json_component["left_down"]))
+	row = layout.split(factor=0.4); row.label(text=side_str + "In"); row.label(text=str(json_component["left_in"]))
+	row = layout.split(factor=0.4); row.label(text=side_str + "Out"); row.label(text=str(json_component["left_out"]))
 	if(not json_component["linked"]):
 		side_str = "Right "
-		row = layout.row(); row.label(text=side_str + "Up"); row.label(text=str(json_component["right_up"]))
-		row = layout.row(); row.label(text=side_str + "Down"); row.label(text=str(json_component["right_down"]))
-		row = layout.row(); row.label(text=side_str + "In"); row.label(text=str(json_component["right_in"]))
-		row = layout.row(); row.label(text=side_str + "Out"); row.label(text=str(json_component["right_out"]))
+		row = layout.split(factor=0.4); row.label(text=side_str + "Up"); row.label(text=str(json_component["right_up"]))
+		row = layout.split(factor=0.4); row.label(text=side_str + "Down"); row.label(text=str(json_component["right_down"]))
+		row = layout.split(factor=0.4); row.label(text=side_str + "In"); row.label(text=str(json_component["right_in"]))
+		row = layout.split(factor=0.4); row.label(text=side_str + "Out"); row.label(text=str(json_component["right_out"]))
 
 
 class SetAVAEyetrackingBoneLimitsNameDefinitionOperator(bpy.types.Operator):

@@ -85,7 +85,7 @@ class EditNNAMaterialMappingComponentOperator(bpy.types.Operator):
 
 def display_nna_material_mapping_component(target_id: str, layout: bpy.types.UILayout, json_component: dict):
 	for idx, slot in enumerate(json_component["slots"]):
-		row = layout.row()
+		row = layout.split(factor=0.4)
 		row.label(text=str(idx))
 		row.label(text=slot)
 	if(len(json_component["slots"]) == 0):

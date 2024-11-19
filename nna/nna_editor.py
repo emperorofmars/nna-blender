@@ -195,31 +195,39 @@ def _draw_nna_json_editor(self: bpy.types.Panel, context: bpy.types.Context | No
 	edit_operators = nna_registry.get_nna_operators(nna_registry.NNAFunctionType.JsonEdit)
 	remove_operators = nna_registry.get_nna_operators(nna_registry.NNAFunctionType.JsonRemove)
 	
-	box = self.layout.box()
-	box.label(text="Components")
+	self.layout.label(text="Components List:")
 
 	if(len(jsonText) > 2):
 		try:
-			col = box.column(heading="Components")
+			col = self.layout.column()
 			componentsList = json.loads(jsonText)
 			for idx, component in enumerate(componentsList):
 				component_box = col.box()
 
-				row = component_box.row(); row.label(text="Type"); row.label(text=str(component["t"]))
+				split = component_box.split(factor=0.4)
+				col_type = split.column()
+				col_type.label(text="Type")
+				col_type.label(text=str(component["t"]))
 
-				row = component_box.row()
-				row.label(text="ID")
-				row.label(text=component.get("id", "No ID set"))
-				editIDButton = row.operator(nna_operators_common.EditNNAComponentIDOperator.bl_idname, text="Edit ID")
+				header_row = split.row()
+
+				col_id = header_row.box().column()
+				col_id.label(text="ID")
+				row = col_id.row()
+				row.label(text=component.get("id", "No ID"))
+				editIDButton = row.operator(nna_operators_common.EditNNAComponentIDOperator.bl_idname, text="Edit")
 				editIDButton.target_id = target_id
 				editIDButton.component_index = idx
 
-				row = component_box.row()
-				row.label(text="Overrides")
-				row.label(text=str(component.get("overrides", "No Overrides set")))
-				editOverridesButton = row.operator(nna_operators_common.EditNNAComponentOverridesOperator.bl_idname, text="Edit Overrides")
+				col_overrides = header_row.box().column()
+				col_overrides.label(text="Overrides")
+				row = col_overrides.row()
+				row.label(text=str(component.get("overrides", "No Overrides")))
+				editOverridesButton = row.operator(nna_operators_common.EditNNAComponentOverridesOperator.bl_idname, text="Edit")
 				editOverridesButton.target_id = target_id
 				editOverridesButton.component_index = idx
+
+				component_box.separator(type="LINE", factor=1)
 
 				if(str(component["t"]) in preview_operators):
 					try:
@@ -229,9 +237,9 @@ def _draw_nna_json_editor(self: bpy.types.Panel, context: bpy.types.Context | No
 				else:
 					for property in component.keys():
 						if(property in ["t", "id", "overrides"]): continue
-						row = component_box.row(); row.label(text=property); row.label(text=str(component[property]))
+						row = component_box.split(factor=0.4); row.label(text=property); row.label(text=str(component[property]))
 
-				component_box.separator(type="LINE", factor=1)
+				component_box.separator(factor=1)
 				row = component_box.row()
 				if(str(component["t"]) in edit_operators):
 					editButton = row.operator(edit_operators[str(component["t"])], text="Edit")
@@ -256,15 +264,19 @@ def _draw_nna_json_editor(self: bpy.types.Panel, context: bpy.types.Context | No
 	else:
 		box.label(text="No Components Added")
 	
-	box.separator(type="LINE", factor=1)
-	row = box.row()
+	self.layout.separator(factor=1)
+	row = self.layout.row(align=True)
 	row.prop(bpy.context.scene, "nna_oparators_add", text="")
 	button_add = row.operator(bpy.context.scene.nna_oparators_add, text="Add Component")
 	if(button_add):	button_add.target_id = target_id
 	else: row.label(text="No Types Loaded")
+	row.separator()
+	button_add_raw = row.operator(nna_operators_raw_json.AddNNARawJsonComponentOperator.bl_idname, text="Add Raw Json Component")
+	button_add_raw.target_id = target_id
+	
+	self.layout.separator(factor=2)
+	row = self.layout.row()
 	button_edit_raw = row.operator(nna_operators_raw_json.EditNNARawJsonOperator.bl_idname, text="Edit Raw Json")
 	button_edit_raw.target_id = target_id
-
-	box.separator(type="LINE", factor=2)
-	button_remove_nna_targeting = box.operator(nna_operators_common.RemoveNNATargetingObjectOperator.bl_idname)
+	button_remove_nna_targeting = row.operator(nna_operators_common.RemoveNNATargetingObjectOperator.bl_idname)
 	button_remove_nna_targeting.target_id = target_id

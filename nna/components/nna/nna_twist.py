@@ -80,10 +80,10 @@ class EditNNATwistComponentOperator(bpy.types.Operator):
 
 
 def display_nna_twist_component(target_id: str, layout: bpy.types.UILayout, json_component: dict):
-	row = layout.row()
+	row = layout.split(factor=0.4)
 	row.label(text="weight")
 	row.label(text=str(json_component.get("w", "default (0.5)")))
-	row = layout.row()
+	row = layout.split(factor=0.4)
 	row.label(text="source")
 	row.label(text=str(json_component.get("s", "default (grandparent)")))
 

@@ -103,7 +103,6 @@ def get_nna_operators(function_type: NNAFunctionType) -> dict[str, any]:
 
 def _build_operator_enum(function_type) -> list:
 	_NNAEnumCache[str(function_type)] = [((value, key, "")) for key, value in get_nna_operators(str(function_type)).items()]
-	if(function_type == NNAFunctionType.JsonAdd): _NNAEnumCache[str(function_type)].append(((AddNNARawJsonComponentOperator.bl_idname, "Raw Json", "")))
 	return _NNAEnumCache[str(function_type)]
 
 def _build_operator_add_enum_callback(self, context) -> list:

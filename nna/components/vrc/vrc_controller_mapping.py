@@ -123,16 +123,16 @@ class EditVRCControllerMappingComponentOperator(bpy.types.Operator):
 
 
 def display_vrc_controller_mapping_component(target_id: str, layout: bpy.types.UILayout, json_component: dict):
-	if("base" in json_component): row = layout.row(); row.label(text="Base"); row.label(text=json_component["base"])
-	if("additive" in json_component): row = layout.row(); row.label(text="Additive"); row.label(text=json_component["additive"])
-	if("gesture" in json_component): row = layout.row(); row.label(text="Gesture"); row.label(text=json_component["gesture"])
-	if("action" in json_component): row = layout.row(); row.label(text="Action"); row.label(text=json_component["action"])
-	if("fx" in json_component): row = layout.row(); row.label(text="FX"); row.label(text=json_component["fx"])
-	if("sitting" in json_component): row = layout.row(); row.label(text="Sitting"); row.label(text=json_component["sitting"])
-	if("tpose" in json_component): row = layout.row(); row.label(text="TPose"); row.label(text=json_component["tpose"])
-	if("ikpose" in json_component): row = layout.row(); row.label(text="IKPose"); row.label(text=json_component["ikpose"])
-	if("parameters" in json_component): row = layout.row(); row.label(text="Parameters"); row.label(text=json_component["parameters"])
-	if("menu" in json_component): row = layout.row(); row.label(text="Menu"); row.label(text=json_component["menu"])
+	if("base" in json_component): row = layout.split(factor=0.4); row.label(text="Base"); row.label(text=json_component["base"])
+	if("additive" in json_component): row = layout.split(factor=0.4); row.label(text="Additive"); row.label(text=json_component["additive"])
+	if("gesture" in json_component): row = layout.split(factor=0.4); row.label(text="Gesture"); row.label(text=json_component["gesture"])
+	if("action" in json_component): row = layout.split(factor=0.4); row.label(text="Action"); row.label(text=json_component["action"])
+	if("fx" in json_component): row = layout.split(factor=0.4); row.label(text="FX"); row.label(text=json_component["fx"])
+	if("sitting" in json_component): row = layout.split(factor=0.4); row.label(text="Sitting"); row.label(text=json_component["sitting"])
+	if("tpose" in json_component): row = layout.split(factor=0.4); row.label(text="TPose"); row.label(text=json_component["tpose"])
+	if("ikpose" in json_component): row = layout.split(factor=0.4); row.label(text="IKPose"); row.label(text=json_component["ikpose"])
+	if("parameters" in json_component): row = layout.split(factor=0.4); row.label(text="Parameters"); row.label(text=json_component["parameters"])
+	if("menu" in json_component): row = layout.split(factor=0.4); row.label(text="Menu"); row.label(text=json_component["menu"])
 
 
 nna_types = {

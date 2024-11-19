@@ -35,11 +35,13 @@ class EditNNAMetaOperator(bpy.types.Operator):
 	name: bpy.props.StringProperty(name="Asset Name") # type: ignore
 	author: bpy.props.StringProperty(name="Author") # type: ignore
 	version: bpy.props.StringProperty(name="Version") # type: ignore
-	url: bpy.props.StringProperty(name="URL") # type: ignore
+	url: bpy.props.StringProperty(name="Asset Link") # type: ignore
 	license: bpy.props.StringProperty(name="License") # type: ignore
 	license_url: bpy.props.StringProperty(name="License Link") # type: ignore
 	documentation: bpy.props.StringProperty(name="Documentation") # type: ignore
-	documentation_url: bpy.props.StringProperty(name="documentation_url Link") # type: ignore
+	documentation_url: bpy.props.StringProperty(name="Documentation Link") # type: ignore
+
+	# TODO user defined properties
 	
 	def invoke(self, context, event):
 		meta = nna_utils_tree.determine_nna_meta()
