@@ -251,7 +251,7 @@ def _draw_nna_json_editor(self: bpy.types.Panel, context: bpy.types.Context | No
 				editIDButton.component_index = idx
 
 				row = header_row.box().row()
-				row.label(text="Overrides: " + component["overrides"] if component.get("overrides") else "No Overrides")
+				row.label(text="Overrides: " + str(component["overrides"]) if component.get("overrides") else "No Overrides")
 				editOverridesButton = row.operator(nna_operators_common.EditNNAComponentOverridesOperator.bl_idname, text="Edit")
 				editOverridesButton.target_id = target_id
 				editOverridesButton.component_index = idx
