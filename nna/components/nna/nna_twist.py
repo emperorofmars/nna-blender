@@ -101,15 +101,25 @@ class NNATwistNameDefinitionOperator(bpy.types.Operator):
 	def invoke(self, context, event):
 		name = nna_utils_name.get_nna_name(self.target_id)
 		match = re.search(_Match, name)
-		if(match):
-			if(match.groupdict()["weight"]): self.weight = float(match.groupdict()["weight"])
-			if(match.groupdict()["source_node_path"]):
-				pass # TODO
-			else:
-				#context.scene.nna_twist_object_selector = None
-				pass
-		else:
-			base_object = nna_utils_tree.get_base_object_by_target_id(self.target_id)
+		if(match and match.groupdict()["weight"]): self.weight = float(match.groupdict()["weight"])
+
+		base_object = nna_utils_tree.get_base_object_by_target_id(self.target_id)
+		if(match and match.groupdict()["source_node_path"]):
+			if(hasattr(base_object.data, "bones")): # If the node is a bone, try to find its source within the same armature.
+				target_object = nna_utils_tree.get_object_by_target_id(base_object.name + "$" + match.groupdict()["source_node_path"])
+				if(target_object):
+					context.scene.nna_twist_object_selector = base_object
+					context.scene.nna_twist_bone_selector = target_object.name
+				else: # Else try to find it by '&' separated target_id.
+					target_base_object = nna_utils_tree.get_base_object_by_target_id(match.groupdict()["source_node_path"], '&')
+					target_object = nna_utils_tree.get_object_by_target_id(match.groupdict()["source_node_path"], '&')
+					context.scene.nna_twist_object_selector = target_base_object
+					context.scene.nna_twist_bone_selector = target_object.name
+			else: # If the node is not a bone, find the target object.
+				target_object = nna_utils_tree.get_object_by_target_id(match.groupdict()["source_node_path"])
+				context.scene.nna_twist_object_selector = target_object
+				context.scene.nna_twist_object_selector = None
+		else: # When the node has no specified source_node, check if its a bone and set the armature as the object if so.
 			if(hasattr(base_object.data, "bones")):
 				context.scene.nna_twist_object_selector = base_object
 			else:
@@ -159,7 +169,6 @@ class NNATwistNameDefinitionOperator(bpy.types.Operator):
 			self.layout.prop(context.scene, "nna_twist_bone_selector")
 
 
-#_Match = r"(?i)twist(?P<source_node_path>[a-zA-Z][a-zA-Z._\-|:\s]*(\&[a-zA-Z][a-zA-Z._\-|:\s]*)*)?(?P<weight>[0-9]*[.][0-9]+)?(([._\-|:][lr])|[._\-|:\s]?(right|left))?$"
 _Match = r"(?i)twist(?P<source_node_path>[a-zA-Z][a-zA-Z0-9._\-|:\s]*(\&[a-zA-Z][a-zA-Z0-9._\-|:\s]*)*)?,?(?P<weight>[0-9]*[.][0-9]+)?(?P<side>(([._\-|:][lr])|[._\-|:\s]?(right|left))$)?$"
 
 def name_match_nna_twist(name: str) -> int:
