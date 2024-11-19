@@ -12,10 +12,34 @@ from . import nna_utils_tree
 from . import nna_utils_json
 
 
+class NNACollectionPanel(bpy.types.Panel):
+	"""Display the NNA editor for Blender collections"""
+	bl_idname = "OBJECT_PT_nna_collection_editor"
+	bl_label = "NNA Collection Editor"
+	bl_region_type = "WINDOW"
+	bl_space_type = "PROPERTIES"
+	bl_category = "NNA"
+	bl_context = "collection"
+
+	def draw_header(self, context):
+		pass
+		
+	def draw(self, context):
+		root = nna_utils_tree.find_nna_root()
+		if(not root):
+			self.layout.label(text="NNA Components Not Enabled")
+			button = self.layout.operator(operator=nna_operators_common.InitializeNNAOperator.bl_idname)
+			button.nna_init_collection = context.collection.name
+		elif(context.collection in root.users_collection):
+			draw_nna_editor(self, context, root.name, nna_utils_tree.determine_nna_object_state(root))
+		else:
+			self.layout.label(text="NNA is setup in another Collection")
+
+
 class NNAObjectPanel(bpy.types.Panel):
 	"""Display the NNA editor for Blender objects"""
-	bl_idname = "OBJECT_PT_nna_editor"
-	bl_label = "NNA Editor"
+	bl_idname = "OBJECT_PT_nna_object_editor"
+	bl_label = "NNA Object Editor"
 	bl_region_type = "WINDOW"
 	bl_space_type = "PROPERTIES"
 	bl_category = "NNA"
@@ -53,6 +77,7 @@ class NNABonePanel(bpy.types.Panel):
 
 
 def draw_nna_editor(self: bpy.types.Panel, context: bpy.types.Context | None, target_id: str, state: nna_utils_tree.NNAObjectState):
+	base_object = nna_utils_tree.get_base_object_by_target_id(target_id)
 	match state:
 		case nna_utils_tree.NNAObjectState.IsRootObject:
 			self.layout.operator(NNAExportFBX.bl_idname)
@@ -101,14 +126,14 @@ def draw_nna_editor(self: bpy.types.Panel, context: bpy.types.Context | None, ta
 				self.layout.label(text="This is the NNA definition for: " + target_id[8:])
 				_draw_nna_editors_for_target(self, context, target_id[8:])
 		case nna_utils_tree.NNAObjectState.IsJsonDefinition:
-			if(not context.object.parent.name[8:]):
-				self.layout.label(text="This part of the NNA definition for the Scene Root" + context.object.parent.name[8:])
+			if(not base_object.parent.name[8:]):
+				self.layout.label(text="This part of the NNA definition for the Scene Root" + base_object.parent.name[8:])
 				_draw_nna_json_editor(self, context, "$nna")
 			else:
-				self.layout.label(text="This part of the NNA definition for: " + context.object.parent.name[8:])
-				_draw_nna_editors_for_target(self, context, context.object.parent.name[8:])
+				self.layout.label(text="This part of the NNA definition for: " + base_object.parent.name[8:])
+				_draw_nna_editors_for_target(self, context, base_object.parent.name[8:])
 		case nna_utils_tree.NNAObjectState.IsInvalidTargetingObject:
-			self.layout.label(text="Invalid Target: '" + context.object.name[8:] + "' does NOT exist!")
+			self.layout.label(text="Invalid Target: '" + base_object.name[8:] + "' does NOT exist!")
 		case nna_utils_tree.NNAObjectState.HasTargetingObject:
 			_draw_nna_editors_for_target(self, context, target_id)
 		case _:
@@ -270,7 +295,7 @@ def _draw_nna_json_editor(self: bpy.types.Panel, context: bpy.types.Context | No
 			box = self.layout.box()
 			box.label(text="Name Definition Error: " + str(error))
 	else:
-		box.label(text="No Components Added")
+		self.layout.label(text="No Components Added")
 	
 	self.layout.separator(factor=1)
 	row = self.layout.row(align=True)
