@@ -239,23 +239,19 @@ def _draw_nna_json_editor(self: bpy.types.Panel, context: bpy.types.Context | No
 
 				split = component_box.split(factor=0.4)
 				col_type = split.column()
-				col_type.label(text="Type")
+				col_type.label(text="Type:")
 				col_type.label(text=str(component["t"]))
 
-				header_row = split.row()
+				header_row = split.column()
 
-				col_id = header_row.box().column()
-				col_id.label(text="ID")
-				row = col_id.row()
-				row.label(text=component.get("id", "No ID"))
+				row = header_row.box().row()
+				row.label(text="ID: " + component["id"] if component.get("id") else "No ID")
 				editIDButton = row.operator(nna_operators_common.EditNNAComponentIDOperator.bl_idname, text="Edit")
 				editIDButton.target_id = target_id
 				editIDButton.component_index = idx
 
-				col_overrides = header_row.box().column()
-				col_overrides.label(text="Overrides")
-				row = col_overrides.row()
-				row.label(text=str(component.get("overrides", "No Overrides")))
+				row = header_row.box().row()
+				row.label(text="Overrides: " + component["overrides"] if component.get("overrides") else "No Overrides")
 				editOverridesButton = row.operator(nna_operators_common.EditNNAComponentOverridesOperator.bl_idname, text="Edit")
 				editOverridesButton.target_id = target_id
 				editOverridesButton.component_index = idx
