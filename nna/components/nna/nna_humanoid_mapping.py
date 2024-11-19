@@ -94,8 +94,9 @@ class NNAHumanoidNameDefinitionOperator(bpy.types.Operator):
 	def invoke(self, context, event):
 		name = nna_utils_name.get_nna_name(self.target_id)
 		match = re.search(_Match, name)
-		if(match.groupdict()["digi"]): self.locomotion_type = "digi"
-		if(match.groupdict()["no_jaw"]): self.no_jaw = True
+		if(match):
+			if(match.groupdict()["digi"]): self.locomotion_type = "digi"
+			if(match.groupdict()["no_jaw"]): self.no_jaw = True
 
 		return context.window_manager.invoke_props_dialog(self)
 		

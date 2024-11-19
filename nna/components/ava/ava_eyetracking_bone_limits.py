@@ -161,10 +161,11 @@ class SetAVAEyetrackingBoneLimitsNameDefinitionOperator(bpy.types.Operator):
 			case nna_utils_name.SymmetrySide.Right: self.side = ".R"; self.side_changable = False
 		
 		match = re.search(_Match, nna_name)
-		if(match.groupdict()["up"]): self.up = float(match.groupdict()["up"])
-		if(match.groupdict()["down"]): self.down = float(match.groupdict()["down"])
-		if(match.groupdict()["in"]): self.inner = float(match.groupdict()["in"])
-		if(match.groupdict()["out"]): self.outer = float(match.groupdict()["out"])
+		if(match):
+			if(match.groupdict()["up"]): self.up = float(match.groupdict()["up"])
+			if(match.groupdict()["down"]): self.down = float(match.groupdict()["down"])
+			if(match.groupdict()["in"]): self.inner = float(match.groupdict()["in"])
+			if(match.groupdict()["out"]): self.outer = float(match.groupdict()["out"])
 
 		return context.window_manager.invoke_props_dialog(self)
 		

@@ -101,31 +101,43 @@ class NNATwistNameDefinitionOperator(bpy.types.Operator):
 	def invoke(self, context, event):
 		name = nna_utils_name.get_nna_name(self.target_id)
 		match = re.search(_Match, name)
-		if(match.groupdict()["weight"]): self.weight = float(match.groupdict()["weight"])
-		if(match.groupdict()["source_node_path"]): pass # TODO
-
-		base_object = nna_utils_tree.get_base_object_by_target_id(self.target_id)
-		if(hasattr(base_object.data, "bones")):
-			context.scene.nna_twist_object_selector = base_object
+		if(match):
+			if(match.groupdict()["weight"]): self.weight = float(match.groupdict()["weight"])
+			if(match.groupdict()["source_node_path"]):
+				pass # TODO
+			else:
+				#context.scene.nna_twist_object_selector = None
+				pass
 		else:
-			context.scene.nna_twist_object_selector = None
+			base_object = nna_utils_tree.get_base_object_by_target_id(self.target_id)
+			if(hasattr(base_object.data, "bones")):
+				context.scene.nna_twist_object_selector = base_object
+			else:
+				context.scene.nna_twist_object_selector = None
 		return context.window_manager.invoke_props_dialog(self)
 		
 	def execute(self, context):
 		try:
 			target = nna_utils_tree.get_object_by_target_id(self.target_id)
+			base_object = nna_utils_tree.get_base_object_by_target_id(self.target_id)
 			(nna_name, symmetry) = nna_utils_name.get_symmetry(nna_utils_name.get_nna_name(self.target_id))
 			
 			match = re.search(_Match, nna_name)
 			if(match): nna_name = nna_name[:match.start()]
 
 			nna_name = nna_name + "Twist"
-			if(self.weight != 0.5): nna_name += str(round(self.weight, 2))
 			
 			if(context.scene.nna_twist_object_selector and (not context.scene.nna_twist_bone_selector or context.scene.nna_twist_bone_selector == "$")):
 				nna_name += context.scene.nna_twist_object_selector.name
+				if(self.weight != 0.5): nna_name += ","
 			elif(context.scene.nna_twist_object_selector and context.scene.nna_twist_bone_selector):
-				nna_name += context.scene.nna_twist_object_selector.name + "&" + context.scene.nna_twist_bone_selector
+				if(base_object.name == context.scene.nna_twist_object_selector.name):
+					nna_name += context.scene.nna_twist_bone_selector
+				else:
+					nna_name += context.scene.nna_twist_object_selector.name + "&" + context.scene.nna_twist_bone_selector
+				if(self.weight != 0.5): nna_name += ","
+
+			if(self.weight != 0.5): nna_name += str(round(self.weight, 2))
 
 			nna_name += symmetry
 
@@ -147,7 +159,8 @@ class NNATwistNameDefinitionOperator(bpy.types.Operator):
 			self.layout.prop(context.scene, "nna_twist_bone_selector")
 
 
-_Match = r"(?i)twist(?P<source_node_path>[a-zA-Z][a-zA-Z._\-|:\s]*(\&[a-zA-Z][a-zA-Z._\-|:\s]*)*)?(?P<weight>[0-9]*[.][0-9]+)?(([._\-|:][lr])|[._\-|:\s]?(right|left))?$"
+#_Match = r"(?i)twist(?P<source_node_path>[a-zA-Z][a-zA-Z._\-|:\s]*(\&[a-zA-Z][a-zA-Z._\-|:\s]*)*)?(?P<weight>[0-9]*[.][0-9]+)?(([._\-|:][lr])|[._\-|:\s]?(right|left))?$"
+_Match = r"(?i)twist(?P<source_node_path>[a-zA-Z][a-zA-Z0-9._\-|:\s]*(\&[a-zA-Z][a-zA-Z0-9._\-|:\s]*)*)?,?(?P<weight>[0-9]*[.][0-9]+)?(?P<side>(([._\-|:][lr])|[._\-|:\s]?(right|left))$)?$"
 
 def name_match_nna_twist(name: str) -> int:
 	match = re.search(_Match, name)
