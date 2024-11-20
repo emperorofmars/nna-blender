@@ -30,3 +30,9 @@ I am disgusted by myself for making this.
 Cheers!
 
 Or something.
+
+<!--
+	Command to build the extension with a default Windows Blender installation:
+	Change the Blender version in the path accordingly.
+	C:\'Program Files'\'Blender Foundation'\'Blender 4.2'\blender.exe --command extension build
+-->
