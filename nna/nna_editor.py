@@ -10,6 +10,7 @@ from . import nna_operators_raw_json
 from . import nna_registry
 from . import nna_utils_tree
 from . import nna_utils_json
+from . import nna_operators_id_list
 
 
 class NNACollectionPanel(bpy.types.Panel):
@@ -246,21 +247,17 @@ def _draw_nna_json_editor(self: bpy.types.Panel, context: bpy.types.Context | No
 
 				row = header_row.box().row()
 				row.label(text="ID: " + component["id"] if component.get("id") else "No ID")
-				editIDButton = row.operator(nna_operators_common.EditNNAComponentIDOperator.bl_idname, text="Edit")
+				editIDButton = row.operator(nna_operators_common.EditNNAComponentIDOperator.bl_idname, text="", icon="OPTIONS")
 				editIDButton.target_id = target_id
 				editIDButton.component_index = idx
 
-				row = header_row.box().row()
-				row.label(text="Overrides: " + str(component["overrides"]) if component.get("overrides") else "No Overrides")
-				editOverridesButton = row.operator(nna_operators_common.EditNNAComponentOverridesOperator.bl_idname, text="Edit")
-				editOverridesButton.target_id = target_id
-				editOverridesButton.component_index = idx
+				nna_operators_id_list.draw_id_list(target_id, header_row.box(), component, idx, "overrides")
 
 				component_box.separator(type="LINE", factor=1)
 
 				if(str(component["t"]) in preview_operators):
 					try:
-						preview_operators[str(component["t"])](target_id, component_box, component)
+						preview_operators[str(component["t"])](target_id, component_box, component, idx)
 					except Exception as error:
 						component_box.label(text="Invalid Definition! Error: " + str(error))
 				else:
@@ -296,7 +293,7 @@ def _draw_nna_json_editor(self: bpy.types.Panel, context: bpy.types.Context | No
 	self.layout.separator(factor=1)
 	row = self.layout.row(align=True)
 	row.prop(bpy.context.scene, "nna_oparators_add", text="")
-	button_add = row.operator(bpy.context.scene.nna_oparators_add, text="Add Component")
+	button_add = row.operator(bpy.context.scene.nna_oparators_add, text="Add Component", icon="ADD")
 	if(button_add):	button_add.target_id = target_id
 	else: row.label(text="No Types Loaded")
 	row.separator()

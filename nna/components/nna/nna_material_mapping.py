@@ -83,7 +83,7 @@ class EditNNAMaterialMappingComponentOperator(bpy.types.Operator):
 		self.layout.operator(NNAMaterialSlotsAddOperator.bl_idname)
 
 
-def display_nna_material_mapping_component(target_id: str, layout: bpy.types.UILayout, json_component: dict):
+def display_nna_material_mapping_component(target_id: str, layout: bpy.types.UILayout, json_component: dict, component_index: int):
 	for idx, slot in enumerate(json_component["slots"]):
 		row = layout.split(factor=0.4)
 		row.label(text=str(idx))
@@ -93,7 +93,7 @@ def display_nna_material_mapping_component(target_id: str, layout: bpy.types.UIL
 
 
 class NNAMaterialSlotsProperty(bpy.types.PropertyGroup):
-    mapping: bpy.props.StringProperty(name="Mapping", default="") # type: ignore
+	mapping: bpy.props.StringProperty(name="Mapping", default="") # type: ignore
 
 class NNAMaterialSlotsAddOperator(bpy.types.Operator):
 	bl_idname = "nna.edit_nna_material_mapping_slots_add"

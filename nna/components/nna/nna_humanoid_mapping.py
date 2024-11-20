@@ -71,7 +71,7 @@ class EditNNAHumanoidComponentOperator(bpy.types.Operator):
 		self.layout.prop(self, "no_jaw", expand=True)
 
 
-def display_nna_humanoid_component(target_id: str, layout: bpy.types.UILayout, json_component: dict):
+def display_nna_humanoid_component(target_id: str, layout: bpy.types.UILayout, json_component: dict, component_index: int):
 	row = layout.split(factor=0.4)
 	row.label(text="Locomotion Type")
 	row.label(text=json_component["lc"] if "lc" in json_component else "default (planti)")

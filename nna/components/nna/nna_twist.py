@@ -79,7 +79,7 @@ class EditNNATwistComponentOperator(bpy.types.Operator):
 			self.layout.prop(context.scene, "nna_twist_bone_selector", text="Source Bone")
 
 
-def display_nna_twist_component(target_id: str, layout: bpy.types.UILayout, json_component: dict):
+def display_nna_twist_component(target_id: str, layout: bpy.types.UILayout, json_component: dict, component_index: int):
 	row = layout.split(factor=0.4)
 	row.label(text="weight")
 	row.label(text=str(json_component.get("w", "default (0.5)")))

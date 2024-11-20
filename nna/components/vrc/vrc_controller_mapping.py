@@ -122,7 +122,7 @@ class EditVRCControllerMappingComponentOperator(bpy.types.Operator):
 		self.layout.prop(self, "menu", expand=True)
 
 
-def display_vrc_controller_mapping_component(target_id: str, layout: bpy.types.UILayout, json_component: dict):
+def display_vrc_controller_mapping_component(target_id: str, layout: bpy.types.UILayout, json_component: dict, component_index: int):
 	if("base" in json_component): row = layout.split(factor=0.4); row.label(text="Base"); row.label(text=json_component["base"])
 	if("additive" in json_component): row = layout.split(factor=0.4); row.label(text="Additive"); row.label(text=json_component["additive"])
 	if("gesture" in json_component): row = layout.split(factor=0.4); row.label(text="Gesture"); row.label(text=json_component["gesture"])
