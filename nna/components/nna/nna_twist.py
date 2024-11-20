@@ -6,6 +6,7 @@ from ...nna_registry import NNAFunctionType
 from ... import nna_utils_name
 from ... import nna_utils_json
 from ... import nna_utils_tree
+from ... import nna_operators_selector
 
 
 _nna_name = "nna.twist"
@@ -44,11 +45,7 @@ class EditNNATwistComponentOperator(bpy.types.Operator):
 		json_component = nna_utils_json.get_component(self.target_id, self.component_index)
 
 		if("w" in json_component): self.weight = json_component["w"]
-
-		if("s" in json_component):
-			context.scene.nna_twist_object_selector = nna_utils_tree.get_base_object_by_target_id(json_component["s"], '&')
-		else:
-			context.scene.nna_twist_object_selector = None
+		nna_operators_selector.init_selector_relative(self.target_id, json_component.get("s"))
 
 		return context.window_manager.invoke_props_dialog(self)
 		
@@ -57,11 +54,10 @@ class EditNNATwistComponentOperator(bpy.types.Operator):
 			json_component = nna_utils_json.get_component(self.target_id, self.component_index)
 
 			if(self.weight != 0.5): json_component["w"] = self.weight
-			
-			if(context.scene.nna_twist_object_selector and (not context.scene.nna_twist_bone_selector or context.scene.nna_twist_bone_selector == "$")):
-				json_component["s"] = context.scene.nna_twist_object_selector.name
-			elif(context.scene.nna_twist_object_selector and context.scene.nna_twist_bone_selector):
-				json_component["s"] = context.scene.nna_twist_object_selector.name + "&" + context.scene.nna_twist_bone_selector
+
+			source_id = nna_operators_selector.get_selected_target_id_relative(self.target_id)
+			if(source_id):
+				json_component["s"] = source_id
 			elif("s" in json_component):
 				del json_component["s"]
 
@@ -74,9 +70,7 @@ class EditNNATwistComponentOperator(bpy.types.Operator):
 	
 	def draw(self, context):
 		self.layout.prop(self, "weight", text="Weight", expand=True)
-		self.layout.prop_search(context.scene, "nna_twist_object_selector", bpy.data, "objects", text="Source Object")
-		if(context.scene.nna_twist_object_selector and hasattr(context.scene.nna_twist_object_selector.data, "bones")):
-			self.layout.prop(context.scene, "nna_twist_bone_selector", text="Source Bone")
+		nna_operators_selector.draw_selector_prop(self.target_id, self.layout)
 
 
 def display_nna_twist_component(target_id: str, layout: bpy.types.UILayout, json_component: dict, component_index: int):
@@ -103,27 +97,11 @@ class NNATwistNameDefinitionOperator(bpy.types.Operator):
 		match = re.search(_Match, name)
 		if(match and match.groupdict()["weight"]): self.weight = float(match.groupdict()["weight"])
 
-		base_object = nna_utils_tree.get_base_object_by_target_id(self.target_id)
 		if(match and match.groupdict()["source_node_path"]):
-			if(hasattr(base_object.data, "bones")): # If the node is a bone, try to find its source within the same armature.
-				target_object = nna_utils_tree.get_object_by_target_id(base_object.name + "$" + match.groupdict()["source_node_path"])
-				if(target_object):
-					context.scene.nna_twist_object_selector = base_object
-					context.scene.nna_twist_bone_selector = target_object.name
-				else: # Else try to find it by '&' separated target_id.
-					target_base_object = nna_utils_tree.get_base_object_by_target_id(match.groupdict()["source_node_path"], '&')
-					target_object = nna_utils_tree.get_object_by_target_id(match.groupdict()["source_node_path"], '&')
-					context.scene.nna_twist_object_selector = target_base_object
-					context.scene.nna_twist_bone_selector = target_object.name
-			else: # If the node is not a bone, find the target object.
-				target_object = nna_utils_tree.get_object_by_target_id(match.groupdict()["source_node_path"])
-				context.scene.nna_twist_object_selector = target_object
-				context.scene.nna_twist_object_selector = None
-		else: # When the node has no specified source_node, check if its a bone and set the armature as the object if so.
-			if(hasattr(base_object.data, "bones")):
-				context.scene.nna_twist_object_selector = base_object
-			else:
-				context.scene.nna_twist_object_selector = None
+			nna_operators_selector.init_selector_relative(self.target_id, match.groupdict()["source_node_path"], target_split_char="&")
+		else:
+			nna_operators_selector.init_selector()
+		
 		return context.window_manager.invoke_props_dialog(self)
 		
 	def execute(self, context):
@@ -136,15 +114,10 @@ class NNATwistNameDefinitionOperator(bpy.types.Operator):
 			if(match): nna_name = nna_name[:match.start()]
 
 			nna_name = nna_name + "Twist"
-			
-			if(context.scene.nna_twist_object_selector and (not context.scene.nna_twist_bone_selector or context.scene.nna_twist_bone_selector == "$")):
-				nna_name += context.scene.nna_twist_object_selector.name
-				if(self.weight != 0.5): nna_name += ","
-			elif(context.scene.nna_twist_object_selector and context.scene.nna_twist_bone_selector):
-				if(base_object.name == context.scene.nna_twist_object_selector.name):
-					nna_name += context.scene.nna_twist_bone_selector
-				else:
-					nna_name += context.scene.nna_twist_object_selector.name + "&" + context.scene.nna_twist_bone_selector
+
+			source_id = nna_operators_selector.get_selected_target_id_relative(self.target_id, target_split_char="&")
+			if(source_id):
+				nna_name += source_id
 				if(self.weight != 0.5): nna_name += ","
 
 			if(self.weight != 0.5): nna_name += str(round(self.weight, 2))
@@ -164,9 +137,7 @@ class NNATwistNameDefinitionOperator(bpy.types.Operator):
 	
 	def draw(self, context):
 		self.layout.prop(self, "weight", text="Weight", expand=True)
-		self.layout.prop_search(context.scene, "nna_twist_object_selector", bpy.data, "objects")
-		if(context.scene.nna_twist_object_selector and hasattr(context.scene.nna_twist_object_selector.data, "bones")):
-			self.layout.prop(context.scene, "nna_twist_bone_selector")
+		nna_operators_selector.draw_selector_prop(self.target_id, self.layout)
 
 
 _Match = r"(?i)twist(?P<source_node_path>[a-zA-Z][a-zA-Z0-9._\-|:\s]*(\&[a-zA-Z][a-zA-Z0-9._\-|:\s]*)*)?,?(?P<weight>[0-9]*[.][0-9]+)?(?P<side>(([._\-|:][lr])|[._\-|:\s]?(right|left))$)?$"
@@ -195,23 +166,3 @@ nna_types = {
 		NNAFunctionType.NameDisplay: name_display_nna_twist
 	},
 }
-
-
-def _build_bone_enum(self, context) -> list:
-	if(bpy.context.scene.nna_twist_object_selector and hasattr(bpy.context.scene.nna_twist_object_selector.data, "bones")):
-		ret = [((bone.name, bone.name, "")) for bone in bpy.context.scene.nna_twist_object_selector.data.bones]
-		ret.append((("$", "", "")))
-		return ret
-	else:
-		return []
-
-
-def register():
-	bpy.types.Scene.nna_twist_object_selector = bpy.props.PointerProperty(type=bpy.types.Object, name="Source Object", options={"SKIP_SAVE"}) # type: ignore
-	bpy.types.Scene.nna_twist_bone_selector = bpy.props.EnumProperty(items=_build_bone_enum, name="Source Bone", options={"SKIP_SAVE"}) # type: ignore
-
-def unregister():
-	if hasattr(bpy.types.Scene, "nna_twist_object_selector"):
-		del bpy.types.Scene.nna_twist_object_selector
-	if hasattr(bpy.types.Scene, "nna_twist_bone_selector"):
-		del bpy.types.Scene.nna_twist_bone_selector

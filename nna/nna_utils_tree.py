@@ -98,6 +98,7 @@ def find_nna_targeting_object(target_id: str) -> bpy.types.Object | None:
 
 
 def get_object_by_target_id(target_id: str, split_char = '$') -> bpy.types.Object | bpy.types.Bone | None:
+	if(not target_id): return None
 	object = bpy.data.objects.get(target_id)
 	if(object): return object
 	parts = target_id.split(split_char)
@@ -106,6 +107,7 @@ def get_object_by_target_id(target_id: str, split_char = '$') -> bpy.types.Objec
 	else: return object
 
 def get_base_object_by_target_id(target_id: str, split_char = '$') -> bpy.types.Object | None:
+	if(not target_id): return None
 	object = bpy.data.objects.get(target_id)
 	if(object): return object
 	parts = target_id.split(split_char)
