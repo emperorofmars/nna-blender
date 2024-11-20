@@ -2,6 +2,11 @@ import bpy
 from . import nna_utils_tree
 
 
+class NNASelectorProperty(bpy.types.PropertyGroup):
+	object: bpy.props.StringProperty(name="Object", default="") # type: ignore
+	bone: bpy.props.StringProperty(name="Bone", default="") # type: ignore
+
+
 def init_selector(target_id: str = None, split_char: str = "$"):
 	base_object = nna_utils_tree.get_base_object_by_target_id(target_id, split_char)
 	target_object = nna_utils_tree.get_object_by_target_id(target_id, split_char)
@@ -69,8 +74,8 @@ def _build_bone_enum(self, context) -> list:
 
 
 def register():
-	bpy.types.Scene.nna_object_selector = bpy.props.PointerProperty(type=bpy.types.Object, name="Source Object", options={"SKIP_SAVE"}) # type: ignore
-	bpy.types.Scene.nna_bone_selector = bpy.props.EnumProperty(items=_build_bone_enum, name="Source Bone", options={"SKIP_SAVE"}) # type: ignore
+	bpy.types.Scene.nna_object_selector = bpy.props.PointerProperty(type=bpy.types.Object, name="Object", options={"SKIP_SAVE"}) # type: ignore
+	bpy.types.Scene.nna_bone_selector = bpy.props.EnumProperty(items=_build_bone_enum, name="Bone", options={"SKIP_SAVE"}) # type: ignore
 
 def unregister():
 	if hasattr(bpy.types.Scene, "nna_object_selector"):

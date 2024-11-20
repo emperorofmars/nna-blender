@@ -137,7 +137,7 @@ def name_match_nna_humanoid(name: str) -> int:
 	match = re.search(_Match, name)
 	return -1 if not match else match.start()
 
-def name_display_nna_humanoid(layout, name: str):
+def name_display_nna_humanoid(layout: bpy.types.UILayout, name: str):
 	match = re.search(_Match, name)
 	row = layout.row()
 	row.label(text="Locomotion Type")

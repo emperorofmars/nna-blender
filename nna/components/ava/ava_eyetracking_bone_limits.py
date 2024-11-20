@@ -207,7 +207,7 @@ def name_match_ava_eyetracking_bone_limits(name: str) -> int:
 	match = re.search(_Match, name)
 	return -1 if not match else match.start()
 
-def name_display_ava_eyetracking_bone_limits(layout, name: str):
+def name_display_ava_eyetracking_bone_limits(layout: bpy.types.UILayout, name: str):
 	match = re.search(_Match, name)
 	if(match.groupdict()["side"]):
 		side = nna_utils_name.detect_side(name)

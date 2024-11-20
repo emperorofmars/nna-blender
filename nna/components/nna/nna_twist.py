@@ -70,16 +70,13 @@ class EditNNATwistComponentOperator(bpy.types.Operator):
 	
 	def draw(self, context):
 		self.layout.prop(self, "weight", text="Weight", expand=True)
+		self.layout.label(text="Source")
 		nna_operators_selector.draw_selector_prop(self.target_id, self.layout)
 
 
 def display_nna_twist_component(target_id: str, layout: bpy.types.UILayout, json_component: dict, component_index: int):
-	row = layout.split(factor=0.4)
-	row.label(text="weight")
-	row.label(text=str(json_component.get("w", "default (0.5)")))
-	row = layout.split(factor=0.4)
-	row.label(text="source")
-	row.label(text=str(json_component.get("s", "default (grandparent)")))
+	row = layout.split(factor=0.4); row.label(text="Weight"); row.label(text=str(json_component.get("w", "default (0.5)")))
+	row = layout.split(factor=0.4); row.label(text="Source"); row.label(text=str(json_component.get("s", "default (grandparent)")))
 
 
 class NNATwistNameDefinitionOperator(bpy.types.Operator):
@@ -137,6 +134,7 @@ class NNATwistNameDefinitionOperator(bpy.types.Operator):
 	
 	def draw(self, context):
 		self.layout.prop(self, "weight", text="Weight", expand=True)
+		self.layout.label(text="Source")
 		nna_operators_selector.draw_selector_prop(self.target_id, self.layout)
 
 
@@ -146,14 +144,10 @@ def name_match_nna_twist(name: str) -> int:
 	match = re.search(_Match, name)
 	return -1 if not match else match.start()
 
-def name_display_nna_twist(layout, name: str):
+def name_display_nna_twist(layout: bpy.types.UILayout, name: str):
 	match = re.search(_Match, name)
-	row = layout.row()
-	row.label(text="weight")
-	row.label(text=str(match.groupdict()["weight"]) if match.groupdict()["weight"] else "default (0.5)")
-	row = layout.row()
-	row.label(text="source")
-	row.label(text=match.groupdict()["source_node_path"] if match.groupdict()["source_node_path"] else "default (grandparent)")
+	row = layout.split(factor=0.4); row.label(text="Weight"); row.label(text=str(match.groupdict()["weight"]) if match.groupdict()["weight"] else "default (0.5)")
+	row = layout.split(factor=0.4); row.label(text="Source"); row.label(text=match.groupdict()["source_node_path"] if match.groupdict()["source_node_path"] else "default (grandparent)")
 
 
 nna_types = {
