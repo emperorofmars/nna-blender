@@ -24,7 +24,7 @@ class SetActiveObjectOperator(bpy.types.Operator):
 class CreateNewObjectOperator(bpy.types.Operator):
 	"""Create a new object with the specified name"""
 	bl_idname = "nna.util_create_new_object"
-	bl_label = "Select"
+	bl_label = "Create new Object"
 	bl_options = {"REGISTER", "UNDO"}
 
 	target_name: bpy.props.StringProperty(name = "target_name") # type: ignore

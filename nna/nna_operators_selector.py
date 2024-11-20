@@ -64,7 +64,7 @@ def draw_selector_prop(target_id: str, layout: bpy.types.UILayout):
 class EditNNASelectionListOperator(bpy.types.Operator):
 	"""Edit Selection List"""
 	bl_idname = "nna.edit_selection_list"
-	bl_label = "Edit Selection List"
+	bl_label = "Edit"
 	bl_options = {"REGISTER", "UNDO"}
 
 	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
@@ -117,7 +117,7 @@ class NNASelectorProperty(bpy.types.PropertyGroup):
 
 class NNASelectorPropertyAddOperator(bpy.types.Operator):
 	bl_idname = "nna.edit_selector_list_add"
-	bl_label = "Add Selector"
+	bl_label = "Add"
 	bl_options = {"REGISTER", "UNDO"}
 
 	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
@@ -137,7 +137,7 @@ class NNASelectorPropertyAddOperator(bpy.types.Operator):
 
 class NNASelectorPropertyEditOperator(bpy.types.Operator):
 	bl_idname = "nna.edit_selector_list"
-	bl_label = "Add Selector"
+	bl_label = "Edit"
 	bl_options = {"REGISTER", "UNDO"}
 
 	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
@@ -158,7 +158,7 @@ class NNASelectorPropertyEditOperator(bpy.types.Operator):
 
 class NNASelectorPropertyDeleteOperator(bpy.types.Operator):
 	bl_idname = "nna.edit_selector_list_delete"
-	bl_label = "Delete Selector"
+	bl_label = "Delete"
 	bl_options = {"REGISTER", "UNDO"}
 	
 	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore

@@ -38,7 +38,7 @@ class EditNNARawJsonOperator(bpy.types.Operator):
 class AddNNARawJsonComponentOperator(bpy.types.Operator):
 	"""Add a new component specified in raw Json"""
 	bl_idname = "nna.add_raw_json_component"
-	bl_label = "Add Raw Json Component"
+	bl_label = "Add"
 	bl_options = {"REGISTER", "UNDO"}
 	
 	target_id: bpy.props.StringProperty(name="targetId") # type: ignore
@@ -69,7 +69,7 @@ class AddNNARawJsonComponentOperator(bpy.types.Operator):
 class EditNNARawJsonComponentOperator(bpy.types.Operator):
 	"""Edit the raw Json of this component"""
 	bl_idname = "nna.edit_raw_json_component"
-	bl_label = "Edit Raw Json Component"
+	bl_label = "Edit"
 	bl_options = {"REGISTER", "UNDO"}
 
 	component_index: bpy.props.IntProperty(name = "component_index", default=-1) # type: ignore

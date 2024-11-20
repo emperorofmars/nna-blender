@@ -6,9 +6,9 @@ from . import nna_utils_name
 
 
 class EditNNAIDListOperator(bpy.types.Operator):
-	"""Edit IDs"""
+	"""Edit list of IDs"""
 	bl_idname = "nna.edit_id_list"
-	bl_label = "Edit IDs"
+	bl_label = "Edit"
 	bl_options = {"REGISTER", "UNDO"}
 
 	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
@@ -59,7 +59,7 @@ class NNAIDProperty(bpy.types.PropertyGroup):
 
 class NNAIDPropertyAddOperator(bpy.types.Operator):
 	bl_idname = "nna.edit_id_list_add"
-	bl_label = "Add ID"
+	bl_label = "Add"
 	bl_options = {"REGISTER", "UNDO"}
 
 	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
@@ -71,7 +71,7 @@ class NNAIDPropertyAddOperator(bpy.types.Operator):
 
 class NNAIDPropertyDeleteOperator(bpy.types.Operator):
 	bl_idname = "nna.edit_id_list_delete"
-	bl_label = "Delete ID"
+	bl_label = "Delete"
 	bl_options = {"REGISTER", "UNDO"}
 	
 	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
@@ -92,7 +92,6 @@ def unregister():
 		del bpy.types.Object.nna_id_list
 	if hasattr(bpy.types.Bone, "nna_id_list"):
 		del bpy.types.Bone.nna_id_list
-
 
 
 def draw_id_list(target_id: str, layout: bpy.types.UILayout, json_component: dict, component_index: int, json_key: str, label_text: str = None):
