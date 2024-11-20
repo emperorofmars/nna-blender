@@ -17,7 +17,7 @@ Find the Unity counterpart here: <https://github.com/emperorofmars/nna_unity>
 
 ---
 
-**[Full Documantation](https://github.com/emperorofmars/nna)** - [Roadmap](https://github.com/emperorofmars/nna/blob/master/roadmap.md)
+**[Full Documentation](https://github.com/emperorofmars/nna)** - [Roadmap](https://github.com/emperorofmars/nna/blob/master/roadmap.md)
 
 Issues, discussions & PRs welcome!
 

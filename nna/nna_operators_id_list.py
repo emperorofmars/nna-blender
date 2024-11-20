@@ -104,7 +104,7 @@ def draw_id_list(target_id: str, layout: bpy.types.UILayout, json_component: dic
 		id_list += str(id)
 		if(index < len(json_component.get(json_key)) - 1): id_list += ", "
 	row.label(text=id_list if id_list else "-")
-	collider_list_button = row.operator(EditNNAIDListOperator.bl_idname, text="", icon="OPTIONS")
-	collider_list_button.target_id = target_id
-	collider_list_button.component_index = component_index
-	collider_list_button.json_key = json_key
+	edit_list_button = row.operator(EditNNAIDListOperator.bl_idname, text="", icon="OPTIONS")
+	edit_list_button.target_id = target_id
+	edit_list_button.component_index = component_index
+	edit_list_button.json_key = json_key
