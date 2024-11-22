@@ -101,7 +101,14 @@ class RemoveNNANameDefinitionOperator(bpy.types.Operator):
 		try:
 			target = nna_utils_tree.get_object_by_target_id(self.target_id)
 			(nna_name, symmetry) = nna_utils_name.get_symmetry(target.name)
-			target.name = nna_name[:self.name_definition_index] + symmetry
+			
+			new_name = nna_name[:self.name_definition_index] + symmetry
+
+			targeting_object = nna_utils_tree.find_nna_targeting_object(target.name)
+			if(targeting_object):
+				targeting_object.name = "$target:" + new_name
+
+			target.name = new_name
 
 			self.report({'INFO'}, "Name definition successfully removed")
 			return {"FINISHED"}
