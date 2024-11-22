@@ -183,14 +183,13 @@ def _draw_nna_name_editor(self: bpy.types.Panel, context: bpy.types.Context | No
 
 	name_definition_match = None
 	try:
+		shortest_start_index = -1
 		for nna_type, match in name_match_operators.items():
-			if(match):
-				nna_name = nna_utils_tree.get_object_by_target_id(target_id).name
-				index = match(nna_name)
-				if(index >= 0):
-					name_definition_match = {"nna_name": nna_name, "index": index, "nna_type": nna_type}
-					break
-		
+			nna_name = nna_utils_tree.get_object_by_target_id(target_id).name
+			start_index = match(nna_name)
+			if(start_index >= 0 and (shortest_start_index < 0 or start_index < shortest_start_index)):
+				shortest_start_index = start_index
+				name_definition_match = {"nna_name": nna_name, "index": start_index, "nna_type": nna_type}
 		if(name_definition_match):
 			box = self.layout.box()
 			box.label(text="Name Definition: " + name_definition_match["nna_type"])

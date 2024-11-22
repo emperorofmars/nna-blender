@@ -195,9 +195,12 @@ def _build_bone_enum(self, context) -> list:
 	else:
 		return []
 
+def _poll_objects(self, object: bpy.types.Object) -> bool:
+	return not object.name.startswith("$")
+
 
 def register():
-	bpy.types.Scene.nna_object_selector = bpy.props.PointerProperty(type=bpy.types.Object, name="Object", options={"SKIP_SAVE"}) # type: ignore
+	bpy.types.Scene.nna_object_selector = bpy.props.PointerProperty(type=bpy.types.Object, poll=_poll_objects, name="Object", options={"SKIP_SAVE"}) # type: ignore
 	bpy.types.Scene.nna_bone_selector = bpy.props.EnumProperty(items=_build_bone_enum, name="Bone", options={"SKIP_SAVE"}) # type: ignore
 	bpy.types.Object.nna_selector_list = bpy.props.CollectionProperty(type=NNASelectorProperty, options={"SKIP_SAVE"}, override={"USE_INSERTION"}) # type: ignore
 	bpy.types.Bone.nna_selector_list = bpy.props.CollectionProperty(type=NNASelectorProperty, options={"SKIP_SAVE"}, override={"USE_INSERTION"}) # type: ignore
