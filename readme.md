@@ -22,6 +22,11 @@ Issues, discussions & PRs welcome!
 
 ![](./Docs/img/nna_cover_image.png)
 
+---
+
+# License
+This repository is licensed under **MPL-2.0**.
+
 <!--
 	Command to build the extension with a default Windows Blender installation:
 	Change the Blender version in the path accordingly.
