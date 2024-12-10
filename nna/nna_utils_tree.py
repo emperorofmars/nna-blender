@@ -98,6 +98,8 @@ def find_nna_targeting_object(target_id: str) -> bpy.types.Object | None:
 			return child
 		elif(target_id == "$nna" and child.name == "$root"):
 			return child
+		elif(target_id == "$meta" and child.name == "$meta"):
+			return child
 	return None
 
 

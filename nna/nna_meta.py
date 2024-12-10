@@ -7,6 +7,7 @@ import bpy
 
 from . import nna_utils_tree
 from . import nna_utils_json
+from . import nna_kv_list
 
 
 class SetupNNAMetaOperator(bpy.types.Operator):
@@ -14,7 +15,7 @@ class SetupNNAMetaOperator(bpy.types.Operator):
 	bl_idname = "nna.init_meta"
 	bl_label = "Setup NNA Meta Information"
 	bl_options = {"REGISTER", "UNDO"}
-	
+
 	def execute(self, context):
 		root = nna_utils_tree.find_nna_root()
 		if(root):
@@ -46,7 +47,7 @@ class EditNNAMetaOperator(bpy.types.Operator):
 	documentation_url: bpy.props.StringProperty(name="Documentation Link") # type: ignore
 
 	# TODO user defined properties
-	
+
 	def invoke(self, context, event):
 		meta = nna_utils_tree.determine_nna_meta()
 		json_text = nna_utils_json.get_json_from_targeting_object(meta)
@@ -61,8 +62,15 @@ class EditNNAMetaOperator(bpy.types.Operator):
 		if("documentation" in json_meta): self.documentation = json_meta["documentation"]
 		if("documentation_url" in json_meta): self.documentation_url = json_meta["documentation_url"]
 
+		if("custom_properties" in json_meta):
+			bpy.context.scene.nna_kv_list.clear()
+			for kv_entry in json_meta.get("custom_properties", []):
+				new_entry = bpy.context.scene.nna_kv_list.add()
+				new_entry.key = kv_entry["key"]
+				new_entry.value = kv_entry["value"]
+
 		return context.window_manager.invoke_props_dialog(self)
-		
+
 	def execute(self, context):
 		try:
 			meta = nna_utils_tree.determine_nna_meta()
@@ -86,13 +94,22 @@ class EditNNAMetaOperator(bpy.types.Operator):
 			if(self.documentation_url): json_meta["documentation_url"] = self.documentation_url
 			elif("documentation_url" in json_meta): del json_meta["documentation_url"]
 
+			if(bpy.context.scene.nna_kv_list):
+				custom_properties = []
+				for kv_entry in bpy.context.scene.nna_kv_list:
+					custom_properties.append({"key": kv_entry.key, "value": kv_entry.value})
+				json_meta["custom_properties"] = custom_properties
+				bpy.context.scene.nna_kv_list.clear()
+			elif("custom_properties" in json_meta):
+				del json_meta["custom_properties"]
+
 			nna_utils_json.serialize_json_to_targeting_object(meta, json.dumps(json_meta))
 			self.report({'INFO'}, "Component successfully edited")
 			return {"FINISHED"}
 		except ValueError as error:
 			self.report({'ERROR'}, str(error))
 			return {"CANCELLED"}
-	
+
 	def draw(self, context):
 		self.layout.prop(self, "name", expand=True)
 		self.layout.prop(self, "author", expand=True)
@@ -102,3 +119,8 @@ class EditNNAMetaOperator(bpy.types.Operator):
 		self.layout.prop(self, "license_url", expand=True)
 		self.layout.prop(self, "documentation", expand=True)
 		self.layout.prop(self, "documentation_url", expand=True)
+
+		self.layout.separator(factor=0.5)
+		self.layout.label(text="Custom Properties")
+		nna_kv_list.edit_kv_list(self, context)
+

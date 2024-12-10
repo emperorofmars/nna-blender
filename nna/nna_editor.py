@@ -15,6 +15,7 @@ from . import nna_registry
 from . import nna_utils_tree
 from . import nna_utils_json
 from . import nna_operators_id_list
+from . import nna_kv_list
 
 
 class NNACollectionPanel(bpy.types.Panel):
@@ -28,7 +29,7 @@ class NNACollectionPanel(bpy.types.Panel):
 
 	def draw_header(self, context):
 		pass
-		
+
 	def draw(self, context):
 		root = nna_utils_tree.find_nna_root()
 		if(not root):
@@ -56,7 +57,7 @@ class NNAObjectPanel(bpy.types.Panel):
 
 	def draw_header(self, context):
 		pass
-		
+
 	def draw(self, context):
 		draw_nna_editor(self, context, context.object.name, nna_utils_tree.determine_nna_object_state(context.object))
 
@@ -76,7 +77,7 @@ class NNABonePanel(bpy.types.Panel):
 
 	def draw_header(self, context):
 		pass
-		
+
 	def draw(self, context):
 		draw_nna_editor(self, context, context.object.name + "$" + context.bone.name, nna_utils_tree.determine_nna_bone_state(context.object, context.bone))
 
@@ -167,6 +168,11 @@ def _draw_meta_editor(self: bpy.types.Panel, context: bpy.types.Context | None):
 			for property in json_meta.keys():
 				if(property in ["name", "version", "author", "url", "license", "license_url", "documentation", "documentation_url"]): continue
 				row = json_meta.row(); row.label(text=property); row.label(text=str(json_meta[property]))
+
+		if("custom_properties" in json_meta):
+			box.separator(factor=0.5)
+			box.label(text="Custom Properties")
+			box.label(text=nna_kv_list.create_kv_list_string(json_meta["custom_properties"]))
 		box.operator(nna_meta.EditNNAMetaOperator.bl_idname)
 	else:
 		box.operator(nna_meta.SetupNNAMetaOperator.bl_idname)
@@ -201,7 +207,7 @@ def _draw_nna_name_editor(self: bpy.types.Panel, context: bpy.types.Context | No
 				name_draw_operators[name_definition_match["nna_type"]](box, name_definition_match["nna_name"])
 			else:
 				pass
-			
+
 			row = box.row()
 			if(name_definition_match["nna_type"] in name_set_operators):
 				edit_button = row.operator(name_set_operators[name_definition_match["nna_type"]], text="Edit")
@@ -221,17 +227,17 @@ def _draw_nna_name_editor(self: bpy.types.Panel, context: bpy.types.Context | No
 	except Exception as error:
 		box = self.layout.box()
 		box.label(text="Name Definition Error: " + str(error))
-	
+
 	return name_definition_match
 
 
 def _draw_nna_json_editor(self: bpy.types.Panel, context: bpy.types.Context | None, target_id: str):
 	jsonText = nna_utils_json.get_json_from_target_id(target_id)
-	
+
 	preview_operators = nna_registry.get_nna_operators(nna_registry.NNAFunctionType.JsonDisplay)
 	edit_operators = nna_registry.get_nna_operators(nna_registry.NNAFunctionType.JsonEdit)
 	remove_operators = nna_registry.get_nna_operators(nna_registry.NNAFunctionType.JsonRemove)
-	
+
 	self.layout.label(text="Components List:")
 
 	if(len(jsonText) > 2):
@@ -292,7 +298,7 @@ def _draw_nna_json_editor(self: bpy.types.Panel, context: bpy.types.Context | No
 			box.label(text="Name Definition Error: " + str(error))
 	else:
 		self.layout.label(text="No Components Added")
-	
+
 	self.layout.separator(factor=1)
 	row = self.layout.row(align=True)
 	row.prop(bpy.context.scene, "nna_oparators_add", text="")
@@ -302,7 +308,7 @@ def _draw_nna_json_editor(self: bpy.types.Panel, context: bpy.types.Context | No
 	row.separator()
 	button_add_raw = row.operator(nna_operators_raw_json.AddNNARawJsonComponentOperator.bl_idname, text="Add Raw Json Component")
 	button_add_raw.target_id = target_id
-	
+
 	self.layout.separator(factor=2)
 	row = self.layout.row()
 	button_edit_raw = row.operator(nna_operators_raw_json.EditNNARawJsonOperator.bl_idname, text="Edit Raw Json")

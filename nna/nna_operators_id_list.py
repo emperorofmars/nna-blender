@@ -16,7 +16,7 @@ class EditNNAIDListOperator(bpy.types.Operator):
 	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
 	component_index: bpy.props.IntProperty(name = "component_index", default=-1) # type: ignore
 	json_key: bpy.props.StringProperty(name = "json_key") # type: ignore
-	
+
 	def invoke(self, context, event):
 		json_component = nna_utils_json.get_component(self.target_id, self.component_index)
 		object = nna_utils_tree.get_object_by_target_id(self.target_id)
@@ -26,7 +26,7 @@ class EditNNAIDListOperator(bpy.types.Operator):
 			object.nna_id_list.add().id = str(id)
 
 		return context.window_manager.invoke_props_dialog(self)
-	
+
 	def execute(self, context):
 		try:
 			json_component = nna_utils_json.get_component(self.target_id, self.component_index)
@@ -43,7 +43,7 @@ class EditNNAIDListOperator(bpy.types.Operator):
 		except ValueError as error:
 			self.report({'ERROR'}, str(error))
 			return {"CANCELLED"}
-	
+
 	def draw(self, context):
 		object = nna_utils_tree.get_object_by_target_id(self.target_id)
 		for index, id in enumerate(object.nna_id_list):
@@ -75,7 +75,7 @@ class NNAIDPropertyDeleteOperator(bpy.types.Operator):
 	bl_idname = "nna.edit_id_list_delete"
 	bl_label = "Delete"
 	bl_options = {"REGISTER", "UNDO"}
-	
+
 	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
 	index: bpy.props.IntProperty(name = "component_index", default=-1) # type: ignore
 
@@ -83,17 +83,6 @@ class NNAIDPropertyDeleteOperator(bpy.types.Operator):
 		object = nna_utils_tree.get_object_by_target_id(self.target_id)
 		object.nna_id_list.remove(self.index)
 		return {"FINISHED"}
-
-
-def register():
-	bpy.types.Object.nna_id_list = bpy.props.CollectionProperty(type=NNAIDProperty, name="ID List", options={"SKIP_SAVE"}, override={"USE_INSERTION"}) # type: ignore
-	bpy.types.Bone.nna_id_list = bpy.props.CollectionProperty(type=NNAIDProperty, name="ID List", options={"SKIP_SAVE"}, override={"USE_INSERTION"}) # type: ignore
-
-def unregister():
-	if hasattr(bpy.types.Object, "nna_id_list"):
-		del bpy.types.Object.nna_id_list
-	if hasattr(bpy.types.Bone, "nna_id_list"):
-		del bpy.types.Bone.nna_id_list
 
 
 def draw_id_list(target_id: str, layout: bpy.types.UILayout, json_component: dict, component_index: int, json_key: str, label_text: str = None):
@@ -110,3 +99,14 @@ def draw_id_list(target_id: str, layout: bpy.types.UILayout, json_component: dic
 	edit_list_button.target_id = target_id
 	edit_list_button.component_index = component_index
 	edit_list_button.json_key = json_key
+
+
+def register():
+	bpy.types.Object.nna_id_list = bpy.props.CollectionProperty(type=NNAIDProperty, name="ID List", options={"SKIP_SAVE"}, override={"USE_INSERTION"}) # type: ignore
+	bpy.types.Bone.nna_id_list = bpy.props.CollectionProperty(type=NNAIDProperty, name="ID List", options={"SKIP_SAVE"}, override={"USE_INSERTION"}) # type: ignore
+
+def unregister():
+	if hasattr(bpy.types.Object, "nna_id_list"):
+		del bpy.types.Object.nna_id_list
+	if hasattr(bpy.types.Bone, "nna_id_list"):
+		del bpy.types.Bone.nna_id_list
