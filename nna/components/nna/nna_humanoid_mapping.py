@@ -20,9 +20,9 @@ class AddNNAHumanoidComponentOperator(bpy.types.Operator):
 	bl_idname = "nna.add_nna_humanoid"
 	bl_label = "Add Humanoid Component"
 	bl_options = {"REGISTER", "UNDO"}
-	
+
 	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
-	
+
 	def execute(self, context):
 		try:
 			nna_utils_json.add_component(self.target_id, {"t":_nna_name})
@@ -44,7 +44,7 @@ class EditNNAHumanoidComponentOperator(bpy.types.Operator):
 
 	locomotion_type: bpy.props.EnumProperty(items=[("planti", "Plantigrade", ""),("digi", "Digitigrade", "")], name="Locomotion Type", default="planti") # type: ignore
 	no_jaw: bpy.props.BoolProperty(name="No Jaw Mapping", default=False) # type: ignore
-	
+
 	def invoke(self, context, event):
 		json_component = nna_utils_json.get_component(self.target_id, self.component_index)
 
@@ -52,7 +52,7 @@ class EditNNAHumanoidComponentOperator(bpy.types.Operator):
 		if("nj" in json_component): self.no_jaw = json_component["nj"]
 
 		return context.window_manager.invoke_props_dialog(self)
-		
+
 	def execute(self, context):
 		try:
 			json_component = nna_utils_json.get_component(self.target_id, self.component_index)
@@ -69,7 +69,7 @@ class EditNNAHumanoidComponentOperator(bpy.types.Operator):
 		except ValueError as error:
 			self.report({'ERROR'}, str(error))
 			return {"CANCELLED"}
-	
+
 	def draw(self, context):
 		self.layout.prop(self, "locomotion_type", expand=True)
 		self.layout.prop(self, "no_jaw", expand=True)
@@ -91,7 +91,7 @@ class NNAHumanoidNameDefinitionOperator(bpy.types.Operator):
 	bl_options = {"REGISTER", "UNDO"}
 
 	target_id: bpy.props.StringProperty(name="target_id") # type: ignore
-	
+
 	locomotion_type: bpy.props.EnumProperty(items=[("planti", "Plantigrade", ""),("digi", "Digitigrade", "")], name="Locomotion Type", default="planti") # type: ignore
 	no_jaw: bpy.props.BoolProperty(name="No Jaw Mapping", default=False) # type: ignore
 
@@ -103,7 +103,7 @@ class NNAHumanoidNameDefinitionOperator(bpy.types.Operator):
 			if(match.groupdict()["no_jaw"]): self.no_jaw = True
 
 		return context.window_manager.invoke_props_dialog(self)
-		
+
 	def execute(self, context):
 		try:
 			target = nna_utils_tree.get_object_by_target_id(self.target_id)
@@ -112,8 +112,8 @@ class NNAHumanoidNameDefinitionOperator(bpy.types.Operator):
 			match = re.search(_Match, nna_name)
 			if(match): nna_name = nna_name[:match.start()]
 
-			nna_name = nna_name + "Humanoid"
-			
+			nna_name = nna_name + "$Humanoid"
+
 			if(self.locomotion_type != "planti"): nna_name += str(self.locomotion_type).capitalize()
 			if(self.no_jaw == True): nna_name += "NoJaw"
 
@@ -129,13 +129,13 @@ class NNAHumanoidNameDefinitionOperator(bpy.types.Operator):
 		except ValueError as error:
 			self.report({'ERROR'}, str(error))
 			return {"CANCELLED"}
-	
+
 	def draw(self, context):
 		self.layout.prop(self, "locomotion_type", expand=True)
 		self.layout.prop(self, "no_jaw", expand=True)
 
 
-_Match = r"(?i)humanoid(?P<digi>digi)?(?P<no_jaw>nojaw)?(([._\-|:][lr])|[._\-|:\s]?(right|left))?$"
+_Match = r"(?i)\$humanoid(?P<digi>digi)?(?P<no_jaw>nojaw)?(([._\-|:][lr])|[._\-|:\s]?(right|left))?$"
 
 def name_match_nna_humanoid(name: str) -> int:
 	match = re.search(_Match, name)

@@ -23,9 +23,9 @@ class AddAVAEyetrackingBoneLimitsComponentOperator(bpy.types.Operator):
 	bl_idname = "ava.add_ava_eyetracking_bone_limits"
 	bl_label = "Add AVA Eyetracking Bone Limits Component"
 	bl_options = {"REGISTER", "UNDO"}
-	
+
 	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
-	
+
 	def execute(self, context):
 		try:
 			nna_utils_json.add_component(self.target_id, {
@@ -65,7 +65,7 @@ class EditAVAEyetrackingBoneLimitsComponentOperator(bpy.types.Operator):
 	right_down: bpy.props.FloatProperty(name="Right Down", default=12, min=0, soft_min=4, max=90, soft_max=30, precision=2, step=2) # type: ignore
 	right_in: bpy.props.FloatProperty(name="Right In", default=15, min=0, soft_min=4, max=90, soft_max=30, precision=2, step=2) # type: ignore
 	right_out: bpy.props.FloatProperty(name="Right Out", default=16, min=0, soft_min=4, max=90, soft_max=30, precision=2, step=2) # type: ignore
-	
+
 	def invoke(self, context, event):
 		json_component = nna_utils_json.get_component(self.target_id, self.component_index)
 
@@ -73,7 +73,7 @@ class EditAVAEyetrackingBoneLimitsComponentOperator(bpy.types.Operator):
 		if("left_down" in json_component): self.left_down = json_component["left_down"]
 		if("left_in" in json_component): self.left_in = json_component["left_in"]
 		if("left_out" in json_component): self.left_out = json_component["left_out"]
-		
+
 		if("linked" in json_component): self.linked = json_component["linked"]
 
 		if("right_up" in json_component): self.right_up = json_component["right_up"]
@@ -82,16 +82,16 @@ class EditAVAEyetrackingBoneLimitsComponentOperator(bpy.types.Operator):
 		if("right_out" in json_component): self.right_out = json_component["right_out"]
 
 		return context.window_manager.invoke_props_dialog(self)
-		
+
 	def execute(self, context):
 		try:
 			json_component = nna_utils_json.get_component(self.target_id, self.component_index)
-			
+
 			json_component["left_up"] = round(self.left_up, 2)
 			json_component["left_down"] = round(self.left_down, 2)
 			json_component["left_in"] = round(self.left_in, 2)
 			json_component["left_out"] = round(self.left_out, 2)
-			
+
 			json_component["linked"] = self.linked
 
 			if(not self.linked):
@@ -106,7 +106,7 @@ class EditAVAEyetrackingBoneLimitsComponentOperator(bpy.types.Operator):
 		except ValueError as error:
 			self.report({'ERROR'}, str(error))
 			return {"CANCELLED"}
-	
+
 	def draw(self, context):
 		self.layout.prop(self, "linked", expand=True)
 
@@ -152,7 +152,7 @@ class SetAVAEyetrackingBoneLimitsNameDefinitionOperator(bpy.types.Operator):
 	down: bpy.props.FloatProperty(name="Down", default=12, min=0, soft_min=4, max=90, soft_max=30, precision=2, step=2) # type: ignore
 	inner: bpy.props.FloatProperty(name="In", default=15, min=0, soft_min=4, max=90, soft_max=30, precision=2, step=2) # type: ignore
 	outer: bpy.props.FloatProperty(name="Out", default=16, min=0, soft_min=4, max=90, soft_max=30, precision=2, step=2) # type: ignore
-	
+
 	side_changable: bpy.props.BoolProperty(default=True) # type: ignore
 	side: bpy.props.EnumProperty(name="Side", items=[("_", "Both", ""),(".L", "Left", ""),(".R", "Right", "")], default=0) # type: ignore
 
@@ -163,7 +163,7 @@ class SetAVAEyetrackingBoneLimitsNameDefinitionOperator(bpy.types.Operator):
 			case nna_utils_name.SymmetrySide.Both: self.side = "_"; self.side_changable = True
 			case nna_utils_name.SymmetrySide.Left: self.side = ".L"; self.side_changable = False
 			case nna_utils_name.SymmetrySide.Right: self.side = ".R"; self.side_changable = False
-		
+
 		match = re.search(_Match, nna_name)
 		if(match):
 			if(match.groupdict()["up"]): self.up = float(match.groupdict()["up"])
@@ -172,7 +172,7 @@ class SetAVAEyetrackingBoneLimitsNameDefinitionOperator(bpy.types.Operator):
 			if(match.groupdict()["out"]): self.outer = float(match.groupdict()["out"])
 
 		return context.window_manager.invoke_props_dialog(self)
-		
+
 	def execute(self, context):
 		try:
 			target = nna_utils_tree.get_object_by_target_id(self.target_id)
@@ -181,8 +181,8 @@ class SetAVAEyetrackingBoneLimitsNameDefinitionOperator(bpy.types.Operator):
 			match = re.search(_Match, nna_name)
 			if(match): nna_name = nna_name[:match.start()]
 
-			nna_name = nna_name + "EyeBoneLimits" + str(round(self.up, 2)) + "," + str(round(self.down, 2)) + "," + str(round(self.inner, 2)) + "," + str(round(self.outer, 2))
-			
+			nna_name = nna_name + "$EyeBoneLimits" + str(round(self.up, 2)) + "," + str(round(self.down, 2)) + "," + str(round(self.inner, 2)) + "," + str(round(self.outer, 2))
+
 			if(self.side_changable and self.side != "_"): target.name += self.side
 			else: nna_name += symmetry
 
@@ -196,7 +196,7 @@ class SetAVAEyetrackingBoneLimitsNameDefinitionOperator(bpy.types.Operator):
 		except ValueError as error:
 			self.report({'ERROR'}, str(error))
 			return {"CANCELLED"}
-	
+
 	def draw(self, context):
 		if(self.side_changable): self.layout.prop(self, "side", expand=True)
 		self.layout.prop(self, "up", expand=True)
@@ -205,7 +205,7 @@ class SetAVAEyetrackingBoneLimitsNameDefinitionOperator(bpy.types.Operator):
 		self.layout.prop(self, "outer", expand=True)
 
 
-_Match = r"(?i)EyeBoneLimits(?P<up>[0-9]*[.][0-9]+),(?P<down>[0-9]*[.][0-9]+),(?P<in>[0-9]*[.][0-9]+),(?P<out>[0-9]*[.][0-9]+)(?P<side>([._\-|:][lr])|[._\-|:\s]?(right|left))?$"
+_Match = r"(?i)\$EyeBoneLimits(?P<up>[0-9]*[.][0-9]+),(?P<down>[0-9]*[.][0-9]+),(?P<in>[0-9]*[.][0-9]+),(?P<out>[0-9]*[.][0-9]+)(?P<side>([._\-|:][lr])|[._\-|:\s]?(right|left))?$"
 
 def name_match_ava_eyetracking_bone_limits(name: str) -> int:
 	match = re.search(_Match, name)

@@ -16,9 +16,9 @@ from ... import nna_utils_tree
 _nna_name = "ava.collider"
 
 
-_MatchSphere = r"(?i)ColSphere(?P<inside_bounds>In)?(?P<radius>r[0-9]*[.][0-9]+)(?P<side>(([._\-|:][lr])|[._\-|:\s]?(right|left))$)?$"
-_MatchCapsule = r"(?i)ColCapsule(?P<inside_bounds>In)?(?P<radius>r[0-9]*[.][0-9]+)(?P<height>h[0-9]*[.][0-9]+)(?P<side>(([._\-|:][lr])|[._\-|:\s]?(right|left))$)?$"
-_MatchPlane = r"(?i)ColPlane(?P<inside_bounds>In)?(?P<side>(([._\-|:][lr])|[._\-|:\s]?(right|left))$)?$"
+_MatchSphere = r"(?i)\$ColSphere(?P<inside_bounds>In)?(?P<radius>r[0-9]*[.][0-9]+)(?P<side>(([._\-|:][lr])|[._\-|:\s]?(right|left))$)?$"
+_MatchCapsule = r"(?i)\$ColCapsule(?P<inside_bounds>In)?(?P<radius>r[0-9]*[.][0-9]+)(?P<height>h[0-9]*[.][0-9]+)(?P<side>(([._\-|:][lr])|[._\-|:\s]?(right|left))$)?$"
+_MatchPlane = r"(?i)\$ColPlane(?P<inside_bounds>In)?(?P<side>(([._\-|:][lr])|[._\-|:\s]?(right|left))$)?$"
 
 
 class SetAVAColliderNameDefinitionOperator(bpy.types.Operator):
@@ -37,7 +37,7 @@ class SetAVAColliderNameDefinitionOperator(bpy.types.Operator):
 
 	def invoke(self, context, event):
 		nna_name = nna_utils_name.get_nna_name(self.target_id)
-		
+
 		if(match := re.search(_MatchSphere, nna_name)):
 			self.col_shape = "sphere"
 			self.inside_bounds = True if match.groupdict()["inside_bounds"] else False
@@ -52,28 +52,28 @@ class SetAVAColliderNameDefinitionOperator(bpy.types.Operator):
 			self.inside_bounds = True if match.groupdict()["inside_bounds"] else False
 
 		return context.window_manager.invoke_props_dialog(self)
-		
+
 	def execute(self, context):
 		try:
 			target = nna_utils_tree.get_object_by_target_id(self.target_id)
 			(nna_name, symmetry) = nna_utils_name.get_symmetry(nna_utils_name.get_nna_name(self.target_id))
-			
+
 			if(match := (re.search(_MatchSphere, nna_name) or re.search(_MatchCapsule, nna_name) or re.search(_MatchPlane, nna_name))):
 				nna_name = nna_name[:match.start()]
-			
+
 			if(self.col_shape == "sphere"):
-				nna_name = nna_name + "ColSphere"\
+				nna_name = nna_name + "$ColSphere"\
 					+ ("In" if self.inside_bounds else "")\
 					+ "R" + str(round(self.radius, 3))
 			elif(self.col_shape == "capsule"):
-				nna_name = nna_name + "ColCapsule"\
+				nna_name = nna_name + "$ColCapsule"\
 					+ ("In" if self.inside_bounds else "")\
 					+ "R" + str(round(self.radius, 3))\
 					+ "H" + str(round(self.height, 3))
 			elif(self.col_shape == "plane"):
-				nna_name = nna_name + "ColPlane"\
+				nna_name = nna_name + "$ColPlane"\
 					+ ("In" if self.inside_bounds else "")
-			
+
 			nna_name += symmetry
 
 			if(len(str.encode(nna_name)) > 63):
@@ -86,7 +86,7 @@ class SetAVAColliderNameDefinitionOperator(bpy.types.Operator):
 		except ValueError as error:
 			self.report({'ERROR'}, str(error))
 			return {"CANCELLED"}
-	
+
 	def draw(self, context):
 		self.layout.prop(self, "col_shape", expand=True)
 		self.layout.prop(self, "inside_bounds", expand=True)

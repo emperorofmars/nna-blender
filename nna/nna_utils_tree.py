@@ -62,7 +62,7 @@ def determine_nna_bone_state(object: bpy.types.Object, bone: bpy.types.Bone) -> 
 	nnaCollection = find_nna_root_collection()
 	for collection in [nnaCollection, *nnaCollection.children_recursive]:
 		if(collection in object.users_collection):
-			if(find_nna_targeting_object(object.name + "$" + bone.name)):
+			if(find_nna_targeting_object(object.name + ";" + bone.name)):
 				return NNAObjectState.HasTargetingObject
 			else:
 				return NNAObjectState.InitedInsideTree
@@ -103,7 +103,7 @@ def find_nna_targeting_object(target_id: str) -> bpy.types.Object | None:
 	return None
 
 
-def get_object_by_target_id(target_id: str, split_char = '$') -> bpy.types.Object | bpy.types.Bone | None:
+def get_object_by_target_id(target_id: str, split_char = ';') -> bpy.types.Object | bpy.types.Bone | None:
 	if(not target_id): return None
 	object = bpy.data.objects.get(target_id)
 	if(object): return object
@@ -112,7 +112,7 @@ def get_object_by_target_id(target_id: str, split_char = '$') -> bpy.types.Objec
 	if(len(parts) > 1): return object.data.bones.get(parts[1])
 	else: return object
 
-def get_base_object_by_target_id(target_id: str, split_char = '$') -> bpy.types.Object | None:
+def get_base_object_by_target_id(target_id: str, split_char = ';') -> bpy.types.Object | None:
 	if(not target_id): return None
 	object = bpy.data.objects.get(target_id)
 	if(object): return object

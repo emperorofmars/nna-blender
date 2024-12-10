@@ -21,9 +21,9 @@ class AddNNATwistComponentOperator(bpy.types.Operator):
 	bl_idname = "nna.add_nna_twist"
 	bl_label = "Add Twist Component"
 	bl_options = {"REGISTER", "UNDO"}
-	
+
 	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
-	
+
 	def execute(self, context):
 		try:
 			nna_utils_json.add_component(self.target_id, {"t":_nna_name})
@@ -44,7 +44,7 @@ class EditNNATwistComponentOperator(bpy.types.Operator):
 	component_index: bpy.props.IntProperty(name = "component_index", default=-1) # type: ignore
 
 	weight: bpy.props.FloatProperty(name="weight", default=0.5, min=0, max=1, precision=2, step=2) # type: ignore
-	
+
 	def invoke(self, context, event):
 		json_component = nna_utils_json.get_component(self.target_id, self.component_index)
 
@@ -52,7 +52,7 @@ class EditNNATwistComponentOperator(bpy.types.Operator):
 		nna_operators_selector.init_selector_relative(self.target_id, json_component.get("s"))
 
 		return context.window_manager.invoke_props_dialog(self)
-		
+
 	def execute(self, context):
 		try:
 			json_component = nna_utils_json.get_component(self.target_id, self.component_index)
@@ -71,7 +71,7 @@ class EditNNATwistComponentOperator(bpy.types.Operator):
 		except ValueError as error:
 			self.report({'ERROR'}, str(error))
 			return {"CANCELLED"}
-	
+
 	def draw(self, context):
 		self.layout.prop(self, "weight", text="Weight", expand=True)
 		self.layout.label(text="Source")
@@ -92,7 +92,7 @@ class NNATwistNameDefinitionOperator(bpy.types.Operator):
 	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
 
 	weight: bpy.props.FloatProperty(name="weight", default=0.5, min=0, max=1, precision=2, step=2) # type: ignore
-	
+
 	def invoke(self, context, event):
 		name = nna_utils_name.get_nna_name(self.target_id)
 		match = re.search(_Match, name)
@@ -102,19 +102,19 @@ class NNATwistNameDefinitionOperator(bpy.types.Operator):
 			nna_operators_selector.init_selector_relative(self.target_id, match.groupdict()["source_node_path"], target_split_char="&")
 		else:
 			nna_operators_selector.init_selector()
-		
+
 		return context.window_manager.invoke_props_dialog(self)
-		
+
 	def execute(self, context):
 		try:
 			target = nna_utils_tree.get_object_by_target_id(self.target_id)
 			base_object = nna_utils_tree.get_base_object_by_target_id(self.target_id)
 			(nna_name, symmetry) = nna_utils_name.get_symmetry(nna_utils_name.get_nna_name(self.target_id))
-			
+
 			match = re.search(_Match, nna_name)
 			if(match): nna_name = nna_name[:match.start()]
 
-			nna_name = nna_name + "Twist"
+			nna_name = nna_name + "$Twist"
 
 			source_id = nna_operators_selector.get_selected_target_id_relative(self.target_id, target_split_char="&")
 			if(source_id):
@@ -135,14 +135,14 @@ class NNATwistNameDefinitionOperator(bpy.types.Operator):
 		except ValueError as error:
 			self.report({'ERROR'}, str(error))
 			return {"CANCELLED"}
-	
+
 	def draw(self, context):
 		self.layout.prop(self, "weight", text="Weight", expand=True)
 		self.layout.label(text="Source")
 		nna_operators_selector.draw_selector_prop(self.target_id, self.layout)
 
 
-_Match = r"(?i)twist(?P<source_node_path>[a-zA-Z][a-zA-Z0-9._\-|:\s]*(\&[a-zA-Z][a-zA-Z0-9._\-|:\s]*)*)?,?(?P<weight>[0-9]*[.][0-9]+)?(?P<side>(([._\-|:][lr])|[._\-|:\s]?(right|left))$)?$"
+_Match = r"(?i)\$twist(?P<source_node_path>[a-zA-Z][a-zA-Z0-9._\-|:\s]*(\&[a-zA-Z][a-zA-Z0-9._\-|:\s]*)*)?,?(?P<weight>[0-9]*[.][0-9]+)?(?P<side>(([._\-|:][lr])|[._\-|:\s]?(right|left))$)?$"
 
 def name_match_nna_twist(name: str) -> int:
 	match = re.search(_Match, name)

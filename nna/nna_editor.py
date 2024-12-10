@@ -3,6 +3,7 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 import json
+import traceback
 import bpy
 
 from . import nna_meta
@@ -79,7 +80,7 @@ class NNABonePanel(bpy.types.Panel):
 		pass
 
 	def draw(self, context):
-		draw_nna_editor(self, context, context.object.name + "$" + context.bone.name, nna_utils_tree.determine_nna_bone_state(context.object, context.bone))
+		draw_nna_editor(self, context, context.object.name + ";" + context.bone.name, nna_utils_tree.determine_nna_bone_state(context.object, context.bone))
 
 
 def draw_nna_editor(self: bpy.types.Panel, context: bpy.types.Context | None, target_id: str, state: nna_utils_tree.NNAObjectState):
@@ -227,6 +228,8 @@ def _draw_nna_name_editor(self: bpy.types.Panel, context: bpy.types.Context | No
 	except Exception as error:
 		box = self.layout.box()
 		box.label(text="Name Definition Error: " + str(error))
+		print(traceback.format_exc())
+		return None
 
 	return name_definition_match
 
