@@ -20,9 +20,9 @@ class AddAVAAvatarComponentOperator(bpy.types.Operator):
 	bl_idname = "ava.add_ava_avatar"
 	bl_label = "Add AVA Avatar Component"
 	bl_options = {"REGISTER", "UNDO"}
-	
+
 	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
-	
+
 	def execute(self, context):
 		try:
 			nna_utils_json.add_component(self.target_id, {"t":_nna_name})
@@ -45,12 +45,12 @@ class EditAVAAvatarComponentOperator(bpy.types.Operator):
 	component_index: bpy.props.IntProperty(name = "component_index", default=-1) # type: ignore
 
 	automap: bpy.props.BoolProperty(name="Automap", default=True) # type: ignore
-	
+
 	def invoke(self, context, event):
 		json_component = nna_utils_json.get_component(self.target_id, self.component_index)
 		if("auto" in json_component): self.automap = json_component["auto"]
 		return context.window_manager.invoke_props_dialog(self)
-		
+
 	def execute(self, context):
 		try:
 			json_component = nna_utils_json.get_component(self.target_id, self.component_index)
@@ -65,7 +65,7 @@ class EditAVAAvatarComponentOperator(bpy.types.Operator):
 		except ValueError as error:
 			self.report({'ERROR'}, str(error))
 			return {"CANCELLED"}
-	
+
 	def draw(self, context):
 		self.layout.prop(self, "automap", expand=True)
 
@@ -76,18 +76,18 @@ def display_ava_avatar_component(target_id: str, layout: bpy.types.UILayout, jso
 	row.label(text="Automap")
 	row.label(text="False" if autodect else "True")
 
-	viewport_object = bpy.data.objects.get("ViewportFirstPerson")
+	viewport_object = bpy.data.objects.get("$ViewportFirstPerson")
 	if(viewport_object):
 		row = layout.row()
-		row.label(text="Viewport defined by 'ViewportFirstPerson'")
-		row.operator(SetActiveObjectOperator.bl_idname).target_name = "ViewportFirstPerson"
+		row.label(text="Viewport defined by '$ViewportFirstPerson'")
+		row.operator(SetActiveObjectOperator.bl_idname).target_name = "$ViewportFirstPerson"
 	else:
 		row = layout.row()
-		row.operator(CreateNewObjectOperator.bl_idname, text="Create Viewport Object").target_name = "ViewportFirstPerson"
+		row.operator(CreateNewObjectOperator.bl_idname, text="Create Viewport Object").target_name = "$ViewportFirstPerson"
 
 
 def name_match_ava_viewport_first_person(name: str) -> int:
-	return 0 if name == "ViewportFirstPerson" else -1
+	return 0 if name == "$ViewportFirstPerson" else -1
 
 
 nna_types = {
