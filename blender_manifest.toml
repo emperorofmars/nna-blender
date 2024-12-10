@@ -1,7 +1,7 @@
 schema_version = "1.0.0"
 
 id = "nna_blender"
-version = "0.0.5"
+version = "0.0.6"
 name = "NNA Blender"
 tagline = "Blender Extension for Creating NNA Definitions"
 maintainer = "Mars (https://squirrelbite.com)"
