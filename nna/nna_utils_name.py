@@ -15,7 +15,7 @@ class SymmetrySide(StrEnum):
 	Right = "right",
 
 
-def get_nna_name(target_id: str, split_char = '$') -> str:
+def get_nna_name(target_id: str, split_char = ';') -> str:
 	split = target_id.split(split_char)
 	return split[len(split) - 1]
 
