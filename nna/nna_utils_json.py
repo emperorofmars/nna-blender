@@ -116,8 +116,8 @@ def remove_component(target_id: str, component_index: int):
 def validate_component_text(json_text: str) -> dict:
 	try:
 		json_component = json.loads(json_text)
-	except ValueError as e:
-		return e
+	except Exception as e:
+		return { "success": False, "error": str(e) }
 	ret = validate_component(json_component)
 	if(ret):
 		return { "success": False, "error": ret }
@@ -136,7 +136,7 @@ def validate_component_list_text(json_text: str) -> dict:
 	try:
 		json_component_list = json.loads(json_text)
 	except ValueError as e:
-		return e
+		return { "success": False, "error": str(e) }
 	ret = validate_component_list(json_component_list)
 	if(ret):
 		return { "success": False, "error": ret }
