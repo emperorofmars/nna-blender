@@ -96,7 +96,7 @@ nna_types = {
 		NNAFunctionType.JsonEdit: EditAVAAvatarComponentOperator.bl_idname,
 		NNAFunctionType.JsonDisplay: display_ava_avatar_component,
 	},
-	"ava.viewport_first_person": {
+	"ava.viewport.first_person": {
 		NNAFunctionType.NameMatch: name_match_ava_viewport_first_person,
 	}
 }
