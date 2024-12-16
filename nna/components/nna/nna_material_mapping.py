@@ -1,7 +1,3 @@
-# This Source Code Form is subject to the terms of the Mozilla Public
-# License, v. 2.0. If a copy of the MPL was not distributed with this
-# file, You can obtain one at https://mozilla.org/MPL/2.0/.
-
 import bpy
 
 from ...nna_registry import NNAFunctionType
@@ -19,9 +15,9 @@ class AddNNAMaterialMappingComponentOperator(bpy.types.Operator):
 	bl_idname = "nna.add_nna_material_mapping"
 	bl_label = "Add Material Mapping Component"
 	bl_options = {"REGISTER", "UNDO"}
-	
+
 	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
-	
+
 	def execute(self, context):
 		try:
 			nna_utils_json.add_component(self.target_id, {"t":_nna_name,"slots":[]})
@@ -40,7 +36,7 @@ class EditNNAMaterialMappingComponentOperator(bpy.types.Operator):
 
 	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
 	component_index: bpy.props.IntProperty(name = "component_index", default=-1) # type: ignore
-	
+
 	def invoke(self, context, event):
 		json_component = nna_utils_json.get_component(self.target_id, self.component_index)
 		object = nna_utils_tree.get_object_by_target_id(self.target_id)
@@ -50,7 +46,7 @@ class EditNNAMaterialMappingComponentOperator(bpy.types.Operator):
 			object.nna_material_mapping_collection.add().mapping = str(slot)
 
 		return context.window_manager.invoke_props_dialog(self)
-	
+
 	def execute(self, context):
 		try:
 			json_component = nna_utils_json.get_component(self.target_id, self.component_index)
@@ -67,7 +63,7 @@ class EditNNAMaterialMappingComponentOperator(bpy.types.Operator):
 		except ValueError as error:
 			self.report({'ERROR'}, str(error))
 			return {"CANCELLED"}
-	
+
 	def draw(self, context):
 		object = nna_utils_tree.get_object_by_target_id(self.target_id)
 		for idx, slot in enumerate(object.nna_material_mapping_collection):
@@ -112,7 +108,7 @@ class NNAMaterialSlotsDeleteOperator(bpy.types.Operator):
 	bl_idname = "nna.edit_nna_material_mapping_slots_delete"
 	bl_label = "Delete Slot"
 	bl_options = {"REGISTER", "UNDO"}
-	
+
 	index: bpy.props.IntProperty(name = "component_index", default=-1) # type: ignore
 
 	def execute(self, context):
@@ -123,7 +119,7 @@ class NNAMaterialSlotsMoveOperator(bpy.types.Operator):
 	bl_idname = "nna.edit_nna_material_mapping_slots_move"
 	bl_label = "Delete Slot"
 	bl_options = {"REGISTER", "UNDO"}
-	
+
 	index: bpy.props.IntProperty(name = "index", default=-1) # type: ignore
 	direction: bpy.props.BoolProperty(name = "direction", default=True) # type: ignore
 

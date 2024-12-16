@@ -1,7 +1,3 @@
-# This Source Code Form is subject to the terms of the Mozilla Public
-# License, v. 2.0. If a copy of the MPL was not distributed with this
-# file, You can obtain one at https://mozilla.org/MPL/2.0/.
-
 import bpy
 
 from ...nna_registry import NNAFunctionType
@@ -18,9 +14,9 @@ class AddAVASecondaryMotionComponentOperator(bpy.types.Operator):
 	bl_idname = "nna.add_ava_secondary_motion"
 	bl_label = "Create simple bone physics definition"
 	bl_options = {"REGISTER", "UNDO"}
-	
+
 	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
-	
+
 	def execute(self, context):
 		try:
 			nna_utils_json.add_component(self.target_id, {
@@ -44,12 +40,12 @@ class EditAVASecondaryMotionComponentOperator(bpy.types.Operator):
 	component_index: bpy.props.IntProperty(name = "component_index", default=-1) # type: ignore
 
 	intensity: bpy.props.FloatProperty(name="Intensity", default=0.3, min=0, max=1, precision=2, step=2) # type: ignore
-	
+
 	def invoke(self, context, event):
 		json_component = nna_utils_json.get_component(self.target_id, self.component_index)
 		self.intensity = json_component.get("intensity", 0.3)
 		return context.window_manager.invoke_props_dialog(self)
-	
+
 	def execute(self, context):
 		try:
 			json_component = nna_utils_json.get_component(self.target_id, self.component_index)
@@ -62,7 +58,7 @@ class EditAVASecondaryMotionComponentOperator(bpy.types.Operator):
 		except ValueError as error:
 			self.report({'ERROR'}, str(error))
 			return {"CANCELLED"}
-	
+
 	def draw(self, context):
 		self.layout.prop(self, "intensity", expand=True)
 

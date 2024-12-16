@@ -1,7 +1,3 @@
-# This Source Code Form is subject to the terms of the Mozilla Public
-# License, v. 2.0. If a copy of the MPL was not distributed with this
-# file, You can obtain one at https://mozilla.org/MPL/2.0/.
-
 from enum import StrEnum
 import inspect
 import sys
@@ -32,7 +28,7 @@ nna_types = {
 
 class NNAFunctionType(StrEnum):
 	"""Types of hot-loadable code for an NNA type.
-		
+
 	* `JsonAdd`: str (bl_idname of a Blender operator)
 		Operator Properties:
 			* target_id: str
@@ -83,7 +79,7 @@ def _concat_module_members(*modules) -> list:
 
 def get_local_nna_operators(function_type: NNAFunctionType) -> dict[str, any]:
 	ret = {}
-	
+
 	from .components import nna, ava, vrc, vrm
 
 	for name, module in _concat_module_members(nna, ava, vrc, vrm):

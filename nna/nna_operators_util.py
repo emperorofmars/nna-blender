@@ -1,7 +1,3 @@
-# This Source Code Form is subject to the terms of the Mozilla Public
-# License, v. 2.0. If a copy of the MPL was not distributed with this
-# file, You can obtain one at https://mozilla.org/MPL/2.0/.
-
 import bpy
 from . import nna_utils_tree
 from . import nna_utils_json
@@ -15,7 +11,7 @@ class SetActiveObjectOperator(bpy.types.Operator):
 	bl_options = {"REGISTER", "UNDO"}
 
 	target_name: bpy.props.StringProperty(name = "target_name") # type: ignore
-	
+
 	def execute(self, context):
 		target = nna_utils_tree.get_base_object_by_target_id(self.target_name)
 		for selected in bpy.context.selected_objects:
@@ -32,7 +28,7 @@ class CreateNewObjectOperator(bpy.types.Operator):
 	bl_options = {"REGISTER", "UNDO"}
 
 	target_name: bpy.props.StringProperty(name = "target_name") # type: ignore
-	
+
 	def execute(self, context):
 		originalSelectedObject = bpy.context.active_object
 		bpy.ops.object.empty_add()

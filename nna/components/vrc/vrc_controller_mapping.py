@@ -1,7 +1,3 @@
-# This Source Code Form is subject to the terms of the Mozilla Public
-# License, v. 2.0. If a copy of the MPL was not distributed with this
-# file, You can obtain one at https://mozilla.org/MPL/2.0/.
-
 import bpy
 
 from ...nna_registry import NNAFunctionType
@@ -16,9 +12,9 @@ class AddVRCControllerMappingComponentOperator(bpy.types.Operator):
 	bl_idname = "nna.add_vrc_controller_mapping"
 	bl_label = "Add VRChat Controller Mapping Component"
 	bl_options = {"REGISTER", "UNDO"}
-	
+
 	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
-	
+
 	def execute(self, context):
 		try:
 			nna_utils_json.add_component(self.target_id, {
@@ -55,14 +51,14 @@ class EditVRCControllerMappingComponentOperator(bpy.types.Operator):
 	gesture: bpy.props.StringProperty(name="Gesture", default="") # type: ignore
 	action: bpy.props.StringProperty(name="Action", default="") # type: ignore
 	fx: bpy.props.StringProperty(name="FX", default="") # type: ignore
-	
+
 	sitting: bpy.props.StringProperty(name="Sitting", default="") # type: ignore
 	tpose: bpy.props.StringProperty(name="TPose", default="") # type: ignore
 	ikpose: bpy.props.StringProperty(name="IKPose", default="") # type: ignore
-	
+
 	parameters: bpy.props.StringProperty(name="Parameters", default="") # type: ignore
 	menu: bpy.props.StringProperty(name="Menu", default="") # type: ignore
-	
+
 	def invoke(self, context, event):
 		json_component = nna_utils_json.get_component(self.target_id, self.component_index)
 		if("base" in json_component): self.base = json_component["base"]
@@ -76,7 +72,7 @@ class EditVRCControllerMappingComponentOperator(bpy.types.Operator):
 		if("parameters" in json_component): self.parameters = json_component["parameters"]
 		if("menu" in json_component): self.menu = json_component["menu"]
 		return context.window_manager.invoke_props_dialog(self)
-		
+
 	def execute(self, context):
 		try:
 			json_component = nna_utils_json.get_component(self.target_id, self.component_index)
@@ -108,7 +104,7 @@ class EditVRCControllerMappingComponentOperator(bpy.types.Operator):
 		except ValueError as error:
 			self.report({'ERROR'}, str(error))
 			return {"CANCELLED"}
-	
+
 	def draw(self, context):
 		self.layout.prop(self, "base", expand=True)
 		self.layout.prop(self, "additive", expand=True)

@@ -25,7 +25,7 @@ Issues, discussions & PRs welcome!
 ---
 
 # License
-This repository is licensed under **MPL-2.0**.
+This repository is licensed under **MIT**.
 
 <!--
 	Command to build the extension with a default Windows Blender installation:

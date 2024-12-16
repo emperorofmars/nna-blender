@@ -1,7 +1,3 @@
-# This Source Code Form is subject to the terms of the Mozilla Public
-# License, v. 2.0. If a copy of the MPL was not distributed with this
-# file, You can obtain one at https://mozilla.org/MPL/2.0/.
-
 import bpy
 from . import nna_utils_tree
 from . import nna_utils_json
@@ -15,7 +11,7 @@ class InitializeNNAOperator(bpy.types.Operator):
 	bl_options = {"REGISTER", "UNDO"}
 
 	nna_init_collection: bpy.props.StringProperty(name = "nna_init_collection") # type: ignore
-	
+
 	def execute(self, context):
 		if bpy.context.scene.collection.name == self.nna_init_collection or not self.nna_init_collection:
 			nna_utils_tree.init_nna_root(bpy.context.scene.collection)
@@ -37,7 +33,7 @@ class CreateNNATargetingObjectOperator(bpy.types.Operator):
 	bl_options = {"REGISTER", "UNDO"}
 
 	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
-	
+
 	def execute(self, context):
 		nna_utils_tree.create_targeting_object(nna_utils_tree.find_nna_root(), self.target_id)
 		self.report({"INFO"}, "Targeting object created")
@@ -54,7 +50,7 @@ class RemoveNNATargetingObjectOperator(bpy.types.Operator):
 
 	def invoke(self, context, event):
 		return context.window_manager.invoke_confirm(self, event)
-	
+
 	def execute(self, context):
 		targeting_object = nna_utils_tree.find_nna_targeting_object(self.target_id)
 		if(targeting_object):
@@ -77,7 +73,7 @@ class RemoveNNAJsonComponentOperator(bpy.types.Operator):
 
 	def invoke(self, context, event):
 		return context.window_manager.invoke_confirm(self, event)
-	
+
 	def execute(self, context):
 		try:
 			nna_utils_json.remove_component(self.target_id, self.component_index)
@@ -99,12 +95,12 @@ class RemoveNNANameDefinitionOperator(bpy.types.Operator):
 
 	def invoke(self, context, event):
 		return context.window_manager.invoke_confirm(self, event)
-	
+
 	def execute(self, context):
 		try:
 			target = nna_utils_tree.get_object_by_target_id(self.target_id)
 			(nna_name, symmetry) = nna_utils_name.get_symmetry(target.name)
-			
+
 			new_name = nna_name[:self.name_definition_index] + symmetry
 
 			targeting_object = nna_utils_tree.find_nna_targeting_object(target.name)
@@ -128,9 +124,9 @@ class EditNNAComponentIDOperator(bpy.types.Operator):
 
 	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
 	component_index: bpy.props.IntProperty(name = "component_index", default=-1) # type: ignore
-	
+
 	component_id: bpy.props.StringProperty(name = "ID") # type: ignore
-	
+
 	def invoke(self, context, event):
 		try:
 			json_component = nna_utils_json.get_component(self.target_id, self.component_index)
@@ -139,21 +135,21 @@ class EditNNAComponentIDOperator(bpy.types.Operator):
 			self.report({'ERROR'}, str(error))
 			return None
 		return context.window_manager.invoke_props_dialog(self)
-		
+
 	def execute(self, context):
 		try:
 			json_component = nna_utils_json.get_component(self.target_id, self.component_index)
 
 			if(self.component_id): json_component["id"] = self.component_id
 			elif("id" in json_component): del json_component["id"]
-			
+
 			nna_utils_json.replace_component(self.target_id, json_component, self.component_index)
 			self.report({'INFO'}, "Component successfully edited")
 			return {"FINISHED"}
 		except Exception as error:
 			self.report({'ERROR'}, str(error))
 			return {"CANCELLED"}
-	
+
 	def draw(self, context):
 		self.layout.label(text="Target Object: " + self.target_id)
 		self.layout.prop(self, "component_id", expand=True)
