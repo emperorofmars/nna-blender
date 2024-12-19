@@ -99,7 +99,7 @@ class RemoveNNANameDefinitionOperator(bpy.types.Operator):
 	def execute(self, context):
 		try:
 			target = nna_utils_tree.get_object_by_target_id(self.target_id)
-			(nna_name, symmetry) = nna_utils_name.get_symmetry(target.name)
+			(nna_name, symmetry) = nna_utils_name.get_side_suffix(target.name)
 
 			new_name = nna_name[:self.name_definition_index] + symmetry
 

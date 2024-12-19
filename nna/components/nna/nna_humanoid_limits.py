@@ -77,7 +77,7 @@ class NNAHumanoidLimitNameDefinitionOperator(bpy.types.Operator):
 		try:
 			target = nna_utils_tree.get_object_by_target_id(self.target_id)
 			base_object = nna_utils_tree.get_base_object_by_target_id(self.target_id)
-			(nna_name, symmetry) = nna_utils_name.get_symmetry(nna_utils_name.get_nna_name(self.target_id))
+			(nna_name, symmetry) = nna_utils_name.get_side_suffix(nna_utils_name.get_nna_name(self.target_id))
 
 			match = re.search(_Match, nna_name)
 			if(match): nna_name = nna_name[:match.start()]
@@ -102,6 +102,7 @@ class NNAHumanoidLimitNameDefinitionOperator(bpy.types.Operator):
 				self.report({'ERROR'}, "Name too long")
 				return {"CANCELLED"}
 			else:
+				nna_utils_tree.reparent_nna_targeting_object(self.target_id, nna_utils_name.construct_nna_id(self.target_id, nna_name))
 				target.name = nna_name
 				self.report({'INFO'}, "Component successfully edited")
 				return {"FINISHED"}

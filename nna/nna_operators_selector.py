@@ -3,7 +3,7 @@ from . import nna_utils_json
 from . import nna_utils_tree
 
 
-def init_selector(target_id: str = None, split_char: str = "$"):
+def init_selector(target_id: str = None, split_char: str = ";"):
 	base_object = nna_utils_tree.get_base_object_by_target_id(target_id, split_char)
 	target_object = nna_utils_tree.get_object_by_target_id(target_id, split_char)
 	bpy.context.scene.nna_object_selector = base_object
@@ -11,11 +11,11 @@ def init_selector(target_id: str = None, split_char: str = "$"):
 		bpy.context.scene.nna_bone_selector = target_object.name
 
 
-def init_selector_relative(origin_id: str, target_id: str = None, origin_split_char: str = "$", target_split_char: str = "$"):
+def init_selector_relative(origin_id: str, target_id: str = None, origin_split_char: str = ";", target_split_char: str = ";"):
 	base_object = nna_utils_tree.get_base_object_by_target_id(origin_id, origin_split_char)
 	if(target_id):
 		if(hasattr(base_object.data, "bones")): # If the node is a bone, try to find its source within the same armature.
-			source_id = base_object.name + "$" + target_id
+			source_id = base_object.name + ";" + target_id
 			source_object = nna_utils_tree.get_object_by_target_id(source_id)
 			if(source_object):
 				init_selector(source_id)
@@ -32,7 +32,7 @@ def init_selector_relative(origin_id: str, target_id: str = None, origin_split_c
 		init_selector()
 
 
-def get_selected_target_id(split_char: str = "$") -> str | None:
+def get_selected_target_id(split_char: str = ";") -> str | None:
 	if(bpy.context.scene.nna_object_selector and (not bpy.context.scene.nna_bone_selector or bpy.context.scene.nna_bone_selector == "$")):
 		return bpy.context.scene.nna_object_selector.name
 	elif(bpy.context.scene.nna_object_selector and bpy.context.scene.nna_bone_selector):
@@ -41,7 +41,7 @@ def get_selected_target_id(split_char: str = "$") -> str | None:
 		return None
 
 
-def get_selected_target_id_relative(origin_id: str, origin_split_char: str = "$", target_split_char: str = "$") -> str | None:
+def get_selected_target_id_relative(origin_id: str, origin_split_char: str = ";", target_split_char: str = ";") -> str | None:
 	base_object = nna_utils_tree.get_base_object_by_target_id(origin_id, origin_split_char)
 	if(bpy.context.scene.nna_object_selector and (not bpy.context.scene.nna_bone_selector or bpy.context.scene.nna_bone_selector == "$")):
 		return bpy.context.scene.nna_object_selector.name

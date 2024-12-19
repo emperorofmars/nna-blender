@@ -98,6 +98,10 @@ def find_nna_targeting_object(target_id: str) -> bpy.types.Object | None:
 			return child
 	return None
 
+def reparent_nna_targeting_object(current_target_id: str, new_target_id: str):
+	obj = find_nna_targeting_object(current_target_id)
+	obj.name = "$target:" + new_target_id
+
 
 def get_object_by_target_id(target_id: str, split_char = ';') -> bpy.types.Object | bpy.types.Bone | None:
 	if(not target_id): return None

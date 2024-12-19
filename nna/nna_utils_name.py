@@ -15,7 +15,20 @@ def get_nna_name(target_id: str, split_char = ';') -> str:
 	split = target_id.split(split_char)
 	return split[len(split) - 1]
 
-def get_symmetry(name: str) -> tuple[str, str]:
+def construct_nna_id(current_target_id: str, new_target_name: str, split_char = ';') -> str:
+	current_split = current_target_id.split(split_char)
+	ret = ""
+	if(len(current_split) > 1):
+		for part in current_split[0:len(current_split) - 1]:
+			ret += part + split_char
+	ret += new_target_name
+
+	print(current_target_id)
+	print(new_target_name)
+	print(ret)
+	return ret
+
+def get_side_suffix(name: str) -> tuple[str, str]:
 	match = _match_lr.search(name)
 	if(match):
 		return (name[:match.start()], match.group())

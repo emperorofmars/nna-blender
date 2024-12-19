@@ -115,12 +115,12 @@ def draw_nna_editor(self: bpy.types.Panel, context: bpy.types.Context | None, ta
 			box = self.layout.box()
 			box.label(text="This Node is outside the NNA Collection!")
 		case nna_utils_tree.NNAObjectState.InitedInsideTree:
-			if(not _draw_nna_name_editor(self, context, target_id)):
-				self.layout.separator(type="LINE", factor=2)
-				box = self.layout.box()
-				box.label(text="NNA Components Not Enabled")
-				button = box.operator(nna_operators_common.CreateNNATargetingObjectOperator.bl_idname)
-				button.target_id = target_id
+			_draw_nna_name_editor(self, context, target_id)
+			self.layout.separator(type="LINE", factor=2)
+			box = self.layout.box()
+			box.label(text="NNA Components Not Enabled")
+			button = box.operator(nna_operators_common.CreateNNATargetingObjectOperator.bl_idname)
+			button.target_id = target_id
 		case nna_utils_tree.NNAObjectState.IsTargetingObject:
 			if(target_id == "$root"):
 				self.layout.label(text="This is the NNA definition for the Scene Root")
@@ -178,8 +178,8 @@ def _draw_meta_editor(self: bpy.types.Panel, context: bpy.types.Context | None):
 def _draw_nna_editors_for_target(self: bpy.types.Panel, context: bpy.types.Context | None, target_id: str):
 	if(_draw_nna_name_editor(self, context, target_id, True)):
 		box = self.layout.box()
-		box.label(text="Warning: This Node has both a Name and Component definition.")
-		box.label(text="It is recommended to use only one.")
+		box.label(text="This Node has both a Name and Component definition.")
+		box.label(text="Warning: Do not rename this Node manually!")
 	_draw_nna_json_editor(self, context, target_id)
 
 
