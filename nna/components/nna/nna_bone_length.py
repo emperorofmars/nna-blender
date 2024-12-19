@@ -48,7 +48,7 @@ class NNABoneLengthNameDefinitionOperator(bpy.types.Operator, NNA_Name_Definitio
 	bl_idname = "nna.nna_bone_length_name_definition"
 	bl_label = "Add Bone Length"
 
-	length: bpy.props.FloatProperty(name="Length", default=0, min=0, soft_max=10, precision=3, step=2) # type: ignore
+	length: bpy.props.FloatProperty(name="Length", default=0.12, min=0, soft_max=10, precision=3, step=2) # type: ignore
 
 	def parse(self, name: str):
 		match = re.search(_Match, name)
