@@ -31,7 +31,8 @@ class NNA_Name_Definition_Base:
 				self.report({'ERROR'}, "Name too long")
 				return {"CANCELLED"}
 			else:
-				nna_utils_tree.reparent_nna_targeting_object(self.target_id, nna_utils_name.construct_nna_id(self.target_id, new_name))
+				targeting_object = nna_utils_tree.find_nna_targeting_object(self.target_id)
+				if(targeting_object): nna_utils_tree.reparent_nna_targeting_object(self.target_id, nna_utils_name.construct_nna_id(self.target_id, new_name))
 				target.name = new_name
 				self.report({'INFO'}, "Component successfully edited")
 				return {"FINISHED"}
