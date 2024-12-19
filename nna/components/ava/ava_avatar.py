@@ -3,64 +3,39 @@ import bpy
 from ...nna_registry import NNAFunctionType
 from ...nna_operators_util import CreateNewObjectOperator, SetActiveObjectOperator
 
-from ... import nna_utils_json
+from ..base_add_json import NNA_Json_Add_Base
+from ..base_edit_json import NNA_Json_Edit_Base
 
 
 _nna_name = "ava.avatar"
 
 
-class AddAVAAvatarComponentOperator(bpy.types.Operator):
+class AddAVAAvatarComponentOperator(bpy.types.Operator, NNA_Json_Add_Base):
 	"""Specifies this object to be a VR & V-Tubing avatar.
 	This component is not nescessary, unless you want to disable on-import-automapping of features.
 	"""
 	bl_idname = "ava.add_ava_avatar"
 	bl_label = "Add AVA Avatar Component"
-	bl_options = {"REGISTER", "UNDO"}
-
-	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
-
-	def execute(self, context):
-		try:
-			nna_utils_json.add_component(self.target_id, {"t":_nna_name})
-			self.report({'INFO'}, "Component successfully added")
-			return {"FINISHED"}
-		except ValueError as error:
-			self.report({'ERROR'}, str(error))
-			return {"CANCELLED"}
+	nna_name = _nna_name
 
 
-class EditAVAAvatarComponentOperator(bpy.types.Operator):
+class EditAVAAvatarComponentOperator(bpy.types.Operator, NNA_Json_Edit_Base):
 	"""Specifies this object to be a VR & V-Tubing avatar.
 	This component is not nescessary, unless you want to disable on-import-automapping of features.
 	"""
 	bl_idname = "nna.edit_ava_avatar"
 	bl_label = "Edit AVA Avatar Component"
-	bl_options = {"REGISTER", "UNDO"}
-
-	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
-	component_index: bpy.props.IntProperty(name = "component_index", default=-1) # type: ignore
 
 	automap: bpy.props.BoolProperty(name="Automap", default=True) # type: ignore
 
-	def invoke(self, context, event):
-		json_component = nna_utils_json.get_component(self.target_id, self.component_index)
+	def parse(self, json_component: dict):
 		if("auto" in json_component): self.automap = json_component["auto"]
-		return context.window_manager.invoke_props_dialog(self)
 
-	def execute(self, context):
-		try:
-			json_component = nna_utils_json.get_component(self.target_id, self.component_index)
-
-			if(not self.automap): json_component["auto"] = False
-			elif("auto" in json_component):
-				del json_component["auto"]
-
-			nna_utils_json.replace_component(self.target_id, json_component, self.component_index)
-			self.report({'INFO'}, "Component successfully edited")
-			return {"FINISHED"}
-		except ValueError as error:
-			self.report({'ERROR'}, str(error))
-			return {"CANCELLED"}
+	def serialize(self, json_component: dict) -> dict:
+		if(not self.automap): json_component["auto"] = False
+		elif("auto" in json_component):
+			del json_component["auto"]
+		return json_component
 
 	def draw(self, context):
 		self.layout.prop(self, "automap", expand=True)

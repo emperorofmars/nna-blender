@@ -3,68 +3,41 @@ import bpy
 
 from ...nna_registry import NNAFunctionType
 
-from ... import nna_utils_name
-from ... import nna_utils_json
-from ... import nna_utils_tree
+from ..base_add_json import NNA_Json_Add_Base
+from ..base_edit_json import NNA_Json_Edit_Base
+from ..base_edit_name import NNA_Name_Definition_Base
 
 
 _nna_name = "nna.humanoid"
 
 
-class AddNNAHumanoidComponentOperator(bpy.types.Operator):
+class AddNNAHumanoidComponentOperator(bpy.types.Operator, NNA_Json_Add_Base):
 	"""Specifies options for the automapping of the Unity compatible humanoid rig"""
 	bl_idname = "nna.add_nna_humanoid"
 	bl_label = "Add Humanoid Component"
-	bl_options = {"REGISTER", "UNDO"}
-
-	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
-
-	def execute(self, context):
-		try:
-			nna_utils_json.add_component(self.target_id, {"t":_nna_name})
-			self.report({'INFO'}, "Component successfully added")
-			return {"FINISHED"}
-		except ValueError as error:
-			self.report({'ERROR'}, str(error))
-			return {"CANCELLED"}
+	nna_name = _nna_name
 
 
-class EditNNAHumanoidComponentOperator(bpy.types.Operator):
+class EditNNAHumanoidComponentOperator(bpy.types.Operator, NNA_Json_Edit_Base):
 	"""Specifies options for the automapping of the Unity compatible humanoid rig"""
 	bl_idname = "nna.edit_nna_humanoid"
 	bl_label = "Edit Humanoid Component"
-	bl_options = {"REGISTER", "UNDO"}
-
-	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
-	component_index: bpy.props.IntProperty(name = "component_index", default=-1) # type: ignore
 
 	locomotion_type: bpy.props.EnumProperty(items=[("planti", "Plantigrade", ""),("digi", "Digitigrade", "")], name="Locomotion Type", default="planti") # type: ignore
 	no_jaw: bpy.props.BoolProperty(name="No Jaw Mapping", default=False) # type: ignore
 
-	def invoke(self, context, event):
-		json_component = nna_utils_json.get_component(self.target_id, self.component_index)
-
+	def parse(self, json_component: dict):
 		if("lc" in json_component): self.locomotion_type = json_component["lc"]
 		if("nj" in json_component): self.no_jaw = json_component["nj"]
 
-		return context.window_manager.invoke_props_dialog(self)
+	def serialize(self, json_component: dict) -> dict:
+		if(self.locomotion_type != "planti"): json_component["lc"] = self.locomotion_type
+		elif("lc" in json_component): del json_component["lc"]
 
-	def execute(self, context):
-		try:
-			json_component = nna_utils_json.get_component(self.target_id, self.component_index)
+		if(self.no_jaw == True): json_component["nj"] = True
+		elif("nj" in json_component): del json_component["nj"]
 
-			if(self.locomotion_type != "planti"): json_component["lc"] = self.locomotion_type
-			elif("lc" in json_component): del json_component["lc"]
-
-			if(self.no_jaw == True): json_component["nj"] = True
-			elif("nj" in json_component): del json_component["nj"]
-
-			nna_utils_json.replace_component(self.target_id, json_component, self.component_index)
-			self.report({'INFO'}, "Component successfully edited")
-			return {"FINISHED"}
-		except ValueError as error:
-			self.report({'ERROR'}, str(error))
-			return {"CANCELLED"}
+		return json_component
 
 	def draw(self, context):
 		self.layout.prop(self, "locomotion_type", expand=True)
@@ -80,59 +53,37 @@ def display_nna_humanoid_component(target_id: str, layout: bpy.types.UILayout, j
 	row.label(text=str(json_component["nj"]) if "nj" in json_component else "default (False)")
 
 
-class NNAHumanoidNameDefinitionOperator(bpy.types.Operator):
+_Match = r"(?i)\$humanoid(?P<digi>digi)?(?P<no_jaw>nojaw)?(([._\-|:][lr])|[._\-|:\s]?(right|left))?$"
+
+class NNAHumanoidNameDefinitionOperator(bpy.types.Operator, NNA_Name_Definition_Base):
 	"""Specifies options for the automapping of the Unity compatible humanoid rig"""
 	bl_idname = "nna.nna_humanoid_name_definition"
 	bl_label = "NNA Humanoid Name Definition"
-	bl_options = {"REGISTER", "UNDO"}
-
-	target_id: bpy.props.StringProperty(name="target_id") # type: ignore
 
 	locomotion_type: bpy.props.EnumProperty(items=[("planti", "Plantigrade", ""),("digi", "Digitigrade", "")], name="Locomotion Type", default="planti") # type: ignore
 	no_jaw: bpy.props.BoolProperty(name="No Jaw Mapping", default=False) # type: ignore
 
-	def invoke(self, context, event):
-		name = nna_utils_name.get_nna_name(self.target_id)
+	def parse(self, name: str):
 		match = re.search(_Match, name)
 		if(match):
 			if(match.groupdict()["digi"]): self.locomotion_type = "digi"
 			if(match.groupdict()["no_jaw"]): self.no_jaw = True
 
-		return context.window_manager.invoke_props_dialog(self)
+	def serialize(self, target: bpy.types.Object | bpy.types.Bone, base_object: bpy.types.Object | None, nna_name: str, symmetry: str) -> str:
+		match = re.search(_Match, nna_name)
+		if(match): nna_name = nna_name[:match.start()]
 
-	def execute(self, context):
-		try:
-			target = nna_utils_tree.get_object_by_target_id(self.target_id)
-			(nna_name, symmetry) = nna_utils_name.get_side_suffix(nna_utils_name.get_nna_name(self.target_id))
+		nna_name = nna_name + "$Humanoid"
 
-			match = re.search(_Match, nna_name)
-			if(match): nna_name = nna_name[:match.start()]
+		if(self.locomotion_type != "planti"): nna_name += str(self.locomotion_type).capitalize()
+		if(self.no_jaw == True): nna_name += "NoJaw"
 
-			nna_name = nna_name + "$Humanoid"
-
-			if(self.locomotion_type != "planti"): nna_name += str(self.locomotion_type).capitalize()
-			if(self.no_jaw == True): nna_name += "NoJaw"
-
-			nna_name += symmetry
-
-			if(len(str.encode(nna_name)) > 63):
-				self.report({'ERROR'}, "Name too long")
-				return {"CANCELLED"}
-			else:
-				nna_utils_tree.reparent_nna_targeting_object(self.target_id, nna_utils_name.construct_nna_id(self.target_id, nna_name))
-				target.name = nna_name
-				self.report({'INFO'}, "Component successfully edited")
-				return {"FINISHED"}
-		except ValueError as error:
-			self.report({'ERROR'}, str(error))
-			return {"CANCELLED"}
+		return nna_name + symmetry
 
 	def draw(self, context):
 		self.layout.prop(self, "locomotion_type", expand=True)
 		self.layout.prop(self, "no_jaw", expand=True)
 
-
-_Match = r"(?i)\$humanoid(?P<digi>digi)?(?P<no_jaw>nojaw)?(([._\-|:][lr])|[._\-|:\s]?(right|left))?$"
 
 def name_match_nna_humanoid(name: str) -> int:
 	match = re.search(_Match, name)

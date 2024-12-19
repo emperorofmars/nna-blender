@@ -2,67 +2,42 @@ import bpy
 
 from ...nna_registry import NNAFunctionType
 
-from ... import nna_utils_name
-from ... import nna_utils_json
+from ..base_add_json import NNA_Json_Add_Base
+from ..base_edit_json import NNA_Json_Edit_Base
+from ..base_edit_name import NNA_Name_Definition_Base
+
 from ... import nna_utils_tree
 
 
 _nna_name = "nna.material_mapping"
 
 
-class AddNNAMaterialMappingComponentOperator(bpy.types.Operator):
+class AddNNAMaterialMappingComponentOperator(bpy.types.Operator, NNA_Json_Add_Base):
 	"""Maps materials to this mesh from the game-engine projects assets on import based, on the name."""
 	bl_idname = "nna.add_nna_material_mapping"
 	bl_label = "Add Material Mapping Component"
-	bl_options = {"REGISTER", "UNDO"}
-
-	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
-
-	def execute(self, context):
-		try:
-			nna_utils_json.add_component(self.target_id, {"t":_nna_name,"slots":[]})
-			self.report({'INFO'}, "Component successfully added")
-			return {"FINISHED"}
-		except ValueError as error:
-			self.report({'ERROR'}, str(error))
-			return {"CANCELLED"}
+	nna_name = _nna_name
 
 
-class EditNNAMaterialMappingComponentOperator(bpy.types.Operator):
+class EditNNAMaterialMappingComponentOperator(bpy.types.Operator, NNA_Json_Edit_Base):
 	"""Maps materials to this mesh from the game-engine projects assets on import based, on the name."""
 	bl_idname = "nna.edit_nna_material_mapping"
 	bl_label = "Edit Material Mapping Component"
-	bl_options = {"REGISTER", "UNDO"}
 
-	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
-	component_index: bpy.props.IntProperty(name = "component_index", default=-1) # type: ignore
-
-	def invoke(self, context, event):
-		json_component = nna_utils_json.get_component(self.target_id, self.component_index)
+	def parse(self, json_component: dict):
 		object = nna_utils_tree.get_object_by_target_id(self.target_id)
 
 		object.nna_material_mapping_collection.clear()
 		for slot in json_component["slots"]:
 			object.nna_material_mapping_collection.add().mapping = str(slot)
 
-		return context.window_manager.invoke_props_dialog(self)
-
-	def execute(self, context):
-		try:
-			json_component = nna_utils_json.get_component(self.target_id, self.component_index)
-			object = nna_utils_tree.get_object_by_target_id(self.target_id)
-
-			slots = []
-			for idx, slot in enumerate(object.nna_material_mapping_collection):
-				slots.append(slot.mapping)
-			json_component["slots"] = slots
-
-			nna_utils_json.replace_component(self.target_id, json_component, self.component_index)
-			self.report({'INFO'}, "Component successfully edited")
-			return {"FINISHED"}
-		except ValueError as error:
-			self.report({'ERROR'}, str(error))
-			return {"CANCELLED"}
+	def serialize(self, json_component: dict) -> dict:
+		object = nna_utils_tree.get_object_by_target_id(self.target_id)
+		slots = []
+		for idx, slot in enumerate(object.nna_material_mapping_collection):
+			slots.append(slot.mapping)
+		json_component["slots"] = slots
+		return json_component
 
 	def draw(self, context):
 		object = nna_utils_tree.get_object_by_target_id(self.target_id)

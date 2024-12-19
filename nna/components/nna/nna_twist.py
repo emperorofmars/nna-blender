@@ -1,72 +1,46 @@
 import bpy
 import re
 
+from ..base_add_json import NNA_Json_Add_Base
+from ..base_edit_json import NNA_Json_Edit_Base
+from ..base_edit_name import NNA_Name_Definition_Base
+
 from ...nna_registry import NNAFunctionType
 
-from ... import nna_utils_name
-from ... import nna_utils_json
-from ... import nna_utils_tree
 from ... import nna_operators_selector
 
 
 _nna_name = "nna.twist"
 
 
-class AddNNATwistComponentOperator(bpy.types.Operator):
+class AddNNATwistComponentOperator(bpy.types.Operator, NNA_Json_Add_Base):
 	"""Specifies a twist-bone constraint"""
 	bl_idname = "nna.add_nna_twist"
 	bl_label = "Add Twist Component"
-	bl_options = {"REGISTER", "UNDO"}
-
-	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
-
-	def execute(self, context):
-		try:
-			nna_utils_json.add_component(self.target_id, {"t":_nna_name})
-			self.report({'INFO'}, "Component successfully added")
-			return {"FINISHED"}
-		except ValueError as error:
-			self.report({'ERROR'}, str(error))
-			return {"CANCELLED"}
+	nna_name = _nna_name
 
 
-class EditNNATwistComponentOperator(bpy.types.Operator):
+class EditNNATwistComponentOperator(bpy.types.Operator, NNA_Json_Edit_Base):
 	"""Specifies a twist-bone constraint"""
 	bl_idname = "nna.edit_nna_twist"
 	bl_label = "Edit Twist Component"
-	bl_options = {"REGISTER", "UNDO"}
-
-	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
-	component_index: bpy.props.IntProperty(name = "component_index", default=-1) # type: ignore
 
 	weight: bpy.props.FloatProperty(name="weight", default=0.5, min=0, max=1, precision=2, step=2) # type: ignore
 
-	def invoke(self, context, event):
-		json_component = nna_utils_json.get_component(self.target_id, self.component_index)
-
+	def parse(self, json_component: dict):
 		if("w" in json_component): self.weight = json_component["w"]
 		nna_operators_selector.init_selector_relative(self.target_id, json_component.get("s"))
 
-		return context.window_manager.invoke_props_dialog(self)
+	def serialize(self, json_component: dict) -> dict:
+		if(self.weight != 0.5): json_component["w"] = self.weight
 
-	def execute(self, context):
-		try:
-			json_component = nna_utils_json.get_component(self.target_id, self.component_index)
+		source_id = nna_operators_selector.get_selected_target_id_relative(self.target_id)
+		if(source_id):
+			json_component["s"] = source_id
+		elif("s" in json_component):
+			del json_component["s"]
 
-			if(self.weight != 0.5): json_component["w"] = self.weight
-
-			source_id = nna_operators_selector.get_selected_target_id_relative(self.target_id)
-			if(source_id):
-				json_component["s"] = source_id
-			elif("s" in json_component):
-				del json_component["s"]
-
-			nna_utils_json.replace_component(self.target_id, json_component, self.component_index)
-			self.report({'INFO'}, "Component successfully edited")
-			return {"FINISHED"}
-		except ValueError as error:
-			self.report({'ERROR'}, str(error))
-			return {"CANCELLED"}
+		return json_component
 
 	def draw(self, context):
 		self.layout.prop(self, "weight", text="Weight", expand=True)
@@ -79,67 +53,42 @@ def display_nna_twist_component(target_id: str, layout: bpy.types.UILayout, json
 	row = layout.split(factor=0.4); row.label(text="Source"); row.label(text=str(json_component.get("s", "default (grandparent)")))
 
 
-class NNATwistNameDefinitionOperator(bpy.types.Operator):
+_Match = r"(?i)\$twist(?P<source_node_path>[a-zA-Z][a-zA-Z0-9._\-|:\s]*(\&[a-zA-Z][a-zA-Z0-9._\-|:\s]*)*)?,?(?P<weight>[0-9]*[.][0-9]+)?(?P<side>(([._\-|:][lr])|[._\-|:\s]?(right|left))$)?$"
+
+class NNATwistNameDefinitionOperator(bpy.types.Operator, NNA_Name_Definition_Base):
 	"""Specifies a twist-bone constraint"""
 	bl_idname = "nna.nna_twist_name_definition"
 	bl_label = "NNA Twist Name Definition"
-	bl_options = {"REGISTER", "UNDO"}
-
-	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
 
 	weight: bpy.props.FloatProperty(name="weight", default=0.5, min=0, max=1, precision=2, step=2) # type: ignore
 
-	def invoke(self, context, event):
-		name = nna_utils_name.get_nna_name(self.target_id)
-		match = re.search(_Match, name)
+	def parse(self, nna_name: str):
+		match = re.search(_Match, nna_name)
 		if(match and match.groupdict()["weight"]): self.weight = float(match.groupdict()["weight"])
-
 		if(match and match.groupdict()["source_node_path"]):
 			nna_operators_selector.init_selector_relative(self.target_id, match.groupdict()["source_node_path"], target_split_char="&")
 		else:
 			nna_operators_selector.init_selector()
 
-		return context.window_manager.invoke_props_dialog(self)
+	def serialize(self, target: bpy.types.Object | bpy.types.Bone, base_object: bpy.types.Object | None, nna_name: str, symmetry: str) -> str:
+		match = re.search(_Match, nna_name)
+		if(match): nna_name = nna_name[:match.start()]
 
-	def execute(self, context):
-		try:
-			target = nna_utils_tree.get_object_by_target_id(self.target_id)
-			base_object = nna_utils_tree.get_base_object_by_target_id(self.target_id)
-			(nna_name, symmetry) = nna_utils_name.get_side_suffix(nna_utils_name.get_nna_name(self.target_id))
+		nna_name = nna_name + "$Twist"
 
-			match = re.search(_Match, nna_name)
-			if(match): nna_name = nna_name[:match.start()]
+		source_id = nna_operators_selector.get_selected_target_id_relative(self.target_id, target_split_char="&")
+		if(source_id):
+			nna_name += source_id
+			if(self.weight != 0.5): nna_name += ","
 
-			nna_name = nna_name + "$Twist"
+		if(self.weight != 0.5): nna_name += str(round(self.weight, 2))
 
-			source_id = nna_operators_selector.get_selected_target_id_relative(self.target_id, target_split_char="&")
-			if(source_id):
-				nna_name += source_id
-				if(self.weight != 0.5): nna_name += ","
-
-			if(self.weight != 0.5): nna_name += str(round(self.weight, 2))
-
-			nna_name += symmetry
-
-			if(len(str.encode(nna_name)) > 63):
-				self.report({'ERROR'}, "Name too long")
-				return {"CANCELLED"}
-			else:
-				nna_utils_tree.reparent_nna_targeting_object(self.target_id, nna_utils_name.construct_nna_id(self.target_id, nna_name))
-				target.name = nna_name
-				self.report({'INFO'}, "Component successfully edited")
-				return {"FINISHED"}
-		except ValueError as error:
-			self.report({'ERROR'}, str(error))
-			return {"CANCELLED"}
+		return nna_name + symmetry
 
 	def draw(self, context):
 		self.layout.prop(self, "weight", text="Weight", expand=True)
 		self.layout.label(text="Source")
 		nna_operators_selector.draw_selector_prop(self.target_id, self.layout)
-
-
-_Match = r"(?i)\$twist(?P<source_node_path>[a-zA-Z][a-zA-Z0-9._\-|:\s]*(\&[a-zA-Z][a-zA-Z0-9._\-|:\s]*)*)?,?(?P<weight>[0-9]*[.][0-9]+)?(?P<side>(([._\-|:][lr])|[._\-|:\s]?(right|left))$)?$"
 
 def name_match_nna_twist(name: str) -> int:
 	match = re.search(_Match, name)
