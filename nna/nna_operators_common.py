@@ -35,6 +35,9 @@ class CreateNNATargetingObjectOperator(bpy.types.Operator):
 	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
 
 	def execute(self, context):
+		if(len(str.encode(self.target_id)) > (63 - 8)):
+			self.report({"ERROR"}, "Name too long for targeting-object")
+			return {"CANCELLED"}
 		nna_utils_tree.create_targeting_object(nna_utils_tree.find_nna_root(), self.target_id)
 		self.report({"INFO"}, "Targeting object created")
 		return {"FINISHED"}
