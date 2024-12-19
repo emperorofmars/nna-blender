@@ -176,7 +176,7 @@ def _draw_meta_editor(self: bpy.types.Panel, context: bpy.types.Context | None):
 
 
 def _draw_nna_editors_for_target(self: bpy.types.Panel, context: bpy.types.Context | None, target_id: str):
-	if(_draw_nna_name_editor(self, context, target_id, True)):
+	if(_draw_nna_name_editor(self, context, target_id, False)):
 		box = self.layout.box()
 		box.label(text="This Node has both a Name and Component definition.")
 		box.label(text="Warning: Do not rename this Node manually!")
