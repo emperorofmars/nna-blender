@@ -91,10 +91,10 @@ def name_match_nna_humanoid(name: str) -> int:
 
 def name_display_nna_humanoid(layout: bpy.types.UILayout, name: str):
 	match = re.search(_Match, name)
-	row = layout.row()
+	row = layout.split(factor=0.4)
 	row.label(text="Locomotion Type")
 	row.label(text="Digitigrade" if match.groupdict()["digi"] else "default (Plantigrade)")
-	row = layout.row()
+	row = layout.split(factor=0.4)
 	row.label(text="No Jaw Mapping")
 	row.label(text="True" if match.groupdict()["no_jaw"] else "False")
 
