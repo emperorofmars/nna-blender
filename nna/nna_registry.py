@@ -5,7 +5,8 @@ import bpy
 
 from .nna_operators_raw_json import AddNNARawJsonComponentOperator
 
-"""To register additional types not NNA, create a dict named `nna_types` at the root of your Blender-Python module.
+"""
+To register additional types not NNA, create a dict named `nna_types` at the root of your Blender-Python module.
 
 It contains dicts of your additional NNA types.
 The keys are the NNA names of your components.

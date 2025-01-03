@@ -12,33 +12,29 @@ class NNAExportFBX(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):
 	bl_idname = "nna.export_nna_fbx"
 	bl_label = "Export as `nna.fbx` file"
 
-	filename_ext = ".nna.fbx"
+	filename_ext = ""
 
-	def invoke(self, context, _event):
+	def invoke(self, context, event):
 		# Determine export file name
-		export_name = ""
 		if(not self.filepath):
 			meta = nna_utils_tree.determine_nna_meta()
 			if(meta):
 				json_text = nna_utils_json.get_json_from_targeting_object(meta)
 				json_meta = json.loads(json_text) if json_text else {}
 				if("name" in json_meta):
-					export_name = json_meta["name"]
-			if(not export_name):
-				export_name = context.blend_data.filepath
-				if(not export_name):
-					export_name = "superawesomemodel"
-				else:
-					export_name = os.path.splitext(export_name)[0]
-			self.filepath = export_name
-
-		context.window_manager.fileselect_add(self)
-		return {'RUNNING_MODAL'}
+					self.filepath = json_meta["name"]
+		return bpy_extras.io_utils.ExportHelper.invoke(self, context, event)
 
 	def execute(self, context):
 		try:
+			export_filepath: str = self.filepath
+			if(not export_filepath.endswith(".nna.fbx")):
+				if(export_filepath.endswith(".fbx")):
+					export_filepath = export_filepath[:len(export_filepath) - 4]
+				export_filepath += ".nna.fbx"
+
 			bpy.ops.export_scene.fbx(
-				filepath=self.filepath,
+				filepath=export_filepath,
 				collection=nna_utils_tree.find_nna_root_collection().name,
 				apply_scale_options="FBX_SCALE_ALL",
 				embed_textures=True,
