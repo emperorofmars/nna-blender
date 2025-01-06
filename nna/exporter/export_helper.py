@@ -1,10 +1,9 @@
 import json
 import bpy
 import bpy_extras
-import os
 
-from .. import nna_utils_tree
-from .. import nna_utils_json
+from ..utils import nna_utils_tree
+from ..utils import nna_utils_json
 
 
 class NNAExportFBX(bpy.types.Operator, bpy_extras.io_utils.ExportHelper):

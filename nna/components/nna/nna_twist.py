@@ -1,13 +1,13 @@
 import bpy
 import re
 
-from ..base_add_json import NNA_Json_Add_Base
-from ..base_edit_json import NNA_Json_Edit_Base
-from ..base_edit_name import NNA_Name_Definition_Base
+from .. import NNA_Json_Add_Base
+from .. import NNA_Json_Edit_Base
+from .. import NNA_Name_Definition_Base
 
 from ...nna_registry import NNAFunctionType
 
-from ... import nna_operators_selector
+from ...ops import nna_operators_selector
 
 
 _nna_name = "nna.twist"

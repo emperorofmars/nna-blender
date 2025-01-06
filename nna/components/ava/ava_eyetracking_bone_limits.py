@@ -7,7 +7,7 @@ from ..base_edit_name import NNA_Name_Definition_Base
 
 from ...nna_registry import NNAFunctionType
 
-from ... import nna_utils_name
+from ...utils import nna_utils_name
 
 
 _nna_name = "ava.eyetracking_bone_limits"

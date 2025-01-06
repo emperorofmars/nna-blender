@@ -3,8 +3,6 @@ import inspect
 import sys
 import bpy
 
-from .nna_operators_raw_json import AddNNARawJsonComponentOperator
-
 """
 To register additional types not NNA, create a dict named `nna_types` at the root of your Blender-Python module.
 

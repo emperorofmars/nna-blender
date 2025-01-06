@@ -1,7 +1,7 @@
 import bpy
 
-from .. import nna_utils_name
-from .. import nna_utils_tree
+from ..utils import nna_utils_name
+from ..utils import nna_utils_tree
 
 class NNA_Name_Definition_Base:
 	"""Base class for Name-Definition Operators"""

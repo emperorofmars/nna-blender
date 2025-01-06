@@ -57,7 +57,8 @@ def get_all_submodules(directory):
 
 def iter_submodules(path, package_name):
 	for name in sorted(iter_submodule_names(path)):
-		yield importlib.import_module("." + name, package_name)
+		if(not name.startswith("nna_extension_template")):
+			yield importlib.import_module("." + name, package_name)
 
 
 def iter_submodule_names(path, root=""):

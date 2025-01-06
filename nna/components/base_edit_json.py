@@ -1,6 +1,6 @@
 import bpy
 
-from .. import nna_utils_json
+from ..utils import nna_utils_json
 
 class NNA_Json_Edit_Base:
 	"""Base class for Edit-Json Operators"""

@@ -1,7 +1,5 @@
 import bpy
-from . import nna_utils_tree
-from . import nna_utils_json
-from . import nna_utils_name
+from ..utils import nna_utils_tree
 
 
 class SetActiveObjectOperator(bpy.types.Operator):

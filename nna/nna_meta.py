@@ -1,9 +1,9 @@
 import json
 import bpy
 
-from . import nna_utils_tree
-from . import nna_utils_json
-from . import nna_kv_list
+from .utils import nna_utils_tree
+from .utils import nna_utils_json
+from .utils import nna_kv_list
 
 
 class SetupNNAMetaOperator(bpy.types.Operator):

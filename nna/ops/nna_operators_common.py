@@ -1,7 +1,7 @@
 import bpy
-from . import nna_utils_tree
-from . import nna_utils_json
-from . import nna_utils_name
+from ..utils import nna_utils_tree
+from ..utils import nna_utils_json
+from ..utils import nna_utils_name
 
 
 class InitializeNNAOperator(bpy.types.Operator):

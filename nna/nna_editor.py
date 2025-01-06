@@ -6,13 +6,13 @@ from . import nna_meta
 
 from .exporter.export_helper import NNAExportFBX
 
-from . import nna_operators_common
-from . import nna_operators_raw_json
+from .ops import nna_operators_common
+from .ops import nna_operators_raw_json
 from . import nna_registry
-from . import nna_utils_tree
-from . import nna_utils_json
-from . import nna_operators_id_list
-from . import nna_kv_list
+from .utils import nna_utils_tree
+from .utils import nna_utils_json
+from .utils import nna_id_list
+from .utils import nna_kv_list
 
 
 class NNACollectionPanel(bpy.types.Panel):
@@ -24,8 +24,9 @@ class NNACollectionPanel(bpy.types.Panel):
 	bl_category = "NNA"
 	bl_context = "collection"
 
-	def draw_header(self, context):
-		pass
+	@classmethod
+	def poll(cls, context):
+		return (context.collection is not None)
 
 	def draw(self, context):
 		root = nna_utils_tree.find_nna_root()
@@ -52,9 +53,6 @@ class NNAObjectPanel(bpy.types.Panel):
 	def poll(cls, context):
 		return (context.object is not None)
 
-	def draw_header(self, context):
-		pass
-
 	def draw(self, context):
 		draw_nna_editor(self, context, context.object.name, nna_utils_tree.determine_nna_object_state(context.object))
 
@@ -70,10 +68,7 @@ class NNABonePanel(bpy.types.Panel):
 
 	@classmethod
 	def poll(cls, context):
-		return (context.object is not None)
-
-	def draw_header(self, context):
-		pass
+		return (context.object is not None and context.bone is not None)
 
 	def draw(self, context):
 		draw_nna_editor(self, context, context.object.name + ";" + context.bone.name, nna_utils_tree.determine_nna_bone_state(context.object, context.bone))
@@ -259,7 +254,7 @@ def _draw_nna_json_editor(self: bpy.types.Panel, context: bpy.types.Context | No
 				editIDButton.target_id = target_id
 				editIDButton.component_index = idx
 
-				nna_operators_id_list.draw_id_list(target_id, header_row.box(), component, idx, "overrides")
+				nna_id_list.draw_id_list(target_id, header_row.box(), component, idx, "overrides")
 
 				component_box.separator(type="LINE", factor=1)
 

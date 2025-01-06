@@ -1,15 +1,19 @@
 schema_version = "1.0.0"
 
-id = "nna_blender"
-version = "0.0.8"
-name = "NNA Blender"
-tagline = "Blender Extension for Creating NNA Definitions"
-maintainer = "Mars (https://squirrelbite.com)"
+# Example of manifest file for a Blender extension
+# Change the values according to your extension
+id = "nna_extension_template"
+version = "0.0.1"
+name = "NNA Extension Template"
+tagline = "This is a template on how to implement your own NNA module in Blender"
+maintainer = "<your name here>"
 # Supported types: "add-on", "theme"
 type = "add-on"
 
+dependencies = ["nna_blender"]
+
 # Optional link to documentation, support, source files, etc
-website = "https://github.com/emperorofmars/nna_blender"
+# website = "https://extensions.blender.org/add-ons/my-example-package/"
 
 # Optional list defined by Blender and server, see:
 # https://docs.blender.org/manual/en/dev/advanced/extensions/tags.html
@@ -23,12 +27,13 @@ blender_version_min = "4.2.0"
 # License conforming to https://spdx.org/licenses/ (use "SPDX: prefix)
 # https://docs.blender.org/manual/en/dev/advanced/extensions/licenses.html
 license = [
-  "SPDX:MIT",
+  "SPDX:GPL-2.0-or-later",
 ]
 # Optional: required by some licenses.
-copyright = [
-  "2024 Mars (https://squirrelbite.com)",
-]
+# copyright = [
+#   "2002-2024 Developer Name",
+#   "1998 Company Name",
+# ]
 
 # Optional list of supported platforms. If omitted, the extension will be available in all operating systems.
 # platforms = ["windows-x64", "macos-arm64", "linux-x64"]
@@ -59,9 +64,6 @@ copyright = [
 # network = "Need to sync motion-capture data to server"
 # files = "Import/export FBX from/to disk"
 # clipboard = "Copy and paste bone transforms"
-[permissions]
-files = "Import/export files from/to disk"
-clipboard = "Copy and paste NNA resources and definitions between different tools"
 
 # Optional: build settings.
 # https://docs.blender.org/manual/en/dev/advanced/extensions/command_line_arguments.html#command-line-args-extension-build
@@ -71,12 +73,3 @@ clipboard = "Copy and paste NNA resources and definitions between different tool
 #   "/.git/",
 #   "/*.zip",
 # ]
-[build]
-paths_exclude_pattern = [
-	"__pycache__/",
-	"/.git/",
-	"/*.zip",
-	"/nna_extension_template/",
-	"/examples/",
-	"/assets/",
-]
