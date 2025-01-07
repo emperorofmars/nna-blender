@@ -22,10 +22,13 @@ Issues, discussions & PRs welcome!
 
 ![](./Docs/img/nna_cover_image.png)
 
+## Create Your Own NNA Type!
+Take a look at [Extension Template](./nna_extension_template/readme.md)
+
 ---
 
 # License
-This repository is licensed under **MIT**.
+This repository is licensed under **MIT** or **Apache-2.0** or **GPL-3.0-or-later**.
 
 <!--
 	Command to build the extension with a default Windows Blender installation:

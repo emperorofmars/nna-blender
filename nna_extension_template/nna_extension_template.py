@@ -1,17 +1,20 @@
 import re
 import bpy
-import importlib
-from .get_blender_nna_module_prefix import nna_blender_module_prefix
 
-nna = importlib.import_module(nna_blender_module_prefix)
-components = importlib.import_module(nna_blender_module_prefix + ".components")
-utils = importlib.import_module(nna_blender_module_prefix + ".utils")
+from bl_ext.user_default.nna_blender.nna.components import NNA_Json_Add_Base, NNA_Json_Edit_Base, NNA_Name_Definition_Base
+from bl_ext.user_default.nna_blender.nna.nna_registry import NNAFunctionType
+from bl_ext.user_default.nna_blender.nna import utils
 
+"""
+from bl_ext.vscode_development.nna_blender.nna.components import NNA_Json_Add_Base, NNA_Json_Edit_Base, NNA_Name_Definition_Base
+from bl_ext.vscode_development.nna_blender.nna.nna_registry import NNAFunctionType
+from bl_ext.vscode_development.nna_blender.nna import utils
+"""
 
 _nna_name = "example.extension"
 
 
-class AddExampleJsonComponent(bpy.types.Operator, components.NNA_Json_Add_Base):
+class AddExampleJsonComponent(bpy.types.Operator, NNA_Json_Add_Base):
 	"""Example Add Json Component Operator"""
 	bl_idname = "example.add_json_component"
 	bl_label = "Add"
@@ -20,7 +23,7 @@ class AddExampleJsonComponent(bpy.types.Operator, components.NNA_Json_Add_Base):
 		return {"t": _nna_name, "foo": "bar"}
 
 
-class EditExampleJsonComponent(bpy.types.Operator, components.NNA_Json_Edit_Base):
+class EditExampleJsonComponent(bpy.types.Operator, NNA_Json_Edit_Base):
 	"""Example Edit Json Component Operator"""
 	bl_idname = "example.edit_json_component"
 	bl_label = "Edit"
@@ -46,7 +49,7 @@ def display_example_nna_json_component(target_id: str, layout: bpy.types.UILayou
 
 _Match = r"(?i)\$Example(?P<foo>[a-zA-Z0-9]*)(?P<side>([._\-|:][lr])|[._\-|:\s]?(right|left))?$"
 
-class SetExampleNameDefinition(bpy.types.Operator, components.NNA_Name_Definition_Base):
+class SetExampleNameDefinition(bpy.types.Operator, NNA_Name_Definition_Base):
 	"""Set Example Name Definition"""
 	bl_idname = "example.set_name_definition"
 	bl_label = "Set Example Name Definition"
@@ -84,12 +87,12 @@ def name_display_example_name_definition(layout: bpy.types.UILayout, name: str):
 
 nna_types = {
 	_nna_name: {
-		nna.NNAFunctionType.JsonAdd: AddExampleJsonComponent.bl_idname,
-		nna.NNAFunctionType.JsonEdit: EditExampleJsonComponent.bl_idname,
-		nna.NNAFunctionType.JsonDisplay: display_example_nna_json_component,
-		nna.NNAFunctionType.NameSet: SetExampleNameDefinition.bl_idname,
-		nna.NNAFunctionType.NameMatch: name_match_example_name_definition,
-		nna.NNAFunctionType.NameDisplay: name_display_example_name_definition,
+		NNAFunctionType.JsonAdd: AddExampleJsonComponent.bl_idname,
+		NNAFunctionType.JsonEdit: EditExampleJsonComponent.bl_idname,
+		NNAFunctionType.JsonDisplay: display_example_nna_json_component,
+		NNAFunctionType.NameSet: SetExampleNameDefinition.bl_idname,
+		NNAFunctionType.NameMatch: name_match_example_name_definition,
+		NNAFunctionType.NameDisplay: name_display_example_name_definition,
 	},
 }
 

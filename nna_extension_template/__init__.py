@@ -1,14 +1,13 @@
 # Custom NNA TYPE Template
-from .nna_extension_template import nna_types
 
-from .get_blender_nna_module_prefix import nna_blender_module_prefix
+import bpy
 
 def register():
-	if(nna_blender_module_prefix):
+	if("bl_ext.user_default.nna_blender" in bpy.context.preferences.addons.keys()):
 		from .nna_extension_template import register
 		register()
 
 def unregister():
-	if(nna_blender_module_prefix):
+	if("bl_ext.user_default.nna_blender" in bpy.context.preferences.addons.keys()):
 		from .nna_extension_template import unregister
 		unregister()

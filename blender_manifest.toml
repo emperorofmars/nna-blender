@@ -24,6 +24,8 @@ blender_version_min = "4.2.0"
 # https://docs.blender.org/manual/en/dev/advanced/extensions/licenses.html
 license = [
   "SPDX:MIT",
+  "SPDX:Apache-2.0",
+  "SPDX:GPL-3.0-or-later",
 ]
 # Optional: required by some licenses.
 copyright = [
@@ -61,7 +63,7 @@ copyright = [
 # clipboard = "Copy and paste bone transforms"
 [permissions]
 files = "Import/export files from/to disk"
-clipboard = "Copy and paste NNA resources and definitions between different tools"
+clipboard = "Copy and paste NNA definitions between different tools"
 
 # Optional: build settings.
 # https://docs.blender.org/manual/en/dev/advanced/extensions/command_line_arguments.html#command-line-args-extension-build
@@ -76,6 +78,7 @@ paths_exclude_pattern = [
 	"__pycache__/",
 	"/.git/",
 	"/*.zip",
+	"/.vscode/",
 	"/nna_extension_template/",
 	"/examples/",
 	"/assets/",
