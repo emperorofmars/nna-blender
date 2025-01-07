@@ -58,6 +58,8 @@ class SetAVAColliderNameDefinitionOperator(bpy.types.Operator, NNA_Name_Definiti
 		return nna_name + symmetry
 
 	def draw(self, context):
+		NNA_Name_Definition_Base.draw(self, context)
+
 		self.layout.prop(self, "col_shape", expand=True)
 		self.layout.prop(self, "inside_bounds", expand=True)
 		if(self.col_shape in ["sphere", "capsule"]): self.layout.prop(self, "radius", expand=True)

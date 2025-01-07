@@ -153,26 +153,28 @@ class NNAHumanoidLimitNameDefinitionOperator(bpy.types.Operator, NNA_Name_Defini
 		self.bone_length = limits[2]
 
 	def serialize(self, target: bpy.types.Object | bpy.types.Bone, base_object: bpy.types.Object | None, nna_name: str, symmetry: str) -> str:
-			match = re.search(_Match, nna_name)
-			if(match): nna_name = nna_name[:match.start()]
+		match = re.search(_Match, nna_name)
+		if(match): nna_name = nna_name[:match.start()]
 
-			nna_name = nna_name + "$HuLim"
+		nna_name += "$HuLim"
 
-			if(self.p_min and self.p_min != None and self.p_max and self.p_max != None):
-				nna_name += "P" + str(round(self.p_min, 2)) + "," + str(round(self.p_max, 2))
+		if(self.p_min and self.p_min != None and self.p_max and self.p_max != None):
+			nna_name += "P" + str(round(self.p_min, 2)) + "," + str(round(self.p_max, 2))
 
-			if(self.s_min and self.s_min != None and self.s_max and self.s_max != None):
-				nna_name += "S" + str(round(self.s_min, 2)) + "," + str(round(self.s_max, 2))
+		if(self.s_min and self.s_min != None and self.s_max and self.s_max != None):
+			nna_name += "S" + str(round(self.s_min, 2)) + "," + str(round(self.s_max, 2))
 
-			if(self.t_min and self.t_min != None and self.t_max and self.t_max != None):
-				nna_name += "T" + str(round(self.t_min, 2)) + "," + str(round(self.t_max, 2))
+		if(self.t_min and self.t_min != None and self.t_max and self.t_max != None):
+			nna_name += "T" + str(round(self.t_min, 2)) + "," + str(round(self.t_max, 2))
 
-			if(self.bone_length and self.bone_length != None):
-				nna_name += "BL" + str(round(self.bone_length, 2))
+		if(self.bone_length and self.bone_length != None):
+			nna_name += "BL" + str(round(self.bone_length, 2))
 
-			return nna_name + symmetry
+		return nna_name + symmetry
 
 	def draw(self, context):
+		NNA_Name_Definition_Base.draw(self, context)
+
 		split = self.layout.split(factor=0.4); split.label(text = "Primary")
 		col = split.column(); col.prop(self, "p_min", text="Min", expand=True); col.prop(self, "p_max", text="Max", expand=True)
 		self.layout.separator(factor=0.5)

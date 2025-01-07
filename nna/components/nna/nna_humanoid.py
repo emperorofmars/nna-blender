@@ -73,7 +73,7 @@ class NNAHumanoidNameDefinitionOperator(bpy.types.Operator, NNA_Name_Definition_
 		match = re.search(_Match, nna_name)
 		if(match): nna_name = nna_name[:match.start()]
 
-		nna_name = nna_name + "$Humanoid"
+		nna_name += "$Humanoid"
 
 		if(self.locomotion_type != "planti"): nna_name += str(self.locomotion_type).capitalize()
 		if(self.no_jaw == True): nna_name += "NoJaw"
@@ -81,6 +81,8 @@ class NNAHumanoidNameDefinitionOperator(bpy.types.Operator, NNA_Name_Definition_
 		return nna_name + symmetry
 
 	def draw(self, context):
+		NNA_Name_Definition_Base.draw(self, context)
+
 		self.layout.prop(self, "locomotion_type", expand=True)
 		self.layout.prop(self, "no_jaw", expand=True)
 

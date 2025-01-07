@@ -62,6 +62,8 @@ class NNABoneLengthNameDefinitionOperator(bpy.types.Operator, NNA_Name_Definitio
 			return nna_name + symmetry
 
 	def draw(self, context):
+		NNA_Name_Definition_Base.draw(self, context)
+
 		self.layout.prop(self, "length", expand=True)
 
 def name_match_nna_bone_length(name: str) -> int:

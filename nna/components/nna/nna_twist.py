@@ -74,7 +74,8 @@ class NNATwistNameDefinitionOperator(bpy.types.Operator, NNA_Name_Definition_Bas
 		match = re.search(_Match, nna_name)
 		if(match): nna_name = nna_name[:match.start()]
 
-		nna_name = nna_name + "$Twist"
+		if(self.clear_definition_on_import): nna_name += "$"
+		nna_name += "$Twist"
 
 		source_id = nna_operators_selector.get_selected_target_id_relative(self.target_id, target_split_char="&")
 		if(source_id):
@@ -86,6 +87,8 @@ class NNATwistNameDefinitionOperator(bpy.types.Operator, NNA_Name_Definition_Bas
 		return nna_name + symmetry
 
 	def draw(self, context):
+		NNA_Name_Definition_Base.draw(self, context)
+
 		self.layout.prop(self, "weight", text="Weight", expand=True)
 		self.layout.label(text="Source")
 		nna_operators_selector.draw_selector_prop(self.target_id, self.layout)

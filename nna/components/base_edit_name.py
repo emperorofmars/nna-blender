@@ -1,7 +1,6 @@
 import bpy
 
-from ..utils import nna_utils_name
-from ..utils import nna_utils_tree
+from ..utils import nna_utils_name, nna_utils_tree
 
 class NNA_Name_Definition_Base:
 	"""Base class for Name-Definition Operators"""
@@ -9,11 +8,15 @@ class NNA_Name_Definition_Base:
 
 	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
 
+	clear_definition_on_import: bpy.props.BoolProperty(name = "Clear Name on Import", default=False) # type: ignore
+
 	def parse(self, nna_name: str): pass
 	def serialize(self, target: bpy.types.Object | bpy.types.Bone, base_object: bpy.types.Object | None, nna_name: str, symmetry: str) -> str: pass
 
 	def invoke(self, context, event):
 		nna_name = nna_utils_name.get_nna_name(self.target_id)
+
+		self.clear_definition_on_import = nna_name.find("$$") == nna_name.find("$")
 
 		self.parse(nna_name)
 
@@ -27,6 +30,13 @@ class NNA_Name_Definition_Base:
 
 			new_name = self.serialize(target, base_object, nna_name, symmetry)
 
+			first_dollar = nna_name.find("$")
+			first_dollardollar = nna_name.find("$$")
+			if(self.clear_definition_on_import and first_dollardollar < 0):
+				new_name = new_name[:first_dollar] + "$" + new_name[first_dollar:]
+			elif(not self.clear_definition_on_import and first_dollardollar >= 0):
+				new_name = new_name[:first_dollar] + new_name[first_dollar + 1:]
+
 			if(len(str.encode(new_name)) > 63):
 				self.report({'ERROR'}, "Name too long")
 				return {"CANCELLED"}
@@ -39,3 +49,7 @@ class NNA_Name_Definition_Base:
 		except ValueError as error:
 			self.report({'ERROR'}, str(error))
 			return {"CANCELLED"}
+
+	def draw(self, context):
+		self.layout.prop(self, "clear_definition_on_import", expand=True)
+		self.layout.separator(factor=1, type="SPACE")

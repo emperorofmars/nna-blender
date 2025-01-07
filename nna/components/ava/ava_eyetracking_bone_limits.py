@@ -1,9 +1,7 @@
 import re
 import bpy
 
-from ..base_add_json import NNA_Json_Add_Base
-from ..base_edit_json import NNA_Json_Edit_Base
-from ..base_edit_name import NNA_Name_Definition_Base
+from .. import NNA_Json_Add_Base, NNA_Json_Edit_Base, NNA_Name_Definition_Base
 
 from ...nna_registry import NNAFunctionType
 
@@ -149,15 +147,19 @@ class SetAVAEyetrackingBoneLimitsNameDefinitionOperator(bpy.types.Operator, NNA_
 		return nna_name
 
 	def draw(self, context):
+		NNA_Name_Definition_Base.draw(self, context)
+
 		if(self.side_changable): self.layout.prop(self, "side", expand=True)
 		self.layout.prop(self, "up", expand=True)
 		self.layout.prop(self, "down", expand=True)
 		self.layout.prop(self, "inner", expand=True)
 		self.layout.prop(self, "outer", expand=True)
 
+
 def name_match_ava_eyetracking_bone_limits(name: str) -> int:
 	match = re.search(_Match, name)
 	return -1 if not match else match.start()
+
 
 def name_display_ava_eyetracking_bone_limits(layout: bpy.types.UILayout, name: str):
 	match = re.search(_Match, name)
