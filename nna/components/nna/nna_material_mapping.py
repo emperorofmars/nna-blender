@@ -17,6 +17,12 @@ class AddNNAMaterialMappingComponentOperator(bpy.types.Operator, NNA_Json_Add_Ba
 	bl_label = "Add Material Mapping Component"
 	nna_name = _nna_name
 
+	def init(self) -> dict:
+		return {
+			"t": self.nna_name,
+			"slots": []
+		}
+
 
 class EditNNAMaterialMappingComponentOperator(bpy.types.Operator, NNA_Json_Edit_Base):
 	"""Maps materials to this mesh from the game-engine projects assets on import based, on the name."""

@@ -16,7 +16,7 @@ class NNA_Name_Definition_Base:
 	def invoke(self, context, event):
 		nna_name = nna_utils_name.get_nna_name(self.target_id)
 
-		self.clear_definition_on_import = nna_name.find("$$") == nna_name.find("$")
+		self.clear_definition_on_import = True if nna_name.find("$$") >= 0 and nna_name.find("$$") == nna_name.find("$") else False
 
 		self.parse(nna_name)
 
@@ -30,8 +30,8 @@ class NNA_Name_Definition_Base:
 
 			new_name = self.serialize(target, base_object, nna_name, symmetry)
 
-			first_dollar = nna_name.find("$")
-			first_dollardollar = nna_name.find("$$")
+			first_dollar = new_name.find("$")
+			first_dollardollar = new_name.find("$$")
 			if(self.clear_definition_on_import and first_dollardollar < 0):
 				new_name = new_name[:first_dollar] + "$" + new_name[first_dollar:]
 			elif(not self.clear_definition_on_import and first_dollardollar >= 0):

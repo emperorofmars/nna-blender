@@ -45,6 +45,7 @@ class AddNNARawJsonComponentOperator(bpy.types.Operator):
 	new_component: bpy.props.StringProperty(name="new_component", default="{\"t\":\"example_type\"}") # type: ignore
 
 	def invoke(self, context, event):
+		self.new_component = "{\"t\":\"example_type\"}"
 		return context.window_manager.invoke_props_dialog(self)
 
 	def execute(self, context):

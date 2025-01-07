@@ -79,10 +79,8 @@ class NNATwistNameDefinitionOperator(bpy.types.Operator, NNA_Name_Definition_Bas
 
 		source_id = nna_operators_selector.get_selected_target_id_relative(self.target_id, target_split_char="&")
 		if(source_id):
-			nna_name += source_id
-			if(self.weight != 0.5): nna_name += ","
-
-		if(self.weight != 0.5): nna_name += str(round(self.weight, 2))
+			nna_name += source_id + ","
+		nna_name += str(round(self.weight, 2))
 
 		return nna_name + symmetry
 

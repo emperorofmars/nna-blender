@@ -83,7 +83,11 @@ class NNAHumanoidNameDefinitionOperator(bpy.types.Operator, NNA_Name_Definition_
 	def draw(self, context):
 		NNA_Name_Definition_Base.draw(self, context)
 
+		self.layout.label(text="Note: Set the 'locomotion type' to Digitigrade")
+		self.layout.label(text="ONLY if your rig itself  is digitigrade!")
 		self.layout.prop(self, "locomotion_type", expand=True)
+
+		self.layout.separator(factor=1, type="SPACE")
 		self.layout.prop(self, "no_jaw", expand=True)
 
 

@@ -106,7 +106,7 @@ def display_ava_eyetracking_bone_limits_component(target_id: str, layout: bpy.ty
 		row = layout.split(factor=0.4); row.label(text=side_str + "Out"); row.label(text=str(json_component["right_out"]))
 
 
-_Match = r"(?i)\$EyeBoneLimits(?P<up>[0-9]*[.][0-9]+),(?P<down>[0-9]*[.][0-9]+),(?P<in>[0-9]*[.][0-9]+),(?P<out>[0-9]*[.][0-9]+)(?P<side>([._\-|:][lr])|[._\-|:\s]?(right|left))?$"
+_Match = r"(?i)\$EyeBoneLimits(?P<up>[0-9]+([.][0-9]+)*),(?P<down>[0-9]+([.][0-9]+)*),(?P<in>[0-9]+([.][0-9]+)*),(?P<out>[0-9]+([.][0-9]+)*)(?P<side>([._\-|:][lr])|[._\-|:\s]?(right|left))?$"
 
 class SetAVAEyetrackingBoneLimitsNameDefinitionOperator(bpy.types.Operator, NNA_Name_Definition_Base):
 	"""Set the rotation limits for the avatars eye-bones in degrees.
