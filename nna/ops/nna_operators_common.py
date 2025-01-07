@@ -156,3 +156,69 @@ class EditNNAComponentIDOperator(bpy.types.Operator):
 	def draw(self, context):
 		self.layout.label(text="Target Object: " + self.target_id)
 		self.layout.prop(self, "component_id", expand=True)
+
+
+class ToggleNNAComponentEnabledOperator(bpy.types.Operator):
+	"""Toggle the default 'Enabled' state of a NNA Json component"""
+	bl_idname = "nna.toggle_component_enabled"
+	bl_label = "Toggle Enabled"
+	bl_options = {"REGISTER", "UNDO"}
+
+	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
+	component_index: bpy.props.IntProperty(name = "component_index", default=-1) # type: ignore
+
+	def execute(self, context):
+		try:
+			json_component = nna_utils_json.get_component(self.target_id, self.component_index)
+
+			if("default_enabled" in json_component and json_component["default_enabled"] == False):
+				del json_component["default_enabled"]
+			else:
+				json_component["default_enabled"] = False
+
+			nna_utils_json.replace_component(self.target_id, json_component, self.component_index)
+			self.report({'INFO'}, "Component successfully edited")
+			return {"FINISHED"}
+		except Exception as error:
+			self.report({'ERROR'}, str(error))
+			return {"CANCELLED"}
+
+
+class EditNNAComponentStringOperator(bpy.types.Operator):
+	"""Edit a string property of a NNA Json component"""
+	bl_idname = "nna.edit_component_property_string"
+	bl_label = "Edit"
+	bl_options = {"REGISTER", "UNDO"}
+
+	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
+	component_index: bpy.props.IntProperty(name = "component_index", default=-1) # type: ignore
+	property_name: bpy.props.StringProperty(name = "property_name") # type: ignore
+
+	property_value: bpy.props.StringProperty(name = "Value") # type: ignore
+
+	def invoke(self, context, event):
+		try:
+			json_component = nna_utils_json.get_component(self.target_id, self.component_index)
+			self.property_value = json_component.get(self.property_name, "")
+		except Exception as error:
+			self.report({'ERROR'}, str(error))
+			return None
+		return context.window_manager.invoke_props_dialog(self)
+
+	def execute(self, context):
+		try:
+			json_component = nna_utils_json.get_component(self.target_id, self.component_index)
+
+			json_component[self.property_name] = self.property_value
+
+			nna_utils_json.replace_component(self.target_id, json_component, self.component_index)
+			self.report({'INFO'}, "Component successfully edited")
+			return {"FINISHED"}
+		except Exception as error:
+			self.report({'ERROR'}, str(error))
+			return {"CANCELLED"}
+
+	def draw(self, context):
+		self.layout.label(text="Target Object: " + self.target_id)
+		self.layout.label(text="Edit: " + self.property_name)
+		self.layout.prop(self, "property_value", expand=True)

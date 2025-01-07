@@ -245,6 +245,11 @@ def _draw_nna_json_editor(self: bpy.types.Panel, context: bpy.types.Context | No
 				col_type = split.column()
 				col_type.label(text="Type:")
 				col_type.label(text=str(component["t"]))
+				enabled_row = col_type.row()
+				enabled_row.label(text="Enabled" if component.get("default_enabled", True) else "Disabled")
+				toggleEnabledButton = enabled_row.operator(nna_operators_common.ToggleNNAComponentEnabledOperator.bl_idname)
+				toggleEnabledButton.target_id = target_id
+				toggleEnabledButton.component_index = idx
 
 				header_row = split.column()
 
