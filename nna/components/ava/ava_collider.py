@@ -19,6 +19,8 @@ class SetAVAColliderNameDefinitionOperator(bpy.types.Operator, NNA_Name_Definiti
 	bl_idname = "nna.set_ava_collider_name"
 	bl_label = "AVA Collider"
 
+	default_clear_definition_on_import = True
+
 	col_shape: bpy.props.EnumProperty(name="Shape", items=[("sphere", "Sphere", ""), ("capsule", "Capsule", ""), ("plane", "Plane", "")], default="sphere") # type: ignore
 	inside_bounds: bpy.props.BoolProperty(name="Inside Bounds", default=False) # type: ignore
 	radius: bpy.props.FloatProperty(name="Radius", default=0.1, min=0, soft_min=0.001, precision=3, step=3) # type: ignore

@@ -6,6 +6,8 @@ class NNA_Name_Definition_Base:
 	"""Base class for Name-Definition Operators"""
 	bl_options = {"REGISTER", "UNDO"}
 
+	default_clear_definition_on_import = False
+
 	target_id: bpy.props.StringProperty(name = "target_id") # type: ignore
 
 	clear_definition_on_import: bpy.props.BoolProperty(name = "Clear Name on Import", default=False) # type: ignore
@@ -16,7 +18,10 @@ class NNA_Name_Definition_Base:
 	def invoke(self, context, event):
 		nna_name = nna_utils_name.get_nna_name(self.target_id)
 
-		self.clear_definition_on_import = True if nna_name.find("$$") >= 0 and nna_name.find("$$") == nna_name.find("$") else False
+		if(nna_name.find("$") >= 0):
+			self.clear_definition_on_import = True if nna_name.find("$$") >= 0 and nna_name.find("$$") == nna_name.find("$") else False
+		else:
+			self.clear_definition_on_import = self.default_clear_definition_on_import
 
 		self.parse(nna_name)
 
