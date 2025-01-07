@@ -154,17 +154,13 @@ def _draw_meta_editor(self: bpy.types.Panel, context: bpy.types.Context | None):
 		if("license_url" in json_meta): row = box.row(); row.label(text="License Link"); row.label(text=json_meta["license_url"])
 		if("documentation" in json_meta): row = box.row(); row.label(text="Documentation"); row.label(text=json_meta["documentation"])
 		if("documentation_url" in json_meta): row = box.row(); row.label(text="Documentation Link"); row.label(text=json_meta["documentation_url"])
-		if(len(json_meta.keys()) > 8):
-			box.separator(factor=1)
-			row = box.row(); row.label(text="Custom Properties")
-			for property in json_meta.keys():
-				if(property in ["name", "version", "author", "url", "license", "license_url", "documentation", "documentation_url"]): continue
-				row = json_meta.row(); row.label(text=property); row.label(text=str(json_meta[property]))
 
 		if("custom_properties" in json_meta):
 			box.separator(factor=0.5)
 			box.label(text="Custom Properties")
-			box.label(text=nna_kv_list.create_kv_list_string(json_meta["custom_properties"]))
+			for key, value in json_meta["custom_properties"]:
+				row = box.row(); row.label(text=key); row.label(text=value)
+
 		box.operator(nna_meta.EditNNAMetaOperator.bl_idname)
 	else:
 		box.operator(nna_meta.SetupNNAMetaOperator.bl_idname)
