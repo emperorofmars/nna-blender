@@ -39,7 +39,6 @@ class EditNNAMetaOperator(bpy.types.Operator):
 	url: bpy.props.StringProperty(name="Asset Link") # type: ignore
 	license: bpy.props.StringProperty(name="License") # type: ignore
 	license_url: bpy.props.StringProperty(name="License Link") # type: ignore
-	documentation: bpy.props.StringProperty(name="Documentation") # type: ignore
 	documentation_url: bpy.props.StringProperty(name="Documentation Link") # type: ignore
 
 	# TODO user defined properties
@@ -55,7 +54,6 @@ class EditNNAMetaOperator(bpy.types.Operator):
 		if("url" in json_meta): self.url = json_meta["url"]
 		if("license" in json_meta): self.license = json_meta["license"]
 		if("license_url" in json_meta): self.license_url = json_meta["license_url"]
-		if("documentation" in json_meta): self.documentation = json_meta["documentation"]
 		if("documentation_url" in json_meta): self.documentation_url = json_meta["documentation_url"]
 
 		if("custom_properties" in json_meta):
@@ -85,8 +83,6 @@ class EditNNAMetaOperator(bpy.types.Operator):
 			elif("license" in json_meta): del json_meta["license"]
 			if(self.license_url): json_meta["license_url"] = self.license_url
 			elif("license_url" in json_meta): del json_meta["license_url"]
-			if(self.documentation): json_meta["documentation"] = self.documentation
-			elif("documentation" in json_meta): del json_meta["documentation"]
 			if(self.documentation_url): json_meta["documentation_url"] = self.documentation_url
 			elif("documentation_url" in json_meta): del json_meta["documentation_url"]
 
@@ -113,7 +109,6 @@ class EditNNAMetaOperator(bpy.types.Operator):
 		self.layout.prop(self, "url", expand=True)
 		self.layout.prop(self, "license", expand=True)
 		self.layout.prop(self, "license_url", expand=True)
-		self.layout.prop(self, "documentation", expand=True)
 		self.layout.prop(self, "documentation_url", expand=True)
 
 		self.layout.separator(factor=0.5)
