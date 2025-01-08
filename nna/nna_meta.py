@@ -60,10 +60,10 @@ class EditNNAMetaOperator(bpy.types.Operator):
 
 		if("custom_properties" in json_meta):
 			bpy.context.scene.nna_kv_list.clear()
-			for kv_entry in json_meta.get("custom_properties", []):
+			for key, value in json_meta.get("custom_properties", {}).items():
 				new_entry = bpy.context.scene.nna_kv_list.add()
-				new_entry.key = kv_entry["key"]
-				new_entry.value = kv_entry["value"]
+				new_entry.key = key
+				new_entry.value = value
 
 		return context.window_manager.invoke_props_dialog(self)
 
@@ -91,10 +91,10 @@ class EditNNAMetaOperator(bpy.types.Operator):
 			elif("documentation_url" in json_meta): del json_meta["documentation_url"]
 
 			if(bpy.context.scene.nna_kv_list):
-				custom_properties = []
+				json_meta["custom_properties"] = {}
 				for kv_entry in bpy.context.scene.nna_kv_list:
-					custom_properties.append({"key": kv_entry.key, "value": kv_entry.value})
-				json_meta["custom_properties"] = custom_properties
+					if(kv_entry.key):
+						json_meta["custom_properties"][kv_entry.key] = kv_entry.value
 				bpy.context.scene.nna_kv_list.clear()
 			elif("custom_properties" in json_meta):
 				del json_meta["custom_properties"]

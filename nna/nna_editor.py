@@ -158,7 +158,7 @@ def _draw_meta_editor(self: bpy.types.Panel, context: bpy.types.Context | None):
 		if("custom_properties" in json_meta):
 			box.separator(factor=0.5)
 			box.label(text="Custom Properties")
-			for key, value in json_meta["custom_properties"]:
+			for key, value in json_meta.get("custom_properties", {}).items():
 				row = box.row(); row.label(text=key); row.label(text=value)
 
 		box.operator(nna_meta.EditNNAMetaOperator.bl_idname)
